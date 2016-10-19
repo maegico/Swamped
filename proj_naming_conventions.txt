@@ -1,0 +1,11 @@
+Naming Conventions:
+	Member Variables: m_name
+	Member Functions: Capitalize
+	Getters and Setters: Precede with Get or Set
+	Parameters: p_name
+	Classes: Capitalize First Letter
+	Structs: Capitalize First Letter
+
+Commenting Conventions:
+	Variables: Comment to the Right
+	Functoins: Comment Above with Basic Summary
