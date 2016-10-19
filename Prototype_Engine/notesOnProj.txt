@@ -1,0 +1,30 @@
+Things to think about
+	how camera movement works
+		//make the forward parrallel to the surface, but allow viewing everywhere
+	How to pass in the name of the Shader and deal with all the issues this is giving me
+	handle the vectors of wchar_t by having them in a function and use that function to do everything that way we don't save the names <--did and we will see how it goes
+	do we want to save the names for use with the maps?? <--probably just a regular std::map
+	think about passing in a struct that has all of the different shader types <-- I like this
+	think about how to probe for an arbitrary number of files and an arbitrary number of directories
+		probably won't do, but this would make it scalable
+
+	Think about loading in mtl files
+		materials will change especially if we want deferred rendering
+	look into having an array of samplers and controlling them in CManager
+	could look into ComPtr
+
+	Added ULONG p to DXCore and to CManager and more
+	https://support.microsoft.com/en-us/kb/104138
+	
+	also, I have a single ref to a sampler when deleting the first material <- doesn't say there is a problem, but be careful
+
+CManager
+	maps of everything
+		VS, PS, Mat, Mesh
+		DS, HS, CS, GS...?????
+	using weak pointers in the class, so they don't have references
+	using shared pointers everywhere else to create references
+	Questions
+		forget any content to manage???
+		how do shared and weak pointers work???
+		what kind of map should I store them in???
