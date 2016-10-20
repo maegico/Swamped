@@ -6,12 +6,12 @@ ContentManager::ContentManager()
 }
 
 ContentManager::ContentManager(ID3D11Device* device, ID3D11DeviceContext* context)
-	:device(device), context(context)
+	:m_device(device), m_context(context)
 {
 	device->AddRef();
 	context->AddRef();
 
-	meshes = std::map<std::string, Mesh*>();
+	m_meshes = std::map<std::string, Mesh*>();
 	materials = std::map<std::string, Material*>();
 
 	//below is placed on the stack, since I won't need them after this
@@ -23,108 +23,82 @@ ContentManager::ContentManager(ID3D11Device* device, ID3D11DeviceContext* contex
 	std::vector<std::wstring> textures = { L"soilrough.png" , L"styrofoam.png" };
 	std::vector<std::string> models = { "cube.obj", "cone.obj", "helix.obj" };
 
-	createVShader(vshaderNames[0]);
-	createPShader(pshaderNames[0]);
+	CreateVShader(vshaderNames[0]);
+	CreatePShader(pshaderNames[0]);
 
-	createSamplers("sampler");
+	CreateSamplers("sampler");
 
-	//createShaderLists("first", vshaders["VertexShader.cso"], pshaders["PixelShader.cso"], nullptr, nullptr, nullptr, nullptr);
-	//createMaterial("trial", textures[0], "first");
-
-	//createMaterial("soilDirLight", textures[0], vshaders["VertexShader.cso"], pshaders["PixelShader.cso"]);
-	//createMaterial("styroDirLight", textures[1], vshaders["VertexShader.cso"], pshaders["PixelShader.cso"]);
-
-	//materials;
-
-	createMesh(models[0]);
-	createMesh(models[1]);
-	createMesh(models[2]);
+	CreateMesh(models[0]);
+	CreateMesh(models[1]);
+	CreateMesh(models[2]);
 }
 
 ContentManager::~ContentManager()
 {
-	for (auto i = meshes.begin(); i != meshes.end(); i++)
+	for (auto i = m_meshes.begin(); i != m_meshes.end(); i++)
 	{
 		if (i->second != nullptr)
 			delete i->second;
 	}
-	for (auto i = materials.begin(); i != materials.end(); i++)
+	for (auto i = m_materials.begin(); i != m_materials.end(); i++)
 	{
 		if (i->second != nullptr)
 			delete i->second;
 	}
-	for (auto i = samplers.begin(); i != samplers.end(); i++)
+	for (auto i = m_samplers.begin(); i != m_samplers.end(); i++)
 	{
 		if (i->second != nullptr)
 			i->second->Release();
 	}
-	for (auto i = vshaders.begin(); i != vshaders.end(); i++)
+	for (auto i = m_vshaders.begin(); i != m_vshaders.end(); i++)
 	{
 		if (i->second != nullptr)
 			delete i->second;
 	}
-	for (auto i = pshaders.begin(); i != pshaders.end(); i++)
+	for (auto i = m_pshaders.begin(); i != m_pshaders.end(); i++)
 	{
 		if (i->second != nullptr)
 			delete i->second;
 	}
 	
-	context->Release();
-	device->Release();
+	m_context->Release();
+	m_device->Release();
 }
 
-Material* ContentManager::loadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::wstring textureName)
+Material* ContentManager::LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::wstring textureName)
 {
-	SimpleVertexShader* vshader = vshaders[vs];
-	SimplePixelShader* pshader = pshaders[ps];
-	ID3D11SamplerState*  sampler = samplers[samplerName];
+	SimpleVertexShader* vshader = m_vshaders[vs];
+	SimplePixelShader* pshader = m_pshaders[ps];
+	ID3D11SamplerState*  sampler = m_samplers[samplerName];
 	Material* mat;
 
 	std::wstring outputDirPath = L"Assets/Textures/";
 	outputDirPath = outputDirPath + textureName;
 	const wchar_t* texturePath = outputDirPath.c_str();
 
-	//ID3D11SamplerState*  sampler;
 	ID3D11ShaderResourceView* texture;
 
-	//D3D11_SAMPLER_DESC samplerDes;
-	//memset(&samplerDes, 0, sizeof(D3D11_SAMPLER_DESC));
-	////Address U, V, W
-	//samplerDes.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	//samplerDes.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	//samplerDes.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	////Filter
-	//samplerDes.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;	//trilinear filtering
-	//														//MaxLOD
-	//samplerDes.MaxLOD = D3D11_FLOAT32_MAX;
-
-
-	//HRESULT result = device->CreateSamplerState(&samplerDes, &sampler);
-	//if (result != S_OK)
-	//	printf("ERROR: Failed to create Sampler State.");
-
-	HRESULT result = DirectX::CreateWICTextureFromFile(device, context, texturePath, 0, &texture);
+	HRESULT result = DirectX::CreateWICTextureFromFile(m_device, m_context, texturePath, 0, &texture);
 	if (result != S_OK)
 		printf("ERROR: Failed to Load Texture.");
 
 	mat = new Material(vshader, pshader, texture, sampler);
-	materials[name] = mat;
-	//sampler->Release();
+	m_materials[name] = mat;
 	texture->Release();
 	return mat;
 }
 
-Mesh* ContentManager::getMesh(std::string mesh)
+Mesh* ContentManager::GetMesh(std::string mesh)
 {
-	return meshes[mesh];
+	return m_meshes[mesh];
 }
 
-Material * ContentManager::getMaterial(std::string name)
+Material * ContentManager::GetMaterial(std::string name)
 {
-	return materials[name];
+	return m_materials[name];
 }
 
-void ContentManager::createMesh(std::string objFile)
+void ContentManager::CreateMesh(std::string objFile)
 {
 	std::string outputDirPath = "Assets/Models/";
 	outputDirPath = outputDirPath + objFile;
@@ -262,11 +236,10 @@ void ContentManager::createMesh(std::string objFile)
 	// Close the file and create the actual buffers
 	obj.close();
 
-	meshes[objFile] = new Mesh(&verts[0], &indices[0], verts.size(), indices.size(), device);
-	//meshes.push_back(new Mesh(&verts[0], &indices[0], verts.size(), indices.size(), device));
+	m_meshes[objFile] = new Mesh(&verts[0], &indices[0], verts.size(), indices.size(), m_device);
 }
 
-void ContentManager::createSamplers(std::string name)
+void ContentManager::CreateSamplers(std::string name)
 {
 	ID3D11SamplerState*  sampler;
 
@@ -281,24 +254,14 @@ void ContentManager::createSamplers(std::string name)
 															//MaxLOD
 	samplerDes.MaxLOD = D3D11_FLOAT32_MAX;
 
-	HRESULT result = device->CreateSamplerState(&samplerDes, &sampler);
+	HRESULT result = m_device->CreateSamplerState(&samplerDes, &sampler);
 	if (result != S_OK)
 		printf("ERROR: Failed to create Sampler State.");
 	else
-	{
-		samplers[name] = sampler;
-	}
+		m_samplers[name] = sampler;
 }
 
-////might want to think on how this is being done
-//void ContentManager::createShaderLists(std::string name, SimpleVertexShader* vs, SimplePixelShader* ps, SimpleComputeShader* cs, SimpleGeometryShader* gs, SimpleDomainShader* ds, SimpleHullShader* hs)
-//{
-//	Shaders* s = new Shaders();
-//	*s = { vs, ps, cs, gs, ds, hs };
-//	shaders[name] = s;
-//}
-
-void ContentManager::createVShader(std::wstring shader)
+void ContentManager::CreateVShader(std::wstring shader)
 {
 	std::wstring outputDirPath = L"Debug/";
 	outputDirPath = outputDirPath + shader;
@@ -307,7 +270,7 @@ void ContentManager::createVShader(std::wstring shader)
 	//wchar_t* projDirFilePath = wcsncat(begin, shader, len+1);
 	//Want to figure the above out!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <- !!!!
 
-	SimpleVertexShader* vertexShader = new SimpleVertexShader(device, context);
+	SimpleVertexShader* vertexShader = new SimpleVertexShader(m_device, m_context);
 	if (!vertexShader->LoadShaderFile(outputDirPath.c_str()))
 		vertexShader->LoadShaderFile(shader.c_str());
 
@@ -323,17 +286,15 @@ void ContentManager::createVShader(std::wstring shader)
 	// scenarios work correctly, although others exist
 
 	std::string shaderString(shader.begin(), shader.end());
-	vshaders[shaderString] = vertexShader;
-
-	//vshaders.push_back(vertexShader);
+	m_vshaders[shaderString] = vertexShader;
 }
 
-void ContentManager::createPShader(std::wstring shader)
+void ContentManager::CreatePShader(std::wstring shader)
 {
 	std::wstring outputDirPath = L"Debug/";
 	outputDirPath = outputDirPath + shader;
 
-	SimplePixelShader* pixelShader = new SimplePixelShader(device, context);
+	SimplePixelShader* pixelShader = new SimplePixelShader(m_device, m_context);
 	if (!pixelShader->LoadShaderFile(outputDirPath.c_str()))
 		pixelShader->LoadShaderFile(shader.c_str());
 
@@ -349,73 +310,5 @@ void ContentManager::createPShader(std::wstring shader)
 	// scenarios work correctly, although others exist
 
 	std::string shaderString(shader.begin(), shader.end());
-	pshaders[shaderString] = pixelShader;
-	//pshaders.push_back(pixelShader);
+	m_pshaders[shaderString] = pixelShader;
 }
-
-void ContentManager::createMaterial(std::string name, std::wstring textureImg, SimpleVertexShader* vshader, SimplePixelShader* pshader)
-{
-	std::wstring outputDirPath = L"Assets/Textures/";
-	outputDirPath = outputDirPath + textureImg;
-
-	ID3D11SamplerState*  sampler;
-	ID3D11ShaderResourceView* texture;
-
-	D3D11_SAMPLER_DESC samplerDes;
-	memset(&samplerDes, 0, sizeof(D3D11_SAMPLER_DESC));
-	//Address U, V, W
-	samplerDes.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDes.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDes.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	//Filter
-	samplerDes.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;	//trilinear filtering
-															//MaxLOD
-	samplerDes.MaxLOD = D3D11_FLOAT32_MAX;
-
-
-	HRESULT result = device->CreateSamplerState(&samplerDes, &sampler);
-	if (result != S_OK)
-		printf("ERROR: Failed to create Sampler State.");
-
-	result = DirectX::CreateWICTextureFromFile(device, context, outputDirPath.c_str(), 0, &texture);
-	if (result != S_OK)
-		printf("ERROR: Failed to Load Texture.");
-
-	materials[name] = new Material(vshader, pshader, texture, sampler);
-	sampler->Release();
-	texture->Release();
-	//materials.push_back(new Material(vshader, pshader, texture, sampler));
-}
-
-//void ContentManager::createMaterial(std::string name, std::wstring textureImg, std::string shaderListName)
-//{
-//	std::wstring outputDirPath = L"Assets/Textures/";
-//	outputDirPath = outputDirPath + textureImg;
-//
-//	ID3D11SamplerState*  sampler;
-//	ID3D11ShaderResourceView* texture;
-//
-//	D3D11_SAMPLER_DESC samplerDes;
-//	memset(&samplerDes, 0, sizeof(D3D11_SAMPLER_DESC));
-//	//Address U, V, W
-//	samplerDes.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-//	samplerDes.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-//	samplerDes.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-//	//Filter
-//	samplerDes.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;	//trilinear filtering
-//															//MaxLOD
-//	samplerDes.MaxLOD = D3D11_FLOAT32_MAX;
-//
-//
-//	HRESULT result = device->CreateSamplerState(&samplerDes, &sampler);
-//	if (result != S_OK)
-//		printf("ERROR: Failed to create Sampler State.");
-//
-//	result = DirectX::CreateWICTextureFromFile(device, context, outputDirPath.c_str(), 0, &texture);
-//	if (result != S_OK)
-//		printf("ERROR: Failed to Load Texture.");
-//
-//	materials[name] = new Material(texture, sampler, shaders[shaderListName]);
-//	sampler->Release();
-//	texture->Release();
-//}
