@@ -8,7 +8,7 @@ using namespace std;
 class Game {
 public:
 	//Example system
-	TestSystem * m_ts;
+	CollisionSystem * m_ts;
 	//Example system
 	TestSystem2 * m_ts2;
 

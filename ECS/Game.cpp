@@ -3,7 +3,7 @@
 Game::Game() {
 	//initialize entity list and systems
 	m_entities = FreeVector<vector<ISystem*>>();
-	m_ts = new TestSystem();
+	m_ts = new CollisionSystem();
 	m_ts2 = new TestSystem2();
 }
 

@@ -121,7 +121,7 @@
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="TestSystem.cpp" />
+    <ClCompile Include="CollisionSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Component.h" />
@@ -129,9 +129,9 @@
     <ClInclude Include="FreeVector.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="ISystem.h" />
-    <ClInclude Include="TestComponent.h" />
+    <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="System.h" />
-    <ClInclude Include="TestSystem.h" />
+    <ClInclude Include="CollisionSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
