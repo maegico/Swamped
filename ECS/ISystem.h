@@ -1,5 +1,6 @@
 #pragma once
-class Game { void RemoveEntity(unsigned int entity_id); };
+//#include "IGame.h"
+class Game;
 class ISystem {
 public:
 	void virtual Update(Game * g) {};

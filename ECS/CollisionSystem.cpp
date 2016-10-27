@@ -7,6 +7,10 @@ CollisionSystem::CollisionSystem() {
 	
 }
 
+CollisionSystem::~CollisionSystem() {
+
+}
+
 //To-do
 //Fix float3/float4 conversions
 void CollisionSystem::Update(Game * g) {
@@ -29,7 +33,7 @@ void CollisionSystem::Update(Game * g) {
 		for (unsigned int n = 0; n < 8; n++)
 		{
 			//store obb point transformed by world matrix into aabb list
-			XMStoreFloat3(&m_aabbs[n][c], XMVector3Transform(XMLoadFloat3(&cc->m_Obb[c]), modelToWorld));
+			XMStoreFloat3(&m_aabbs[n].m_bb[c], XMVector3Transform(XMLoadFloat3(&cc->m_bb[c]), modelToWorld));
 		}
 	}
 }

@@ -24,7 +24,7 @@ public:
 	void Remove(unsigned int entityId) {
 		m_components[entityId].m_active = false;
 		m_components.free(m_handles[entityId]);
-		m_handles.erase(m_handles.erase(entityId));
+		m_handles.erase(entityId);
 	}
 
 	//Returns a reference to the component with the given ID

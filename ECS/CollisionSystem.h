@@ -10,5 +10,5 @@ public:
 	CollisionSystem();
 	~CollisionSystem();
 private:
-	vector<DirectX::XMFLOAT3[8]> m_aabbs;
+	vector<CollisionComponent> m_aabbs;
 };

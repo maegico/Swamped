@@ -2,6 +2,7 @@
 #include "CollisionSystem.h"
 #include "TransformSystem.h"
 #include <vector>
+#include "IGame.h"
 
 using namespace std;
 

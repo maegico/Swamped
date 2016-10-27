@@ -6,4 +6,6 @@
 class TransformSystem : public System<TransformComponent> {
 public:
 	void Update(Game * g);
+	size_t GetSize();
+	size_t GetCount();
 };
