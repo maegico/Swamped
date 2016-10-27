@@ -1,5 +1,5 @@
 #pragma once
-class Game; //we need this to avoid circular dependencies
+class Game { void RemoveEntity(unsigned int entity_id); };
 class ISystem {
 public:
 	void virtual Update(Game * g) {};

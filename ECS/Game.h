@@ -1,16 +1,16 @@
 #pragma once
-#include "TestSystem.h"
+#include "CollisionSystem.h"
+#include "TransformSystem.h"
 #include <vector>
 
 using namespace std;
 
 //The game instance. Not a singleton
-class Game {
+class Game{
 public:
 	//Example system
-	CollisionSystem * m_ts;
-	//Example system
-	TestSystem2 * m_ts2;
+	CollisionSystem * m_cs;
+	TransformSystem * m_ts;
 
 	Game();
 	~Game();
