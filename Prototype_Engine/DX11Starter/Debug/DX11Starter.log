@@ -1,3 +1,9 @@
-﻿  ContentManager.cpp
+﻿  Game.cpp
+d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(41): warning C4018: '<': signed/unsigned mismatch
+d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(109): warning C4018: '<': signed/unsigned mismatch
+d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(140): warning C4018: '<': signed/unsigned mismatch
+d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(212): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(213): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+  LINK : D:\Profiles\spc1802\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.exe not found or not built by the last incremental link; performing full link
   DX11Starter.vcxproj -> D:\Profiles\spc1802\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.exe
   DX11Starter.vcxproj -> D:\Profiles\spc1802\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.pdb (Full PDB)

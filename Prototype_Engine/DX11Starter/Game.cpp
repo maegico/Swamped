@@ -66,15 +66,15 @@ void Game::Init()
 	camera = new Camera();
 
 	cmanager = new ContentManager(device, context);
-	Material* mat1 = cmanager->loadMaterial("soilDirLight", "sampler", "VertexShader.cso", "PixelShader.cso", L"soilrough.png");
-	Material* mat2 = cmanager->loadMaterial("styroDirLight", "sampler", "VertexShader.cso", "PixelShader.cso", L"styrofoam.png");
+	Material* mat1 = cmanager->LoadMaterial("soilDirLight", "sampler", "VertexShader.cso", "PixelShader.cso", L"soilrough.png");
+	Material* mat2 = cmanager->LoadMaterial("styroDirLight", "sampler", "VertexShader.cso", "PixelShader.cso", L"styrofoam.png");
 
 	entities = {
-		new Entity(context, cmanager->getMesh("cube.obj"), cmanager->getMaterial("soilDirLight"),{ 0.5, 0.5, 0 }, 0),
-		new Entity(context, cmanager->getMesh("cone.obj"), cmanager->getMaterial("styroDirLight"),{ 0, 0, 0 }, 0),
-		new Entity(context, cmanager->getMesh("helix.obj"), cmanager->getMaterial("soilDirLight"),{ -1.0f, 0, 0 }, 0),
-		new Entity(context, cmanager->getMesh("cube.obj"), cmanager->getMaterial("styroDirLight"),{ 0.0f, -0.5f, 0 }, 0),
-		new Entity(context, cmanager->getMesh("cone.obj"), cmanager->getMaterial("soilDirLight"),{ 1.0f, -1.0f, 0 }, 0) };
+		new Entity(context, cmanager->GetMesh("cube.obj"), cmanager->GetMaterial("soilDirLight"),{ 0.5, 0.5, 0 }, 0),
+		new Entity(context, cmanager->GetMesh("cone.obj"), cmanager->GetMaterial("styroDirLight"),{ 0, 0, 0 }, 0),
+		new Entity(context, cmanager->GetMesh("helix.obj"), cmanager->GetMaterial("soilDirLight"),{ -1.0f, 0, 0 }, 0),
+		new Entity(context, cmanager->GetMesh("cube.obj"), cmanager->GetMaterial("styroDirLight"),{ 0.0f, -0.5f, 0 }, 0),
+		new Entity(context, cmanager->GetMesh("cone.obj"), cmanager->GetMaterial("soilDirLight"),{ 1.0f, -1.0f, 0 }, 0) };
 
 	camera->updateProjection(width, height);
 	// Tell the input assembler stage of the pipeline what kind of

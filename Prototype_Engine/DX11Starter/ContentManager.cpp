@@ -12,7 +12,7 @@ ContentManager::ContentManager(ID3D11Device* device, ID3D11DeviceContext* contex
 	context->AddRef();
 
 	m_meshes = std::map<std::string, Mesh*>();
-	materials = std::map<std::string, Material*>();
+	m_materials = std::map<std::string, Material*>();
 
 	//below is placed on the stack, since I won't need them after this
 	//below here is probably where I will probe the files for the needed info
