@@ -10,30 +10,6 @@ class PairedSystem : public ISystem {
 public:
 	void virtual Update(Game * g) {}
 
-	void virtual Create(unsigned int entityId, T tc) {
-		ComponentData comp = ComponentData(entityId);
-		comp.m_active = true;
-		unsigned int index = m_components1.add(tc);
-		m_handles[entityId] = index;
-		m_components2.add({});
-		if (index == m_componentData.size())
-			m_componentData.push_back(comp);
-		else
-			m_componentData[index] = comp;
-	}
-
-	void virtual Create(unsigned int entityId, U uc) {
-		ComponentData comp = ComponentData(entityId);
-		comp.m_active = true;
-		unsigned int index = m_components1.add({});
-		m_handles[entityId] = index;
-		m_components2.add(uc);
-		if (index == m_componentData.size())
-			m_componentData.push_back(comp);
-		else
-			m_componentData[index] = comp;
-	}
-
 	void virtual Create(unsigned int entityId, T tc, U uc) {
 		ComponentData comp = ComponentData(entityId);
 		comp.m_active = true;
