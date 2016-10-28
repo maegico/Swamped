@@ -1,6 +1,6 @@
 #pragma once
 #include "ISystem.h"
-#include "Component.h"
+#include "ComponentData.h"
 #include "FreeVector.h"
 #include <vector>
 #include <map>
@@ -11,63 +11,73 @@ public:
 	void virtual Update(Game * g) {}
 
 	void virtual Create(unsigned int entityId, T tc) {
-		auto comp1 = Component<T>(entityId, tc);
-		comp1.m_active = true;
-		auto comp2 = Component<U>(entityId, {});
-		comp2.m_active = true;
-		m_handles[entityId] = m_components1.add(comp1);
-		m_components2.add(comp2);
+		ComponentData comp = ComponentData(entityId);
+		comp.m_active = true;
+		unsigned int index = m_components1.add(tc);
+		m_handles[entityId] = index;
+		m_components2.add({});
+		if (index == m_componentData.size())
+			m_componentData.push_back(comp);
+		else
+			m_componentData[index] = comp;
 	}
 
 	void virtual Create(unsigned int entityId, U uc) {
-		auto comp1 = Component<T>(entityId, {});
-		comp1.m_active = true;
-		auto comp2 = Component<U>(entityId, uc);
-		comp2.m_active = true;
-		m_handles[entityId] = m_components1.add(comp1);
-		m_components2.add(comp2);
+		ComponentData comp = ComponentData(entityId);
+		comp.m_active = true;
+		unsigned int index = m_components1.add({});
+		m_handles[entityId] = index;
+		m_components2.add(uc);
+		if (index == m_componentData.size())
+			m_componentData.push_back(comp);
+		else
+			m_componentData[index] = comp;
 	}
 
 	void virtual Create(unsigned int entityId, T tc, U uc) {
-		auto comp1 = Component<T>(entityId, tc);
-		comp1.m_active = true;
-		auto comp2 = Component<U>(entityId, uc);
-		comp2.m_active = true;
-		m_handles[entityId] = m_components1.add(comp1);
-		m_components2.add(comp2);
+		ComponentData comp = ComponentData(entityId);
+		comp.m_active = true;
+		unsigned int index = m_components1.add(tc);
+		m_handles[entityId] = index;
+		m_components2.add(uc);
+		if (index == m_componentData.size())
+			m_componentData.push_back(comp);
+		else
+			m_componentData[index] = comp;
 	}
 
 	void virtual Remove(unsigned int entityId) {
 		unsigned int handle = m_handles[entityId];
-		m_components1[entityId].m_active = false;
+		m_componentData[handle].m_active = false;
 		m_components1.free(handle);
-		m_components2[entityId].m_active = false;
 		m_components2.free(handle);
 		m_handles.erase(entityId);
 	}
 
 	T& GetComponent1(unsigned int entityId) {
-		return m_components1[m_handles[entityId]].GetData();
+		return m_components1[m_handles[entityId]];
 	}
 
 	U& GetComponent2(unsigned int entityId) {
-		return m_components2[m_handles[entityId]].GetData();
+		return m_components2[m_handles[entityId]];
 	}
-	FreeVector<Component<T>> * GetComponentList1() {
+	FreeVector<T> * GetComponentList1() {
 		return &m_components1;
 	}
-	FreeVector<Component<U>> * GetComponentList2() {
+	FreeVector<U> * GetComponentList2() {
 		return &m_components2;
 	}
 	PairedSystem() {
-		m_components1 = FreeVector<Component<T>>();
-		m_components2 = FreeVector<Component<U>>();
+		m_componentData = vector<ComponentData>();
+		m_components1 = FreeVector<T>();
+		m_components2 = FreeVector<U>();
 		m_handles = map<unsigned int, unsigned int>();
 	}
 	~PairedSystem() {}
 protected:
-	FreeVector<Component<T>> m_components1;
-	FreeVector<Component<U>> m_components2;
+	FreeVector<T> m_components1;
+	FreeVector<U> m_components2;
+	vector<ComponentData> m_componentData;
 private:
 	map<unsigned int, unsigned int> m_handles;
 };

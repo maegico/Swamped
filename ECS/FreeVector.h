@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <deque>
 
 using namespace std;
 
@@ -24,7 +25,7 @@ public:
 			unsigned int index = m_freeIndices[0];
 			m_vector[index] = item;
 			//then remove the index
-			m_freeIndices.erase(m_freeIndices.begin());
+			m_freeIndices.pop_front();
 			m_count++;
 			return index;
 		}
@@ -63,7 +64,7 @@ private:
 	//Data store
 	vector<T> m_vector;
 	//List of available indices before the end of the vector
-	vector<int> m_freeIndices;
+	deque<int> m_freeIndices;
 
 	size_t m_count = 0;
 };

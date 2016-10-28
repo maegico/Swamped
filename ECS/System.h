@@ -1,6 +1,6 @@
 #pragma once
 #include "ISystem.h"
-#include "Component.h"
+#include "ComponentData.h"
 #include "FreeVector.h"
 #include <vector>
 #include <map>
@@ -14,37 +14,45 @@ public:
 
 	//Creates a component of type T and adds it to m_components and m_handles
 	void virtual Create(unsigned int entityId, T tc) {
-		auto comp = Component<T>(entityId, tc);
+		auto comp = ComponentData(entityId);
 		comp.m_active = true;
 		//FreeVector::add returns the index of the added element
-		m_handles[entityId] = m_components.add(comp);
+		unsigned int index = m_components.add(tc);
+		m_handles[entityId] = index;
+		if (index == m_componentData.size())
+			m_componentData.push_back(comp);
+		else
+			m_componentData[index] = comp;
 	}
 
 	//Deactivates the component with the given ID, frees the space in m_components, and erases the handle
 	void virtual Remove(unsigned int entityId) {
-		m_components[entityId].m_active = false;
-		m_components.free(m_handles[entityId]);
+		unsigned int index = m_handles[entityId];
+		m_componentData[index].m_active = false;
+		m_components.free(index);
 		m_handles.erase(entityId);
 	}
 
 	//Returns a reference to the component with the given ID
 	T& GetComponent(unsigned int entityId) {
-		return m_components[m_handles[entityId]].GetData();
+		return m_components[m_handles[entityId]];
 	}
 
-	FreeVector<Component<T>> * GetComponentList() {
+	FreeVector<T> * GetComponentList() {
 		return &m_components;
 	}
 
 	//Initializes m_components and m_handles
 	System() {
-		m_components = FreeVector<Component<T>>();
+		m_componentData = vector<ComponentData>();
+		m_components = FreeVector<T>();
 		m_handles = map<unsigned int, unsigned int>();
 	}
 	~System(){}
 protected:
 	//Holds component data
-	FreeVector<Component<T>>  m_components;
+	FreeVector<T>  m_components;
+	vector<ComponentData> m_componentData;
 private:
 	//Holds entityId - index pairs
 	map<unsigned int, unsigned int> m_handles;

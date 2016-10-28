@@ -24,7 +24,7 @@ void CollisionSystem::Update(Game * g) {
 
 	//loop through obbs
 	for (unsigned int c = 0; c < m_components.size(); c++) {
-		cc = &m_components[c].GetData(); //get component data
+		cc = &m_components[c]; //get component data
 
 		//To-do
 		//load world matrix from transform system
