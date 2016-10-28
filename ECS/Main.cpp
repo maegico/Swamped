@@ -5,7 +5,8 @@
 #include <string>
 
 int main() {
-	srand(time(nullptr));
+	time_t now = time(nullptr);
+	srand(now);
 	//create game
 	Game g = Game();
 
@@ -17,7 +18,7 @@ int main() {
 	{
 		g.Update();
 		if(c%10==0)
-			std::cout <<to_string(c) +" - "+to_string(g.m_ts->GetCount())+"/"+to_string(g.m_ts->GetSize())<< std::endl;
+			std::cout <<to_string(c) +" - "+to_string(g.m_ts->GetCount())+"/"+to_string(g.m_ts->GetSize()) +", "+ to_string(time(nullptr) - now) << std::endl;
 	}
 	//g.RemoveEntity(0);
 

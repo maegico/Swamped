@@ -13,7 +13,7 @@ public:
 	void virtual Update(Game * g) {}
 
 	//Creates a component of type T and adds it to m_components and m_handles
-	void Create(unsigned int entityId, T tc) {
+	void virtual Create(unsigned int entityId, T tc) {
 		auto comp = Component<T>(entityId, tc);
 		comp.m_active = true;
 		//FreeVector::add returns the index of the added element
@@ -21,7 +21,7 @@ public:
 	}
 
 	//Deactivates the component with the given ID, frees the space in m_components, and erases the handle
-	void Remove(unsigned int entityId) {
+	void virtual Remove(unsigned int entityId) {
 		m_components[entityId].m_active = false;
 		m_components.free(m_handles[entityId]);
 		m_handles.erase(entityId);
@@ -30,6 +30,10 @@ public:
 	//Returns a reference to the component with the given ID
 	T& GetComponent(unsigned int entityId) {
 		return m_components[m_handles[entityId]].GetData();
+	}
+
+	FreeVector<Component<T>> * GetComponentList() {
+		return &m_components;
 	}
 
 	//Initializes m_components and m_handles

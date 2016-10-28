@@ -1,9 +1,10 @@
 #pragma once
 
-#include "System.h"
+#include "PairedSystem.h"
 #include "TransformComponent.h"
+#include "PhysicsComponent.h"
 
-class TransformSystem : public System<TransformComponent> {
+class TransformSystem : public PairedSystem<TransformComponent, PhysicsComponent> {
 public:
 	void Update(Game * g);
 	size_t GetSize();
