@@ -13,9 +13,9 @@ Game::~Game() {
 	delete m_ts;
 }
 
-void Game::Update() {
-	m_cs->Update(this);
-	m_ts->Update(this);
+void Game::Update(float dt) {
+	m_cs->Update(this, dt);
+	m_ts->Update(this, dt);
 }
 
 void Game::RemoveEntity(unsigned int entityId) {

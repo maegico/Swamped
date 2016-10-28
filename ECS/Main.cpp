@@ -16,7 +16,7 @@ int main() {
 	//example update and removal
 	for (unsigned int c = 0; c < 2000; c++)
 	{
-		g.Update();
+		g.Update(1.0f);
 		if(c%10==0)
 			std::cout <<to_string(c) +" - "+to_string(g.m_ts->GetCount())+"/"+to_string(g.m_ts->GetSize()) +", "+ to_string(time(nullptr) - now) << std::endl;
 	}

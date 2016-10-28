@@ -8,7 +8,7 @@
 template <typename T, typename U>
 class PairedSystem : public ISystem {
 public:
-	void virtual Update(Game * g) {}
+	void virtual Update(Game * g, float dT) {}
 
 	void virtual Create(unsigned int entityId, T tc, U uc) {
 		ComponentData comp = ComponentData(entityId);

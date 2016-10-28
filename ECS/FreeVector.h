@@ -9,14 +9,11 @@ template <typename T>
 class FreeVector {
 public:
 	FreeVector() {
-
 	}
 	~FreeVector() {
-		//m_vector.clear();
-		//m_freeIndices.clear();
 	}
 
-	//Adds the given item at the lowest available index
+	//Adds the given item at the first available index
 	unsigned int add(T item) {
 		//if there are unused indices
 		if (m_freeIndices.size() > 0)

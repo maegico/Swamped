@@ -13,7 +13,7 @@ CollisionSystem::~CollisionSystem() {
 
 //To-do
 //Fix float3/float4 conversions
-void CollisionSystem::Update(Game * g) {
+void CollisionSystem::Update(Game * g, float dt) {
 	//pre-allocate component, obb, and world matrix
 	CollisionComponent * cc;
 	XMVECTOR obb[8];

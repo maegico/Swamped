@@ -6,7 +6,7 @@
 //A System implementation
 class CollisionSystem : public System<CollisionComponent> {
 public:
-	void Update(Game * g);
+	void Update(Game * g, float dT);
 	CollisionSystem();
 	~CollisionSystem();
 private:

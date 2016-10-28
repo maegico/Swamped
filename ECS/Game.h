@@ -16,7 +16,7 @@ public:
 	~Game();
 
 	//Update for the game. The program's main loop will call this
-	void Update();
+	void Update(float dT);
 
 	//Frees an entity's components, and frees its entry in m_entities
 	void RemoveEntity(unsigned int entityId);

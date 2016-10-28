@@ -10,7 +10,7 @@ using namespace std;
 template <typename T>
 class System : public ISystem {
 public:
-	void virtual Update(Game * g) {}
+	void virtual Update(Game * g, float dT) {}
 
 	//Creates a component of type T and adds it to m_components and m_handles
 	void virtual Create(unsigned int entityId, T tc) {
