@@ -37,11 +37,14 @@ public:
 	U& GetComponent2(unsigned int entityId) {
 		return m_components2[m_handles[entityId]];
 	}
-	FreeVector<T> * GetComponentList1() {
-		return &m_components1;
+	FreeVector<T> & GetComponentList1() {
+		return m_components1;
 	}
-	FreeVector<U> * GetComponentList2() {
-		return &m_components2;
+	FreeVector<U> & GetComponentList2() {
+		return m_components2;
+	}
+	vector<ComponentData> & GetComponentData() {
+		return m_componentData;
 	}
 	PairedSystem() {
 		m_componentData = vector<ComponentData>();

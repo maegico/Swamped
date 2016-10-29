@@ -5,10 +5,26 @@ void TransformSystem::Update(Game * g, float dt) {
 		if (m_componentData[c].m_active && rand() % 2 == 1)
 			g->RemoveEntity(m_componentData[c].GetEntityId());
 	}
-	unsigned int newComponents = rand() % 100000;
+	unsigned int newComponents = rand() % 10000;
 	for (unsigned int c = 0; c < newComponents; c++)
 	{
-		Constructors::CreateTransform(g, {}, {});
+		PhysicsComponent pc;
+		pc.m_velocity = XMFLOAT3(0, 0, 0);
+		pc.m_acceleration = XMFLOAT3(0, 0, 0);
+		XMStoreFloat4(&pc.m_rotationalVelocity, XMQuaternionRotationRollPitchYaw(1, 0, 0));
+		XMStoreFloat4(&pc.m_rotationalAcceleration, XMQuaternionRotationRollPitchYaw(0,0,0));
+		Constructors::CreateTransform(g, {}, pc, {
+			{
+				{ -1,-1,-1 },
+				{ -1,-1,1 },
+				{ -1,1,-1 },
+				{ -1,1,1 },
+				{ 1,-1,-1 },
+				{ 1,-1,1 },
+				{ 1,1,-1 },
+				{ 1,1,1 }
+			}
+		});
 	}
 
 	//Movement
@@ -45,7 +61,7 @@ void TransformSystem::Update(Game * g, float dt) {
 }
 
 XMMATRIX TransformSystem::GetMatrix(TransformComponent tc) {
-
+	return XMMatrixMultiply(XMMatrixTranslationFromVector(XMLoadFloat3(&tc.m_position)), XMMatrixRotationQuaternion(XMLoadFloat4(&tc.m_rotation)));
 }
 
 size_t TransformSystem::GetSize() {
