@@ -24,5 +24,5 @@ public:
 	friend class Constructors;
 private:
 	//Associates systems with entity IDs for deletion
-	FreeVector<vector<ISystem*>> m_entities;
+	FreeVector<vector<SystemBase*>> m_entities;
 };

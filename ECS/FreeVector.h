@@ -50,6 +50,7 @@ public:
 		return m_vector.size();
 	}
 
+	//Gets the number of filled slots
 	size_t count() {
 		return m_count;
 	}
@@ -60,6 +61,7 @@ public:
 private:
 	//Data store
 	vector<T> m_vector;
+
 	//List of available indices before the end of the vector
 	deque<int> m_freeIndices;
 

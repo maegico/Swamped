@@ -133,7 +133,7 @@
     <ClInclude Include="Constructors.h" />
     <ClInclude Include="FreeVector.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="ISystem.h" />
+    <ClInclude Include="SystemBase.h" />
     <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="PairedSystem.h" />
     <ClInclude Include="PhysicsComponent.h" />

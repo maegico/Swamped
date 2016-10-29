@@ -1,5 +1,5 @@
 #pragma once
-#include "ISystem.h"
+#include "SystemBase.h"
 #include "ComponentData.h"
 #include "FreeVector.h"
 #include <vector>
@@ -7,8 +7,9 @@
 
 using namespace std;
 
+//A system for a single component
 template <typename T>
-class System : public ISystem {
+class System : public SystemBase {
 public:
 	void virtual Update(Game * g, float dT) {}
 
@@ -38,35 +39,25 @@ public:
 		return m_components[m_handles[entityId]];
 	}
 
+	//Returns a pointer to the component list
 	FreeVector<T> * GetComponentList() {
 		return &m_components;
-	}
+	}	
 
-	bool SearchForEntityId(unsigned int& transformIndex, unsigned int entityId) {
-		unsigned int total = 0;
-		while (tcds[transformIndex].GetEntityId() != entityId)
-		{
-			transformIndex++;
-			total++;
-			if (transformIndex == m_componentData.size())
-				transformIndex = 0;
-			if (total == m_componentData.size())
-				return false;
-		}
-		return true;
+	//Gets the number of components
+	size_t GetCount() {
+		return m_components1.count();
 	}
 
 	//Initializes m_components and m_handles
-	System() {
-		m_componentData = vector<ComponentData>();
+	System() : SystemBase() {
 		m_components = FreeVector<T>();
 		m_handles = map<unsigned int, unsigned int>();
 	}
 	~System(){}
 protected:
-	//Holds component data
+	//Holds components
 	FreeVector<T>  m_components;
-	vector<ComponentData> m_componentData;
 private:
 	//Holds entityId - index pairs
 	map<unsigned int, unsigned int> m_handles;

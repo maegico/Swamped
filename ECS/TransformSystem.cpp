@@ -60,14 +60,7 @@ void TransformSystem::Update(Game * g, float dt) {
 	}
 }
 
+//
 XMMATRIX TransformSystem::GetMatrix(TransformComponent tc) {
 	return XMMatrixMultiply(XMMatrixTranslationFromVector(XMLoadFloat3(&tc.m_position)), XMMatrixRotationQuaternion(XMLoadFloat4(&tc.m_rotation)));
-}
-
-size_t TransformSystem::GetSize() {
-	return m_components1.size();
-}
-
-size_t TransformSystem::GetCount() {
-	return m_components1.count();
 }
