@@ -1,11 +1,11 @@
 #include "TransformSystem.h"
 #include "Constructors.h"
 void TransformSystem::Update(Game * g, float dt) {
-	/*for (unsigned int c = 0; c < m_components1.size(); c++) {
+	for (unsigned int c = 0; c < m_components1.size(); c++) {
 		if (m_componentData[c].m_active && rand() % 2 == 1)
 			g->RemoveEntity(m_componentData[c].GetEntityId());
-	}*/
-	/*unsigned int newComponents = rand() % 100;
+	}
+	unsigned int newComponents = rand() % 2000;
 	for (unsigned int c = 0; c < newComponents; c++)
 	{
 		PhysicsComponent pc;
@@ -13,7 +13,9 @@ void TransformSystem::Update(Game * g, float dt) {
 		pc.m_acceleration = XMFLOAT3(0, 0, 0);
 		XMStoreFloat4(&pc.m_rotationalVelocity, XMQuaternionRotationRollPitchYaw(1, 0, 0));
 		XMStoreFloat4(&pc.m_rotationalAcceleration, XMQuaternionRotationRollPitchYaw(0,0,0));
-		Constructors::CreateTransform(g, {}, pc, {
+		TransformComponent tc;
+		tc.m_position = XMFLOAT3((rand() % 50) - 25, (rand() % 50) - 25, (rand() % 50) - 25);
+		Constructors::CreateTransform(g, tc, pc, {
 			{
 				{ -1,-1,-1 },
 				{ -1,-1,1 },
@@ -25,7 +27,7 @@ void TransformSystem::Update(Game * g, float dt) {
 				{ 1,1,1 }
 			}
 		});
-	}*/
+	}
 
 	//Movement
 	//Pre-allocate stuff

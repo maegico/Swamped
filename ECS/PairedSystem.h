@@ -33,6 +33,17 @@ public:
 		m_handles.erase(entityId);
 	}
 
+	void Collapse() {
+		m_collapsedCount = 0;
+		m_collapsedComponents1.resize(GetCount());
+		for (unsigned int c = 0; c < m_componentData.size(); c++)
+			if (m_componentData[c].m_active) {
+				m_collapsedComponents1[m_collapsedCount] = m_components1[c];
+				m_collapsedComponents2[m_collapsedCount] = m_components2[c];
+				m_collapsedCount++;
+			}
+	}
+
 	//Returns a reference to the component of type T with the given ID
 	T& GetComponent1(unsigned int entityId) {
 		return m_components1[m_handles[entityId]];
@@ -76,6 +87,10 @@ protected:
 
 	//Holds components of type U
 	FreeVector<U> m_components2;
+
+	vector<T> m_collapsedComponents1;
+	vector<U> m_collapsedComponents2;
+	unsigned int m_collapsedCount = 0;
 private:
 	//Holds entityId - index pairs
 	map<unsigned int, unsigned int> m_handles;

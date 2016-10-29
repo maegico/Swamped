@@ -34,6 +34,16 @@ public:
 		m_handles.erase(entityId);
 	}
 
+	void Collapse() {
+		m_collapsedCount = 0;
+		m_collapsedComponents.resize(GetCount());
+		for (unsigned int c = 0; c < m_componentData.size(); c++)
+			if (m_componentData[c].m_active) {
+				m_collapsedComponents[m_collapsedCount] = m_components[c];
+				m_collapsedCount++;
+			}
+	}
+
 	//Returns a reference to the component with the given ID
 	T& GetComponent(unsigned int entityId) {
 		return m_components[m_handles[entityId]];
@@ -46,18 +56,21 @@ public:
 
 	//Gets the number of components
 	size_t GetCount() {
-		return m_components1.count();
+		return m_components.count();
 	}
 
 	//Initializes m_components and m_handles
 	System() : SystemBase() {
 		m_components = FreeVector<T>();
+		m_collapsedComponents = vector<T>();
 		m_handles = map<unsigned int, unsigned int>();
 	}
 	~System(){}
 protected:
 	//Holds components
 	FreeVector<T>  m_components;
+	vector<T> m_collapsedComponents;
+	unsigned int m_collapsedCount = 0;
 private:
 	//Holds entityId - index pairs
 	map<unsigned int, unsigned int> m_handles;
