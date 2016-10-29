@@ -42,6 +42,20 @@ public:
 		return &m_components;
 	}
 
+	bool SearchForEntityId(unsigned int& transformIndex, unsigned int entityId) {
+		unsigned int total = 0;
+		while (tcds[transformIndex].GetEntityId() != entityId)
+		{
+			transformIndex++;
+			total++;
+			if (transformIndex == m_componentData.size())
+				transformIndex = 0;
+			if (total == m_componentData.size())
+				return false;
+		}
+		return true;
+	}
+
 	//Initializes m_components and m_handles
 	System() {
 		m_componentData = vector<ComponentData>();

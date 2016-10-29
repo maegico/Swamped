@@ -46,6 +46,19 @@ public:
 	vector<ComponentData> & GetComponentData() {
 		return m_componentData;
 	}
+	bool SearchForEntityId(unsigned int& transformIndex, unsigned int entityId) {
+		unsigned int total = 0;
+		while (m_componentData[transformIndex].GetEntityId() != entityId)
+		{
+			transformIndex++;
+			total++;
+			if (transformIndex == m_componentData.size())
+				transformIndex = 0;
+			if (total == m_componentData.size())
+				return false;
+		}
+		return true;
+	}
 	PairedSystem() {
 		m_componentData = vector<ComponentData>();
 		m_components1 = FreeVector<T>();

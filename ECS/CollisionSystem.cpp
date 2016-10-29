@@ -45,12 +45,8 @@ void CollisionSystem::Update(Game * g, float dt) {
 		entityId = m_componentData[c].GetEntityId(); //get entityID
 
 		//search for the index of this component's corresponding transform
-		while (tcds[transformIndex].GetEntityId() != entityId)
-		{
-			transformIndex++;
-			if (transformIndex == tcds.size())
-				transformIndex = 0;
-		}
+		ts->SearchForEntityId(transformIndex, entityId);
+
 		//save the transform and its quat
 		tc = &tcs[transformIndex];
 		rotation = XMLoadFloat4(&tc->m_rotation);
@@ -60,8 +56,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 		min = XMLoadFloat3(&XMFLOAT3(FLT_MAX, FLT_MAX, FLT_MAX));
 
 		//loop through eight bounding box points
-		for (unsigned int n = 0; n < 8; n++)
-		{
+		for (unsigned int n = 0; n < 8; n++){
 			//load and rotate
 			original = DirectX::XMLoadFloat3(&cc->m_bb[n]);
 			original = XMVector3Rotate(original, rotation);
