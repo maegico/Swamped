@@ -1,11 +1,11 @@
 #include "TransformSystem.h"
 #include "Constructors.h"
 void TransformSystem::Update(Game * g, float dt) {
-	for (unsigned int c = 0; c < m_components1.size(); c++) {
+	/*for (unsigned int c = 0; c < m_components1.size(); c++) {
 		if (m_componentData[c].m_active && rand() % 2 == 1)
 			g->RemoveEntity(m_componentData[c].GetEntityId());
-	}
-	unsigned int newComponents = rand() % 1000;
+	}*/
+	/*unsigned int newComponents = rand() % 100;
 	for (unsigned int c = 0; c < newComponents; c++)
 	{
 		PhysicsComponent pc;
@@ -25,7 +25,7 @@ void TransformSystem::Update(Game * g, float dt) {
 				{ 1,1,1 }
 			}
 		});
-	}
+	}*/
 
 	//Movement
 	//Pre-allocate stuff

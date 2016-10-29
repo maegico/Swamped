@@ -29,6 +29,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 	XMMATRIX modelToWorld;
 	XMVECTOR max;
 	XMVECTOR min;
+	XMVECTOR position;
 
 	//size aabb list appropriately
 	m_aabbs.resize(m_components.count()); //use count to avoid dead elements in aabb list
@@ -59,16 +60,17 @@ void CollisionSystem::Update(Game * g, float dt) {
 		for (unsigned int n = 0; n < 8; n++){
 			//load and rotate
 			original = DirectX::XMLoadFloat3(&cc->m_bb[n]);
-			original = XMVector3Rotate(original, rotation);
+			original = XMVector3Rotate(rotation, original);
 			//check against max and min
 			max = XMVectorMax(original, max);
 			min = XMVectorMin(original, min);
 		}
 
-		//store final max and min in aabb list
+		//store final translated max and min in aabb list
 		//note that aabbIndex is used instead of c - no dead elements in the aabb list
-		XMStoreFloat3(&m_aabbs[aabbIndex].m_max, max);
-		XMStoreFloat3(&m_aabbs[aabbIndex].m_min, min);
+		position = XMLoadFloat3(&tc->m_position);
+		XMStoreFloat3(&m_aabbs[aabbIndex].m_max, max + position);
+		XMStoreFloat3(&m_aabbs[aabbIndex].m_min, min + position);
 		aabbIndex++;
 	}
 }

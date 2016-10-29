@@ -12,6 +12,33 @@ int main() {
 
 	//create some objects with static constructors
 	//Constructors::CreateTestObject(&g, { 1 }, { 'c' });
+	TransformComponent tc;
+	tc.m_position = XMFLOAT3(.5, .5, 0);
+	Constructors::CreateTransform(&g, tc, {}, {
+		{
+			{ -1,-1,-1 },
+			{ -1,-1,1 },
+			{ -1,1,-1 },
+			{ -1,1,1 },
+			{ 1,-1,-1 },
+			{ 1,-1,1 },
+			{ 1,1,-1 },
+			{ 1,1,1 }
+		}
+	});
+	tc.m_position = XMFLOAT3(0, 0, 0);
+	Constructors::CreateTransform(&g, tc, {}, {
+		{
+			{ -1,-1,-1 },
+			{ -1,-1,1 },
+			{ -1,1,-1 },
+			{ -1,1,1 },
+			{ 1,-1,-1 },
+			{ 1,-1,1 },
+			{ 1,1,-1 },
+			{ 1,1,1 }
+		}
+	});
 
 	//example update and removal
 	for (unsigned int c = 0; c < 2000; c++)
