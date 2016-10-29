@@ -5,7 +5,7 @@ void TransformSystem::Update(Game * g, float dt) {
 		if (m_componentData[c].m_active && rand() % 2 == 1)
 			g->RemoveEntity(m_componentData[c].GetEntityId());
 	}
-	unsigned int newComponents = rand() % 10000;
+	unsigned int newComponents = rand() % 1000;
 	for (unsigned int c = 0; c < newComponents; c++)
 	{
 		PhysicsComponent pc;
@@ -46,11 +46,13 @@ void TransformSystem::Update(Game * g, float dt) {
 			acceleration = XMLoadFloat3(&m_components2[c].m_acceleration);
 			rotationalVelocity = XMLoadFloat4(&m_components2[c].m_rotationalVelocity);
 			rotationalAcceleration = XMLoadFloat4(&m_components2[c].m_rotationalAcceleration);
+
 			//do maths
 			velocity += dt*acceleration;
 			position += dt*velocity;
 			rotationalVelocity = XMQuaternionMultiply(rotationalVelocity, dt*rotationalAcceleration);
 			rotation = XMQuaternionMultiply(rotation, dt*rotationalVelocity);
+
 			//store stuff
 			XMStoreFloat3(&m_components2[c].m_velocity, velocity);
 			XMStoreFloat3(&m_components1[c].m_position, position);
@@ -60,7 +62,7 @@ void TransformSystem::Update(Game * g, float dt) {
 	}
 }
 
-//
+//Returns a matrix generated from the given component's properties
 XMMATRIX TransformSystem::GetMatrix(TransformComponent tc) {
 	return XMMatrixMultiply(XMMatrixTranslationFromVector(XMLoadFloat3(&tc.m_position)), XMMatrixRotationQuaternion(XMLoadFloat4(&tc.m_rotation)));
 }
