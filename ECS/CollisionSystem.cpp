@@ -69,9 +69,8 @@ void CollisionSystem::Update(Game * g, float dt) {
 		//store final translated max and min in aabb list
 		//note that aabbIndex is used instead of c - no dead elements in the aabb list
 		position = XMLoadFloat3(&tc->m_position);
-		XMStoreFloat3(&m_aabbs[aabbIndex].m_max, max + position);
-		XMStoreFloat3(&m_aabbs[aabbIndex].m_min, min + position);
-		aabbIndex++;
+		XMStoreFloat3(&m_aabbs[c].m_max, max + position);
+		XMStoreFloat3(&m_aabbs[c].m_min, min + position);
 	}
 
 	//Collision checking
@@ -83,9 +82,9 @@ void CollisionSystem::Update(Game * g, float dt) {
 	auto collisions = vector<std::pair<unsigned int, unsigned int>>();
 
 	//iterate through all unique pairs
-	for (unsigned int c = 0; aabbIndex>0 && c < aabbIndex - 1; c++) {
+	for (unsigned int c = 0; m_collapsedCount>0 && c < m_collapsedCount - 1; c++) {
 		aabb1 = m_aabbs[c];
-		for (unsigned int n = c + 1; n < aabbIndex; n++) {
+		for (unsigned int n = c + 1; n < m_collapsedCount; n++) {
 			aabb2 = m_aabbs[n];
 
 			//add pair of indices on collision
