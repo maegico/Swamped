@@ -11,7 +11,7 @@ using namespace std;
 template <typename T>
 class System : public SystemBase {
 public:
-	void virtual Update(Game * g, float dT) {}
+	void virtual Update(Game * g, float dT) = 0;
 
 	//Creates a component of type T and adds it to m_components and m_handles
 	void virtual Create(unsigned int entityId, T tc) {

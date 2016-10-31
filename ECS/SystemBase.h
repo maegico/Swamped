@@ -5,8 +5,8 @@ using namespace std;
 class Game;
 class SystemBase {
 public:
-	void virtual Update(Game * g, float dT) {};
-	void virtual Remove(unsigned int entityId) {};
+	void virtual Update(Game * g, float dT) = 0;
+	void virtual Remove(unsigned int entityId) = 0;
 	//Returns a reference to the ComponentData vector
 	vector<ComponentData> & GetComponentData() {
 		return m_componentData;

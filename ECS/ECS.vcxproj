@@ -138,6 +138,8 @@
     <ClInclude Include="DXCore.h" />
     <ClInclude Include="FreeVector.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="RenderingComponent.h" />
     <ClInclude Include="RenderingSystem.h" />
     <ClInclude Include="SystemBase.h" />
