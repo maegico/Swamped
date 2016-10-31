@@ -1,22 +1,25 @@
 #pragma once
 #include "CollisionSystem.h"
 #include "TransformSystem.h"
+#include "DXCore.h"
 #include <vector>
 
 using namespace std;
 
 //The game instance. Not a singleton
-class Game{
+class Game : public DXCore {
 public:
-	//Example system
+	//Systems
 	CollisionSystem * m_cs;
 	TransformSystem * m_ts;
 
-	Game();
+	Game(HINSTANCE hInstance);
 	~Game();
 
+	void Init();
+
 	//Update for the game. The program's main loop will call this
-	void Update(float dT);
+	void Update(float dT, float totalTime);
 
 	//Frees an entity's components, and frees its entry in m_entities
 	void RemoveEntity(unsigned int entityId);

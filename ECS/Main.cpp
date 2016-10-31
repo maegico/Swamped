@@ -1,53 +1,43 @@
+
+#include <Windows.h>
 #include "Game.h"
-#include "Constructors.h"
-#include <time.h>
-#include <iostream>
-#include <string>
 
-int main() {
-	time_t now = time(nullptr);
-	srand(now);
-	//create game
-	Game g = Game();
+// --------------------------------------------------------
+// Entry point for a graphical (non-console) Windows application
+// --------------------------------------------------------
+int WINAPI WinMain(
+	HINSTANCE hInstance,		// The handle to this app's instance
+	HINSTANCE hPrevInstance,	// A handle to the previous instance of the app (always NULL)
+	LPSTR lpCmdLine,			// Command line params
+	int nCmdShow)				// How the window should be shown (we ignore this)
+{
+#if defined(DEBUG) | defined(_DEBUG)
+	// Enable memory leak detection as a quick and dirty
+	// way of determining if we forgot to clean something up
+	//  - You may want to use something more advanced, like Visual Leak Detector
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 
-	//create some objects with static constructors
-	//Constructors::CreateTestObject(&g, { 1 }, { 'c' });
-	/*TransformComponent tc;
-	tc.m_position = XMFLOAT3(.5, .5, 0);
-	Constructors::CreateTransform(&g, tc, {}, {
-		{
-			{ -1,-1,-1 },
-			{ -1,-1,1 },
-			{ -1,1,-1 },
-			{ -1,1,1 },
-			{ 1,-1,-1 },
-			{ 1,-1,1 },
-			{ 1,1,-1 },
-			{ 1,1,1 }
-		}
-	});
-	tc.m_position = XMFLOAT3(0, 0, 0);
-	Constructors::CreateTransform(&g, tc, {}, {
-		{
-			{ -1,-1,-1 },
-			{ -1,-1,1 },
-			{ -1,1,-1 },
-			{ -1,1,1 },
-			{ 1,-1,-1 },
-			{ 1,-1,1 },
-			{ 1,1,-1 },
-			{ 1,1,1 }
-		}
-	});*/
+	// Create the Game object using
+	// the app handle we got from WinMain
+	Game dxGame(hInstance);
 
-	//example update and removal
-	for (unsigned int c = 0; c < 2000; c++)
-	{
-		g.Update(1.0f);
-		if(c%10==0)
-			std::cout <<to_string(c) +" - "+to_string(g.m_ts->GetCount())+"/"+to_string(g.m_ts->GetSize()) +", "+ to_string(time(nullptr) - now) << std::endl;
-	}
-	//g.RemoveEntity(0);
+	// Result variable for function calls below
+	HRESULT hr = S_OK;
 
-	return 0;
+	// Attempt to create the window for our program, and
+	// exit early if something failed
+	hr = dxGame.InitWindow();
+	if (FAILED(hr)) return hr;
+
+	// Attempt to initialize DirectX, and exit
+	// early if something failed
+	hr = dxGame.InitDirectX();
+	if (FAILED(hr)) return hr;
+
+	//SetCapture(hInstance);
+
+	// Begin the message and game loop, and then return
+	// whatever we get back once the game loop is over
+	return dxGame.Run();
 }
