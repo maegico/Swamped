@@ -49,11 +49,11 @@ DXCore::DXCore(
 	fpsFrameCount = 0;
 	fpsTimeElapsed = 0.0f;
 	
-	device = 0;
-	context = 0;
-	swapChain = 0;
-	backBufferRTV = 0;
-	depthStencilView = 0;
+	m_device = 0;
+	m_context = 0;
+	m_swapChain = 0;
+	m_backBufferRTV = 0;
+	m_depthStencilView = 0;
 
 	// Query performance counter for accurate timing information
 	__int64 perfFreq;
@@ -67,16 +67,16 @@ DXCore::DXCore(
 DXCore::~DXCore()
 {
 	// Release all DirectX resources
-	if (depthStencilView) { depthStencilView->Release(); }
-	if (backBufferRTV) { backBufferRTV->Release();}
+	if (m_depthStencilView) { m_depthStencilView->Release(); }
+	if (m_backBufferRTV) { m_backBufferRTV->Release();}
 
-	if (swapChain) { 
+	if (m_swapChain) { 
 		//swapChain->SetFullscreenState(FALSE, NULL);
-		swapChain->Release();
+		m_swapChain->Release();
 	}
-	if (context) { context->Release();}
+	if (m_context) { m_context->Release();}
 
-	if (device) { 
+	if (m_device) { 
 #if defined(DEBUG) || defined(_DEBUG)
 		// If we're in debug mode in visual studio, we also
 		// want to make a "Debug DirectX Device" to see some
@@ -87,7 +87,7 @@ DXCore::~DXCore()
 		//debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 		debug->Release();
 #endif
-		device->Release();
+		m_device->Release();
 	}
 }
 
@@ -221,10 +221,10 @@ HRESULT DXCore::InitDirectX()
 		0,							// The number of fallbacks in the above param
 		D3D11_SDK_VERSION,			// Current version of the SDK
 		&swapDesc,					// Address of swap chain options
-		&swapChain,					// Pointer to our Swap Chain pointer
-		&device,					// Pointer to our Device pointer
+		&m_swapChain,					// Pointer to our Swap Chain pointer
+		&m_device,					// Pointer to our Device pointer
 		&dxFeatureLevel,			// This will hold the actual feature level the app will use
-		&context);					// Pointer to our Device Context pointer
+		&m_context);					// Pointer to our Device Context pointer
 	if (FAILED(hr)) return hr;
 
 	//swapChain->SetFullscreenState(TRUE, NULL);
@@ -232,7 +232,7 @@ HRESULT DXCore::InitDirectX()
 	// The above function created the back buffer render target
 	// for us, but we need a reference to it
 	ID3D11Texture2D* backBufferTexture;
-	swapChain->GetBuffer(
+	m_swapChain->GetBuffer(
 		0,
 		__uuidof(ID3D11Texture2D),
 		(void**)&backBufferTexture);
@@ -240,10 +240,10 @@ HRESULT DXCore::InitDirectX()
 	// Now that we have the texture, create a render target view
 	// for the back buffer so we can render into it.  Then release
 	// our local reference to the texture, since we have the view.
-	device->CreateRenderTargetView(
+	m_device->CreateRenderTargetView(
 		backBufferTexture,
 		0,
-		&backBufferRTV);
+		&m_backBufferRTV);
 	backBufferTexture->Release();
 
 	// Set up the description of the texture to use for the depth buffer
@@ -263,13 +263,13 @@ HRESULT DXCore::InitDirectX()
 	// Create the depth buffer and its view, then 
 	// release our reference to the texture
 	ID3D11Texture2D* depthBufferTexture;
-	device->CreateTexture2D(&depthStencilDesc, 0, &depthBufferTexture);
-	device->CreateDepthStencilView(depthBufferTexture, 0, &depthStencilView);
+	m_device->CreateTexture2D(&depthStencilDesc, 0, &depthBufferTexture);
+	m_device->CreateDepthStencilView(depthBufferTexture, 0, &m_depthStencilView);
 	depthBufferTexture->Release();
 
 	// Bind the views to the pipeline, so rendering properly 
 	// uses their underlying textures
-	context->OMSetRenderTargets(1, &backBufferRTV, depthStencilView);
+	m_context->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
 	// Lastly, set up a viewport so we render into
 	// to correct portion of the window
@@ -280,7 +280,7 @@ HRESULT DXCore::InitDirectX()
 	viewport.Height		= (float)height;
 	viewport.MinDepth	= 0.0f;
 	viewport.MaxDepth	= 1.0f;
-	context->RSSetViewports(1, &viewport);
+	m_context->RSSetViewports(1, &viewport);
 
 	// Return the "everything is ok" HRESULT value
 	return S_OK;
@@ -297,11 +297,11 @@ HRESULT DXCore::InitDirectX()
 void DXCore::OnResize()
 {
 	// Release existing DirectX views and buffers
-	if (depthStencilView) { depthStencilView->Release(); }
-	if (backBufferRTV) { backBufferRTV->Release(); }
+	if (m_depthStencilView) { m_depthStencilView->Release(); }
+	if (m_backBufferRTV) { m_backBufferRTV->Release(); }
 
 	// Resize the underlying swap chain buffers
-	swapChain->ResizeBuffers(
+	m_swapChain->ResizeBuffers(
 		1,
 		width,
 		height,
@@ -311,8 +311,8 @@ void DXCore::OnResize()
 	// Recreate the render target view for the back buffer
 	// texture, then release our local texture reference
 	ID3D11Texture2D* backBufferTexture;
-	swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBufferTexture));
-	device->CreateRenderTargetView(backBufferTexture, 0, &backBufferRTV);
+	m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBufferTexture));
+	m_device->CreateRenderTargetView(backBufferTexture, 0, &m_backBufferRTV);
 	backBufferTexture->Release();
 
 	// Set up the description of the texture to use for the depth buffer
@@ -332,13 +332,13 @@ void DXCore::OnResize()
 	// Create the depth buffer and its view, then 
 	// release our reference to the texture
 	ID3D11Texture2D* depthBufferTexture;
-	device->CreateTexture2D(&depthStencilDesc, 0, &depthBufferTexture);
-	device->CreateDepthStencilView(depthBufferTexture, 0, &depthStencilView);
+	m_device->CreateTexture2D(&depthStencilDesc, 0, &depthBufferTexture);
+	m_device->CreateDepthStencilView(depthBufferTexture, 0, &m_depthStencilView);
 	depthBufferTexture->Release();
 
 	// Bind the views to the pipeline, so rendering properly 
 	// uses their underlying textures
-	context->OMSetRenderTargets(1, &backBufferRTV, depthStencilView);
+	m_context->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
 
 	// Lastly, set up a viewport so we render into
 	// to correct portion of the window
@@ -349,7 +349,7 @@ void DXCore::OnResize()
 	viewport.Height = (float)height;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
-	context->RSSetViewports(1, &viewport);
+	m_context->RSSetViewports(1, &viewport);
 }
 
 
@@ -559,7 +559,7 @@ LRESULT DXCore::ProcessMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
 		// If DX is initialized, resize 
 		// our required buffers
-		if (device) 
+		if (m_device) 
 			OnResize();
 
 		return 0;

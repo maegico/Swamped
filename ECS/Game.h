@@ -1,6 +1,7 @@
 #pragma once
 #include "CollisionSystem.h"
 #include "TransformSystem.h"
+#include "RenderingSystem.h"
 #include "DXCore.h"
 #include <vector>
 
@@ -12,6 +13,7 @@ public:
 	//Systems
 	CollisionSystem * m_cs;
 	TransformSystem * m_ts;
+	RenderingSystem * m_rs;
 
 	Game(HINSTANCE hInstance);
 	~Game();

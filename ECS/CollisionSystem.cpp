@@ -1,7 +1,6 @@
 #include "CollisionSystem.h"
 #include "TransformSystem.h"
 #include "Game.h"
-#include <DirectXMath.h>
 
 using namespace DirectX;
 

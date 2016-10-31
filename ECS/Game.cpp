@@ -28,21 +28,22 @@ Game::Game(HINSTANCE hInstance)
 #endif
 }
 
-//initialize entity list and systems
 void Game::Init() {
-	
+	m_rs = new RenderingSystem(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 }
 
 //delete system objects
 Game::~Game() {
 	delete m_cs;
 	delete m_ts;
+	delete m_rs;
 }
 
 //Advances the game in time
 void Game::Update(float dt, float totalTime) {
 	m_ts->Update(this, dt);
 	m_cs->Update(this, dt);
+	m_rs->Update(this, dt);
 }
 
 //Removes an entity from all its systems

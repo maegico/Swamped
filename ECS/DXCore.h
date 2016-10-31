@@ -61,12 +61,12 @@ protected:
 	
 	// DirectX related objects and variables
 	D3D_FEATURE_LEVEL		dxFeatureLevel;
-	IDXGISwapChain*			swapChain;
-	ID3D11Device*			device;
-	ID3D11DeviceContext*	context;
+	IDXGISwapChain*			m_swapChain;
+	ID3D11Device*			m_device;
+	ID3D11DeviceContext*	m_context;
 
-	ID3D11RenderTargetView* backBufferRTV;
-	ID3D11DepthStencilView* depthStencilView;
+	ID3D11RenderTargetView* m_backBufferRTV;
+	ID3D11DepthStencilView* m_depthStencilView;
 
 	// Helper function for allocating a console window
 	void CreateConsoleWindow(int bufferLines, int bufferColumns, int windowLines, int windowColumns);
