@@ -83,7 +83,7 @@ DXCore::~DXCore()
 		// errors and warnings in Visual Studio's output window
 		// when things go wrong!
 		ID3D11Debug *debug;
-		device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&debug));
+		m_device->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&debug));
 		//debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 		debug->Release();
 #endif
