@@ -82,7 +82,8 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)assets" "$(TargetDir)assets" /e /y /i /r</Command>
+      <Command>xcopy "$(ProjectDir)assets" "$(TargetDir)assets" /e /y /i /r
+copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -97,7 +98,8 @@
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)assets" "$(TargetDir)assets" /e /y /i /r</Command>
+      <Command>xcopy "$(ProjectDir)assets" "$(TargetDir)assets" /e /y /i /r
+copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -116,7 +118,8 @@
       <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)assets" "$(TargetDir)assets" /e /y /i /r</Command>
+      <Command>xcopy "$(ProjectDir)assets" "$(TargetDir)assets" /e /y /i /r
+copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,7 +138,8 @@
       <Profile>true</Profile>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)assets" "$(TargetDir)assets" /e /y /i /r</Command>
+      <Command>xcopy "$(ProjectDir)assets" "$(TargetDir)assets" /e /y /i /r
+copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

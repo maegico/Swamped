@@ -74,15 +74,16 @@ void CollisionSystem::Update(Game * g, float dt) {
 
 	//Collision checking
 	//pre-allocate aabbs
-	MaxMin aabb1;
-	MaxMin aabb2;
+	//MaxMin aabb1;
+	//MaxMin aabb2;
 
 	//vector to save collision pairs
 	auto collisions = vector<std::pair<unsigned int, unsigned int>>();
 
 	//iterate through all unique pairs
-	for (unsigned int c = 0; m_collapsedCount>0 && c < m_collapsedCount - 1; c++) {
-		aabb1 = m_aabbs[c];
+	parallel_for(size_t(0), m_collapsedCount-1,[&](unsigned int c) {
+		MaxMin aabb1 = m_aabbs[c];
+		MaxMin aabb2;
 		for (unsigned int n = c + 1; n < m_collapsedCount; n++) {
 			aabb2 = m_aabbs[n];
 
@@ -90,7 +91,11 @@ void CollisionSystem::Update(Game * g, float dt) {
 			if (aabb1.m_max.x > aabb2.m_min.x && aabb1.m_min.x < aabb2.m_max.x
 				&& aabb1.m_max.y > aabb2.m_min.y && aabb1.m_min.y < aabb2.m_max.y
 				&& aabb1.m_max.z > aabb2.m_min.z && aabb1.m_min.z < aabb2.m_max.z)
+			{
+				m_collisionsMutex.lock();
 				collisions.push_back(std::pair<int, int>(c, n));
+				m_collisionsMutex.unlock();
+			}
 		}
-	}
+	});
 }
