@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <vector>
 #include <string>
-#include "DirectionalLight.h"
+//#include "DirectionalLight.h"
 
 // --------------------------------------------------------
 // Used by simple shaders to store information about
@@ -79,7 +79,7 @@ public:
 
 	// Sets arbitrary shader data
 	bool SetData(std::string name, const void* data, unsigned int size);
-	bool SetLight(std::string name, const DirectionalLight* data, unsigned int size);
+	//bool SetLight(std::string name, const DirectionalLight* data, unsigned int size);
 
 	bool SetInt(std::string name, int data);
 	bool SetFloat(std::string name, float data);

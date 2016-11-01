@@ -6,6 +6,7 @@ class Camera {
 public:
 	void Update();
 	Camera(XMFLOAT3 pos);
+	Camera();
 	~Camera();
 	XMFLOAT4X4 GetProjection();
 	XMFLOAT4X4 GetView();

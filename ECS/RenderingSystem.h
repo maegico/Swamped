@@ -15,5 +15,5 @@ private:
 	ID3D11DeviceContext*	m_context;
 	ID3D11RenderTargetView* m_backBufferRTV;
 	ID3D11DepthStencilView* m_depthStencilView;
-	Camera *					m_camera;
+	Camera					m_camera;
 };

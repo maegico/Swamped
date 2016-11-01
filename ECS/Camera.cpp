@@ -10,6 +10,10 @@ Camera::Camera(XMFLOAT3 pos) {
 	Update();
 }
 
+Camera::Camera() : Camera(XMFLOAT3(0,0,0)) {
+
+}
+
 Camera::~Camera() {
 
 }

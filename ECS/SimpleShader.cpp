@@ -366,22 +366,22 @@ bool ISimpleShader::SetData(std::string name, const void* data, unsigned int siz
 	return true;
 }
 
-bool ISimpleShader::SetLight(std::string name, const DirectionalLight* data, unsigned int size)
-{
-	// Look for the variable and verify
-	SimpleShaderVariable* var = FindVariable(name, size);
-	if (var == 0)
-		return false;
-
-	// Set the data in the local data buffer
-	memcpy(
-		constantBuffers[var->ConstantBufferIndex].LocalDataBuffer + var->ByteOffset,
-		data,
-		size);
-
-	// Success
-	return true;
-}
+//bool ISimpleShader::SetLight(std::string name, const DirectionalLight* data, unsigned int size)
+//{
+//	// Look for the variable and verify
+//	SimpleShaderVariable* var = FindVariable(name, size);
+//	if (var == 0)
+//		return false;
+//
+//	// Set the data in the local data buffer
+//	memcpy(
+//		constantBuffers[var->ConstantBufferIndex].LocalDataBuffer + var->ByteOffset,
+//		data,
+//		size);
+//
+//	// Success
+//	return true;
+//}
 
 // --------------------------------------------------------
 // Sets INTEGER data

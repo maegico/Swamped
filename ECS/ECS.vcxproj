@@ -129,6 +129,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="CollisionSystem.cpp" />
     <ClCompile Include="RenderingSystem.cpp" />
+    <ClCompile Include="SimpleShader.cpp" />
     <ClCompile Include="TransformSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -138,10 +139,9 @@
     <ClInclude Include="DXCore.h" />
     <ClInclude Include="FreeVector.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="Mesh.h" />
     <ClInclude Include="RenderingComponent.h" />
     <ClInclude Include="RenderingSystem.h" />
+    <ClInclude Include="SimpleShader.h" />
     <ClInclude Include="SystemBase.h" />
     <ClInclude Include="CollisionComponent.h" />
     <ClInclude Include="PairedSystem.h" />
