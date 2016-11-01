@@ -347,7 +347,7 @@ void ContentManager::CreateSamplers(std::string name)
 
 void ContentManager::CreateVShader(std::wstring shader)
 {
-	std::wstring outputDirPath = L"Debug/";
+	std::wstring outputDirPath = L"VertexShaders/";
 	outputDirPath = outputDirPath + shader;
 	//wchar_t begin[] = L"Debug/\0";
 	//size_t len = wcslen(shader);
@@ -375,7 +375,7 @@ void ContentManager::CreateVShader(std::wstring shader)
 
 void ContentManager::CreatePShader(std::wstring shader)
 {
-	std::wstring outputDirPath = L"Debug/";
+	std::wstring outputDirPath = L"PixelShaders/";
 	outputDirPath = outputDirPath + shader;
 
 	SimplePixelShader* pixelShader = new SimplePixelShader(m_device, m_context);
