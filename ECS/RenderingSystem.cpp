@@ -38,7 +38,7 @@ void RenderingSystem::Update(Game * g, float dt) {
 		//  - The "SimpleShader" class handles all of that for you.
 		DirectX::XMFLOAT4X4 wm;
 		g->m_ts->SearchForEntityId(transformIndex, m_componentData[c].GetEntityId());
-		XMStoreFloat4x4(&wm, TransformSystem::GetMatrix(g->m_ts->GetComponentList1()[transformIndex]));
+		XMStoreFloat4x4(&wm, XMMatrixTranspose(TransformSystem::GetMatrix(g->m_ts->GetComponentList1()[transformIndex])));
 		vertexShader->SetMatrix4x4("world", wm);
 		vertexShader->SetMatrix4x4("view", m_camera.GetView());
 		vertexShader->SetMatrix4x4("projection", m_camera.GetProjection());
