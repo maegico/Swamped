@@ -50,6 +50,7 @@ artifacts/
 *.ilk
 *.meta
 *.obj
+!Assets\Models\*.obj
 *.pch
 *.pdb
 *.pgc
