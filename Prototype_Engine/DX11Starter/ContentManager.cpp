@@ -316,10 +316,15 @@ void ContentManager::CreateSamplers(std::string name)
 		m_samplers[name] = sampler;
 }
 
+
+//Compiles .cso's where the .hlsl file is
 void ContentManager::CreateVShader(std::wstring shader)
 {
+	std::wstring compiledName = shader.substr(0, shader.length() - 4);
+	compiledName += L"cso";
 	std::wstring outputDirPath = L"Debug/";
-	outputDirPath = outputDirPath + shader;
+	outputDirPath = outputDirPath + compiledName;
+
 	//wchar_t begin[] = L"Debug/\0";
 	//size_t len = wcslen(shader);
 	//wchar_t* projDirFilePath = wcsncat(begin, shader, len+1);
@@ -327,7 +332,7 @@ void ContentManager::CreateVShader(std::wstring shader)
 
 	SimpleVertexShader* vertexShader = new SimpleVertexShader(m_device, m_context);
 	if (!vertexShader->LoadShaderFile(outputDirPath.c_str()))
-		vertexShader->LoadShaderFile(shader.c_str());
+		vertexShader->LoadShaderFile(compiledName.c_str());
 
 	// You'll notice that the code above attempts to load each
 	// compiled shader file (.cso) from two different relative paths.
@@ -340,18 +345,20 @@ void ContentManager::CreateVShader(std::wstring shader)
 	// Checking both paths is the easiest way to ensure both 
 	// scenarios work correctly, although others exist
 
-	std::string shaderString(shader.begin(), shader.end());
+	std::string shaderString(compiledName.begin(), compiledName.end());
 	m_vshaders[shaderString] = vertexShader;
 }
 
 void ContentManager::CreatePShader(std::wstring shader)
 {
+	std::wstring compiledName = shader.substr(0, shader.length() - 4);
+	compiledName += L"cso";
 	std::wstring outputDirPath = L"Debug/";
-	outputDirPath = outputDirPath + shader;
+	outputDirPath = outputDirPath + compiledName;
 
 	SimplePixelShader* pixelShader = new SimplePixelShader(m_device, m_context);
 	if (!pixelShader->LoadShaderFile(outputDirPath.c_str()))
-		pixelShader->LoadShaderFile(shader.c_str());
+		pixelShader->LoadShaderFile(compiledName.c_str());
 
 	// You'll notice that the code above attempts to load each
 	// compiled shader file (.cso) from two different relative paths.
@@ -364,7 +371,7 @@ void ContentManager::CreatePShader(std::wstring shader)
 	// Checking both paths is the easiest way to ensure both 
 	// scenarios work correctly, although others exist
 
-	std::string shaderString(shader.begin(), shader.end());
+	std::string shaderString(compiledName.begin(), compiledName.end());
 	m_pshaders[shaderString] = pixelShader;
 }
 
