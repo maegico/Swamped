@@ -1,9 +1,14 @@
-﻿  Game.cpp
-d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(41): warning C4018: '<': signed/unsigned mismatch
-d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(109): warning C4018: '<': signed/unsigned mismatch
-d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(140): warning C4018: '<': signed/unsigned mismatch
-d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(212): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(213): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-  LINK : D:\Profiles\spc1802\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.exe not found or not built by the last incremental link; performing full link
-  DX11Starter.vcxproj -> D:\Profiles\spc1802\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.exe
-  DX11Starter.vcxproj -> D:\Profiles\spc1802\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.pdb (Full PDB)
+﻿  Main.cpp
+  Game.cpp
+e:\mydocuments\school\college\senior year\graphics\swamped\prototype_engine\dx11starter\game.cpp(41): warning C4018: '<': signed/unsigned mismatch
+e:\mydocuments\school\college\senior year\graphics\swamped\prototype_engine\dx11starter\game.cpp(111): warning C4018: '<': signed/unsigned mismatch
+e:\mydocuments\school\college\senior year\graphics\swamped\prototype_engine\dx11starter\game.cpp(142): warning C4018: '<': signed/unsigned mismatch
+e:\mydocuments\school\college\senior year\graphics\swamped\prototype_engine\dx11starter\game.cpp(214): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+e:\mydocuments\school\college\senior year\graphics\swamped\prototype_engine\dx11starter\game.cpp(215): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
+  ContentManager.cpp
+e:\mydocuments\school\college\senior year\graphics\swamped\prototype_engine\dx11starter\contentmanager.cpp(105): warning C4018: '<': signed/unsigned mismatch
+e:\mydocuments\school\college\senior year\graphics\swamped\prototype_engine\dx11starter\contentmanager.cpp(109): warning C4018: '<': signed/unsigned mismatch
+e:\mydocuments\school\college\senior year\graphics\swamped\prototype_engine\dx11starter\contentmanager.cpp(114): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+  DX11Starter.vcxproj -> E:\MyDocuments\School\College\Senior Year\Graphics\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.exe
+  DX11Starter.vcxproj -> E:\MyDocuments\School\College\Senior Year\Graphics\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.pdb (Full PDB)

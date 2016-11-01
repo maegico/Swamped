@@ -1,6 +1,8 @@
 #include "ContentManager.h"
 #include <cstdarg>
 
+using namespace std;
+
 ContentManager::ContentManager()
 {
 }
@@ -11,26 +13,26 @@ ContentManager::ContentManager(ID3D11Device* device, ID3D11DeviceContext* contex
 	device->AddRef();
 	context->AddRef();
 
-	m_meshes = std::map<std::string, Mesh*>();
-	m_materials = std::map<std::string, Material*>();
+	//m_meshes = std::unordered_map<std::string, Mesh*>();
+	//m_materials = std::unordered_map<std::string, Material*>();
 
-	//below is placed on the stack, since I won't need them after this
-	//below here is probably where I will probe the files for the needed info
-	//the below isn't so terrible anymore, but still
-		//these make sense though since we will go through all the files in a file location and grab all there names saving them inside the below vectors and more vectors
-	std::vector<std::wstring> vshaderNames = { L"VertexShader.cso" };	//see if I can change this <- this is going to be terrible
-	std::vector<std::wstring> pshaderNames = { L"PixelShader.cso" };	//see if I can change this <- this is going to be terrible
-	std::vector<std::wstring> textures = { L"soilrough.png" , L"styrofoam.png" };
-	std::vector<std::string> models = { "cube.obj", "cone.obj", "helix.obj" };
+	////below is placed on the stack, since I won't need them after this
+	////below here is probably where I will probe the files for the needed info
+	////the below isn't so terrible anymore, but still
+	//	//these make sense though since we will go through all the files in a file location and grab all there names saving them inside the below vectors and more vectors
+	//std::vector<std::wstring> vshaderNames = { L"VertexShader.cso" };	//see if I can change this <- this is going to be terrible
+	//std::vector<std::wstring> pshaderNames = { L"PixelShader.cso" };	//see if I can change this <- this is going to be terrible
+	//std::vector<std::wstring> textures = { L"soilrough.png" , L"styrofoam.png" };
+	//std::vector<std::string> models = { "cube.obj", "cone.obj", "helix.obj" };
 
-	CreateVShader(vshaderNames[0]);
-	CreatePShader(pshaderNames[0]);
+	//CreateVShader(vshaderNames[0]);
+	//CreatePShader(pshaderNames[0]);
 
-	CreateSamplers("sampler");
+	//CreateSamplers("sampler");
 
-	CreateMesh(models[0]);
-	CreateMesh(models[1]);
-	CreateMesh(models[2]);
+	//CreateMesh(models[0]);
+	//CreateMesh(models[1]);
+	//CreateMesh(models[2]);
 }
 
 ContentManager::~ContentManager()
@@ -65,6 +67,58 @@ ContentManager::~ContentManager()
 	m_device->Release();
 }
 
+void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
+{
+	device->AddRef();
+	context->AddRef();
+
+	m_device = device;
+	m_context = context;
+
+	/*m_materials = std::unordered_map<std::string, Material*>();
+	m_meshes = std::unordered_map<std::string, Mesh*>();
+	m_samplers = std::unordered_map<std::string, ID3D11SamplerState*>();
+	m_vshaders = std::unordered_map<std::string, SimpleVertexShader*>();
+	m_pshaders = std::unordered_map<std::string, SimplePixelShader*>();*/
+	m_materials = std::map<std::string, Material*>();
+	m_meshes = std::map<std::string, Mesh*>();
+	m_samplers = std::map<std::string, ID3D11SamplerState*>();
+	m_vshaders = std::map<std::string, SimpleVertexShader*>();
+	m_pshaders = std::map<std::string, SimplePixelShader*>();
+	
+
+	//below is placed on the stack, since I won't need them after this
+	//below here is probably where I will probe the files for the needed info
+	//the below isn't so terrible anymore, but still
+	//these make sense though since we will go through all the files in a file location and grab all there names saving them inside the below vectors and more vectors
+	std::vector<std::wstring> vshaderNames;	//see if I can change this <- this is going to be terrible
+	std::vector<std::wstring> pshaderNames;	//see if I can change this <- this is going to be terrible
+	//std::vector<std::wstring> textures;
+	std::vector<std::string> models;
+
+	FindFilesInFolderWSTR(L"Assets/VShaders", vshaderNames);
+	FindFilesInFolderWSTR(L"Assets/PShaders", pshaderNames);
+	FindFilesInFolder(L"Assets/Models", models);
+
+	CreateSamplers("sampler");
+
+	//The below isn't creating the shaders correctly
+	for (int i = 0; i < vshaderNames.size(); i++)
+	{
+		CreateVShader(vshaderNames[i]);
+	}
+	for (int i = 0; i < pshaderNames.size(); i++)
+	{
+		CreatePShader(pshaderNames[i]);
+	}
+
+	for (int i = 0; i < models.size(); i++)
+	{
+		CreateMesh(models[i]);
+	}
+}
+
+//Should I hold a bunch of textures in CM or create on construction of a material
 Material* ContentManager::LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::wstring textureName)
 {
 	SimpleVertexShader* vshader = m_vshaders[vs];
@@ -76,6 +130,7 @@ Material* ContentManager::LoadMaterial(std::string name, std::string samplerName
 	outputDirPath = outputDirPath + textureName;
 	const wchar_t* texturePath = outputDirPath.c_str();
 
+	//do I put these by themselves and hold them in my CM?????
 	ID3D11ShaderResourceView* texture;
 
 	HRESULT result = DirectX::CreateWICTextureFromFile(m_device, m_context, texturePath, 0, &texture);
@@ -311,4 +366,96 @@ void ContentManager::CreatePShader(std::wstring shader)
 
 	std::string shaderString(shader.begin(), shader.end());
 	m_pshaders[shaderString] = pixelShader;
+}
+
+//I could make the below better, by
+
+//I took the basic code from below and modified it to work for both UNICODE and non-UNICODE character sets
+//Got it from: http://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
+void ContentManager::FindFilesInFolder(std::wstring folder, std::vector<std::string>& listOfFiles)
+{
+#ifdef UNICODE
+	std::wstring path = folder + L"/*.*";
+	
+	WIN32_FIND_DATA fd;
+	//for the below to work they need to run with findfilefirstW not A
+	HANDLE hFind = ::FindFirstFile(path.c_str(), &fd);
+	if (hFind != INVALID_HANDLE_VALUE) {
+		do {
+			// read all (real) files in current folder
+			// , delete '!' read other 2 default folder . and ..
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				std::wstring temp1(fd.cFileName);
+				std::string temp2(temp1.begin(), temp1.end());
+				listOfFiles.push_back(temp2);
+			}
+		} while (::FindNextFile(hFind, &fd));
+		::FindClose(hFind);
+	}
+
+#else
+	
+	std::wstring path = folder + L"/*.*";
+	std::string pathSTR(path.begin(), path.end());
+	WIN32_FIND_DATA fd;
+	//for the below to work they need to run with findfilefirstW not A
+	HANDLE hFind = ::FindFirstFile(pathSTR.c_str(), &fd);
+	if (hFind != INVALID_HANDLE_VALUE) {
+		do {
+			// read all (real) files in current folder
+			// , delete '!' read other 2 default folder . and ..
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+
+				std::string temp(fd.cFileName);
+				listOfFiles.push_back(temp);
+			}
+		} while (::FindNextFile(hFind, &fd));
+		::FindClose(hFind);
+	}
+#endif
+}
+
+//I didn't code this
+//Got it from: http://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
+void ContentManager::FindFilesInFolderWSTR(std::wstring folder, std::vector<std::wstring>& listOfFiles)
+{
+#ifdef UNICODE
+	std::wstring path = folder + L"/*.*";
+
+	WIN32_FIND_DATA fd;
+	//for the below to work they need to run with findfilefirstW not A
+	HANDLE hFind = ::FindFirstFile(path.c_str(), &fd);
+	if (hFind != INVALID_HANDLE_VALUE) {
+		do {
+			// read all (real) files in current folder
+			// , delete '!' read other 2 default folder . and ..
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+				std::wstring temp(fd.cFileName);
+				listOfFiles.push_back(temp);
+			}
+		} while (::FindNextFile(hFind, &fd));
+		::FindClose(hFind);
+	}
+
+#else
+
+	std::wstring path = folder + L"/*.*";
+	std::string pathSTR(path.begin(), path.end());
+	WIN32_FIND_DATA fd;
+	//for the below to work they need to run with findfilefirstW not A
+	HANDLE hFind = ::FindFirstFile(pathSTR.c_str(), &fd);
+	if (hFind != INVALID_HANDLE_VALUE) {
+		do {
+			// read all (real) files in current folder
+			// , delete '!' read other 2 default folder . and ..
+			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+
+				std::string temp1(fd.cFileName);
+				std::wstring temp2(temp1.begin(), temp1.end());
+				listOfFiles.push_back(temp2);
+			}
+		} while (::FindNextFile(hFind, &fd));
+		::FindClose(hFind);
+	}
+#endif
 }

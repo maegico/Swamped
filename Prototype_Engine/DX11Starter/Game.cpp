@@ -65,7 +65,9 @@ void Game::Init()
 
 	camera = new Camera();
 
-	cmanager = new ContentManager(device, context);
+	//cmanager = new ContentManager(device, context);
+	cmanager = new ContentManager();
+	cmanager->Init(device, context);
 	Material* mat1 = cmanager->LoadMaterial("soilDirLight", "sampler", "VertexShader.cso", "PixelShader.cso", L"soilrough.png");
 	Material* mat2 = cmanager->LoadMaterial("styroDirLight", "sampler", "VertexShader.cso", "PixelShader.cso", L"styrofoam.png");
 

@@ -6,6 +6,7 @@
 #include <WICTextureLoader.h>
 #include <map>
 #include <memory>
+#include <Windows.h>
 
 #include "Shaders.h"
 #include "SimpleShader.h"
@@ -24,13 +25,24 @@ public:
 	ContentManager( ID3D11Device* device, ID3D11DeviceContext* context );
 	~ContentManager();
 
+	void Init(ID3D11Device* device, ID3D11DeviceContext* context);
+
 	Material* LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::wstring textureName);
 	Mesh* GetMesh(std::string);
 	Material* GetMaterial(std::string);
 
+
+	//Unordered Map implementation was breaking, will work on it some more later\
+		//did not seem to be the issue
 private:
 	//could possibly use an unordered map
 	//also, need to allow for multiple textures
+	//std::unordered_map<std::string, Material*>			m_materials;	//List of materials
+	//std::unordered_map<std::string, Mesh*>				m_meshes;		//List of meshes
+	//std::unordered_map<std::string, ID3D11SamplerState*>	m_samplers;		//List of sampler states
+	//std::unordered_map<std::string, SimpleVertexShader*>	m_vshaders;		//List of vertex shaders
+	//std::unordered_map<std::string, SimplePixelShader*>	m_pshaders;		//List of pixel shaders
+
 	std::map<std::string, Material*>			m_materials;	//List of materials
 	std::map<std::string, Mesh*>				m_meshes;		//List of meshes
 	std::map<std::string, ID3D11SamplerState*>	m_samplers;		//List of sampler states
@@ -49,5 +61,7 @@ private:
 	void CreateVShader(std::wstring shader);
 	//Creates a pixel shader of the passed in wide string .cso file and saves it into a std::map
 	void CreatePShader(std::wstring shader);
+	void FindFilesInFolder(std::wstring folder, std::vector<std::string>& listOfFiles);
+	void FindFilesInFolderWSTR(std::wstring folder, std::vector<std::wstring>& listOfFiles);
 };
 
