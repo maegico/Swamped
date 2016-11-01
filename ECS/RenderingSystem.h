@@ -3,6 +3,7 @@
 #include "System.h"
 #include "Vertex.h"
 #include "Camera.h"
+#include "DirectionalLight.h"
 #include <d3d11.h>
 
 class RenderingSystem : public System<RenderingComponent> {
@@ -16,4 +17,5 @@ private:
 	ID3D11RenderTargetView* m_backBufferRTV;
 	ID3D11DepthStencilView* m_depthStencilView;
 	Camera					m_camera;
+	DirectionalLight		m_dirLights[3];
 };

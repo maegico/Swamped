@@ -158,6 +158,7 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
     <ClInclude Include="ComponentData.h" />
     <ClInclude Include="Constructors.h" />
     <ClInclude Include="ContentManager.h" />
+    <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="DXCore.h" />
     <ClInclude Include="FreeVector.h" />
     <ClInclude Include="Game.h" />
