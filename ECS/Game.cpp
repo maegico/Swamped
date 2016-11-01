@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Constructors.h"
 
 Game::Game(HINSTANCE hInstance) 
 	: DXCore(
@@ -32,6 +33,8 @@ Game::Game(HINSTANCE hInstance)
 void Game::Init() {
 	m_cm->Init(m_device, m_context);
 	m_rs = new RenderingSystem(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
+
+	//Constructors::CreateTransform(this, {}, {}, {});
 }
 
 //delete system objects

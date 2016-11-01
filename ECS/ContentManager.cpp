@@ -86,26 +86,28 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	//std::vector<std::wstring> textures;
 	std::vector<std::string> models;
 
-	FindFilesInFolderWSTR(L"Assets/VShaders", vshaderNames);
-	FindFilesInFolderWSTR(L"Assets/PShaders", pshaderNames);
-	FindFilesInFolder(L"Assets/Models", models);
+	FindFilesInFolderWSTR(L"VertexShaders", vshaderNames);
+	FindFilesInFolderWSTR(L"PixelShaders", pshaderNames);
+	FindFilesInFolder(L"assets/Models", models);
 
 	CreateSamplers("sampler");
 
 	//The below isn't creating the shaders correctly
-	for (int i = 0; i < vshaderNames.size(); i++)
+	for (unsigned int i = 0; i < vshaderNames.size(); i++)
 	{
 		CreateVShader(vshaderNames[i]);
 	}
-	for (int i = 0; i < pshaderNames.size(); i++)
+	for (unsigned int i = 0; i < pshaderNames.size(); i++)
 	{
 		CreatePShader(pshaderNames[i]);
 	}
 
-	for (int i = 0; i < models.size(); i++)
+	for (unsigned int i = 0; i < models.size(); i++)
 	{
 		CreateMesh(models[i]);
 	}
+
+	LoadMaterial("TestMaterial", "sampler", "VertexShader.cso", "PixelShader.cso", L"soilrough.png");
 }
 
 //Should I hold a bunch of textures in CM or create on construction of a material
@@ -129,7 +131,6 @@ Material ContentManager::LoadMaterial(std::string name, std::string samplerName,
 
 	mat = { vshader, pshader, texture, sampler };//new Material(vshader, pshader, texture, sampler);
 	m_materials[name] = mat;
-	texture->Release();
 	return mat;
 }
 
@@ -298,7 +299,7 @@ void ContentManager::CreateMesh(std::string objFile)
 
 	// Create the proper struct to hold the initial vertex data
 	D3D11_SUBRESOURCE_DATA initialVertexData;
-	initialVertexData.pSysMem = &verts;
+	initialVertexData.pSysMem = &verts[0];
 
 	// Actually create the buffer with the initial data
 	m_device->CreateBuffer(&vbd, &initialVertexData, &vertexBuffer);
@@ -314,7 +315,7 @@ void ContentManager::CreateMesh(std::string objFile)
 
 	// Create the proper struct to hold the initial index data
 	D3D11_SUBRESOURCE_DATA initialIndexData;
-	initialIndexData.pSysMem = &indices;
+	initialIndexData.pSysMem = &indices[0];
 
 	// Actually create the buffer with the initial data
 	m_device->CreateBuffer(&ibd, &initialIndexData, &indexBuffer);

@@ -2,6 +2,8 @@
 #include "Game.h"
 
 RenderingSystem::RenderingSystem(IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView) {
+	m_camera = Camera(XMFLOAT3(0, 0, -50));
+	m_camera.CreateProjectionMatrix(1920, 1080, 103);
 	m_swapChain = swapChain;
 	m_device = device;
 	m_context = context;
