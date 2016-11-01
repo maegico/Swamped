@@ -2,6 +2,7 @@
 #include "CollisionSystem.h"
 #include "TransformSystem.h"
 #include "RenderingSystem.h"
+#include "ContentManager.h"
 #include "DXCore.h"
 #include <vector>
 
@@ -14,6 +15,8 @@ public:
 	CollisionSystem * m_cs;
 	TransformSystem * m_ts;
 	RenderingSystem * m_rs;
+
+	ContentManager * m_cm;
 
 	Game(HINSTANCE hInstance);
 	~Game();

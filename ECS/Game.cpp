@@ -9,6 +9,7 @@ Game::Game(HINSTANCE hInstance)
 	m_entities = FreeVector<vector<SystemBase*>>();
 	m_cs = new CollisionSystem();
 	m_ts = new TransformSystem();
+	m_cm = new ContentManager();
 	// Initialize fields
 	//vertexBuffer = 0;
 	//indexBuffer = 0;
@@ -29,6 +30,7 @@ Game::Game(HINSTANCE hInstance)
 }
 
 void Game::Init() {
+	m_cm->Init(m_device, m_context);
 	m_rs = new RenderingSystem(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 }
 
