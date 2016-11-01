@@ -7,34 +7,6 @@ ContentManager::ContentManager()
 {
 }
 
-ContentManager::ContentManager(ID3D11Device* device, ID3D11DeviceContext* context)
-	:m_device(device), m_context(context)
-{
-	device->AddRef();
-	context->AddRef();
-
-	//m_meshes = std::unordered_map<std::string, Mesh*>();
-	//m_materials = std::unordered_map<std::string, Material*>();
-
-	////below is placed on the stack, since I won't need them after this
-	////below here is probably where I will probe the files for the needed info
-	////the below isn't so terrible anymore, but still
-	//	//these make sense though since we will go through all the files in a file location and grab all there names saving them inside the below vectors and more vectors
-	//std::vector<std::wstring> vshaderNames = { L"VertexShader.cso" };	//see if I can change this <- this is going to be terrible
-	//std::vector<std::wstring> pshaderNames = { L"PixelShader.cso" };	//see if I can change this <- this is going to be terrible
-	//std::vector<std::wstring> textures = { L"soilrough.png" , L"styrofoam.png" };
-	//std::vector<std::string> models = { "cube.obj", "cone.obj", "helix.obj" };
-
-	//CreateVShader(vshaderNames[0]);
-	//CreatePShader(pshaderNames[0]);
-
-	//CreateSamplers("sampler");
-
-	//CreateMesh(models[0]);
-	//CreateMesh(models[1]);
-	//CreateMesh(models[2]);
-}
-
 ContentManager::~ContentManager()
 {
 	for (auto i = m_meshes.begin(); i != m_meshes.end(); i++)
@@ -48,6 +20,11 @@ ContentManager::~ContentManager()
 			delete i->second;
 	}
 	for (auto i = m_samplers.begin(); i != m_samplers.end(); i++)
+	{
+		if (i->second != nullptr)
+			i->second->Release();
+	}
+	for (auto i = m_textures.begin(); i != m_textures.end(); i++)
 	{
 		if (i->second != nullptr)
 			i->second->Release();
@@ -75,43 +52,42 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	m_device = device;
 	m_context = context;
 
-	/*m_materials = std::unordered_map<std::string, Material*>();
+	m_materials = std::unordered_map<std::string, Material*>();
 	m_meshes = std::unordered_map<std::string, Mesh*>();
 	m_samplers = std::unordered_map<std::string, ID3D11SamplerState*>();
 	m_vshaders = std::unordered_map<std::string, SimpleVertexShader*>();
-	m_pshaders = std::unordered_map<std::string, SimplePixelShader*>();*/
-	m_materials = std::map<std::string, Material*>();
-	m_meshes = std::map<std::string, Mesh*>();
-	m_samplers = std::map<std::string, ID3D11SamplerState*>();
-	m_vshaders = std::map<std::string, SimpleVertexShader*>();
-	m_pshaders = std::map<std::string, SimplePixelShader*>();
+	m_pshaders = std::unordered_map<std::string, SimplePixelShader*>();
 	
 
 	//below is placed on the stack, since I won't need them after this
 	//below here is probably where I will probe the files for the needed info
 	//the below isn't so terrible anymore, but still
 	//these make sense though since we will go through all the files in a file location and grab all there names saving them inside the below vectors and more vectors
-	std::vector<std::wstring> vshaderNames;	//see if I can change this <- this is going to be terrible
-	std::vector<std::wstring> pshaderNames;	//see if I can change this <- this is going to be terrible
-	//std::vector<std::wstring> textures;
+	std::vector<std::wstring> vshaders;	//see if I can change this <- this is going to be terrible
+	std::vector<std::wstring> pshaders;	//see if I can change this <- this is going to be terrible
+	std::vector<std::wstring> textures;
 	std::vector<std::string> models;
 
-	FindFilesInFolderWSTR(L"Assets/VShaders", vshaderNames);
-	FindFilesInFolderWSTR(L"Assets/PShaders", pshaderNames);
+	FindFilesInFolderWSTR(L"Assets/VShaders", vshaders);
+	FindFilesInFolderWSTR(L"Assets/PShaders", pshaders);
+	FindFilesInFolderWSTR(L"Assets/Textures", textures);
 	FindFilesInFolder(L"Assets/Models", models);
 
 	CreateSamplers("sampler");
 
 	//The below isn't creating the shaders correctly
-	for (int i = 0; i < vshaderNames.size(); i++)
+	for (int i = 0; i < vshaders.size(); i++)
 	{
-		CreateVShader(vshaderNames[i]);
+		CreateVShader(vshaders[i]);
 	}
-	for (int i = 0; i < pshaderNames.size(); i++)
+	for (int i = 0; i < pshaders.size(); i++)
 	{
-		CreatePShader(pshaderNames[i]);
+		CreatePShader(pshaders[i]);
 	}
-
+	for (int i = 0; i < textures.size(); i++)
+	{
+		CreateTexture(textures[i]);
+	}
 	for (int i = 0; i < models.size(); i++)
 	{
 		CreateMesh(models[i]);
@@ -119,28 +95,15 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 }
 
 //Should I hold a bunch of textures in CM or create on construction of a material
-Material* ContentManager::LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::wstring textureName)
+Material* ContentManager::LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::string textureName)
 {
 	SimpleVertexShader* vshader = m_vshaders[vs];
 	SimplePixelShader* pshader = m_pshaders[ps];
 	ID3D11SamplerState*  sampler = m_samplers[samplerName];
-	Material* mat;
+	ID3D11ShaderResourceView* texture = m_textures[textureName];
 
-	std::wstring releasePath = L"Debug/Assets/Textures/";
-	releasePath = releasePath + textureName;
-	std::wstring debugPath = releasePath.substr(6, releasePath.length() - 6);
-	//const wchar_t* texturePath = debugPath.c_str();
-
-	//do I put these by themselves and hold them in my CM?????
-	ID3D11ShaderResourceView* texture;
-
-	HRESULT result = DirectX::CreateWICTextureFromFile(m_device, m_context, debugPath.c_str(), 0, &texture);
-	if (result != S_OK)
-		printf("ERROR: Failed to Load Texture.");
-
-	mat = new Material(vshader, pshader, texture, sampler);
+	Material* mat = new Material(vshader, pshader, texture, sampler);
 	m_materials[name] = mat;
-	texture->Release();
 	return mat;
 }
 
@@ -315,6 +278,21 @@ void ContentManager::CreateSamplers(std::string name)
 		printf("ERROR: Failed to create Sampler State.");
 	else
 		m_samplers[name] = sampler;
+}
+
+void ContentManager::CreateTexture(std::wstring textureName)
+{
+	std::wstring releasePath = L"Debug/Assets/Textures/";
+	releasePath = releasePath + textureName;
+	std::wstring debugPath = releasePath.substr(6, releasePath.length() - 6);
+
+	ID3D11ShaderResourceView* texture;
+
+	HRESULT result = DirectX::CreateWICTextureFromFile(m_device, m_context, debugPath.c_str(), 0, &texture);
+	if (result != S_OK)
+		printf("ERROR: Failed to Load Texture.");
+	std::string name(textureName.begin(), textureName.end());
+	m_textures[name] = texture;
 }
 
 

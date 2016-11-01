@@ -26,6 +26,8 @@ public:
 
 	ID3D11ShaderResourceView* getShaderResView();
 	ID3D11SamplerState* getSampler();
+	void ReleaseShaderResView();
+	void ReleaseSampler();
 
 private:
 	SimpleVertexShader* vertexShader;

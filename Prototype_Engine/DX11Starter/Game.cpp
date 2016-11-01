@@ -68,15 +68,15 @@ void Game::Init()
 	//cmanager = new ContentManager(device, context);
 	cmanager = new ContentManager();
 	cmanager->Init(device, context);
-	Material* mat1 = cmanager->LoadMaterial("soilDirLight", "sampler", "VertexShader.cso", "PixelShader.cso", L"soilrough.png");
-	Material* mat2 = cmanager->LoadMaterial("styroDirLight", "sampler", "VertexShader.cso", "PixelShader.cso", L"styrofoam.png");
+	Material* mat1 = cmanager->LoadMaterial("soilDirLight", "sampler", "VertexShader.cso", "PixelShader.cso", "soilrough.png");
+	Material* mat2 = cmanager->LoadMaterial("styroDirLight", "sampler", "VertexShader.cso", "PixelShader.cso", "styrofoam.png");
 
 	entities = {
 		new Entity(context, cmanager->GetMesh("cube.obj"), cmanager->GetMaterial("soilDirLight"),{ 0.5, 0.5, 0 }, 0),
 		new Entity(context, cmanager->GetMesh("cone.obj"), cmanager->GetMaterial("styroDirLight"),{ 0, 0, 0 }, 0),
 		new Entity(context, cmanager->GetMesh("helix.obj"), cmanager->GetMaterial("soilDirLight"),{ -1.0f, 0, 0 }, 0),
 		new Entity(context, cmanager->GetMesh("cube.obj"), cmanager->GetMaterial("styroDirLight"),{ 0.0f, -0.5f, 0 }, 0),
-		new Entity(context, cmanager->GetMesh("Avent.obj"), cmanager->GetMaterial("soilDirLight"),{ 1.0f, -1.0f, 0 }, 0) };
+		new Entity(context, cmanager->GetMesh("aventR3.obj"), cmanager->GetMaterial("soilDirLight"),{ 1.0f, -1.0f, 0 }, 0) };
 
 	ID3D11Buffer* test = entities[0]->getMesh()->GetVertexBuffer();
 
@@ -143,21 +143,26 @@ void Game::Draw(float deltaTime, float totalTime)
 	
 	for (int i = 0; i < entities.size(); i++)
 	{
-		ID3D11SamplerState* sampler = entities[i]->getMat()->getSampler();
-		ID3D11ShaderResourceView* shaderResView = entities[i]->getMat()->getShaderResView();
+		Entity* entity = entities[i];
+		Material* mat = entity->getMat();
+		ID3D11SamplerState* sampler = mat->getSampler();
+		ID3D11ShaderResourceView* shaderResView = mat->getShaderResView();
 
-		entities[i]->getMat()->getVShader()->SetMatrix4x4("view", camera->getViewMatrix());
-		entities[i]->getMat()->getVShader()->SetMatrix4x4("projection", camera->getProjectionMatrix());
-		entities[i]->getMat()->getPShader()->SetData("dirLight1", &dirLight1, sizeof(DirectionalLight));
-		entities[i]->getMat()->getPShader()->SetData("dirLight2", &dirLight2, sizeof(DirectionalLight));
-		entities[i]->getMat()->getPShader()->SetData("dirLight3", &dirLight3, sizeof(DirectionalLight));
-		entities[i]->getMat()->getPShader()->SetSamplerState("basicSampler", sampler);
-		entities[i]->getMat()->getPShader()->SetShaderResourceView("diffuseTexture", shaderResView);
+		mat->getVShader()->SetMatrix4x4("view", camera->getViewMatrix());
+		mat->getVShader()->SetMatrix4x4("projection", camera->getProjectionMatrix());
+		mat->getPShader()->SetData("dirLight1", &dirLight1, sizeof(DirectionalLight));
+		mat->getPShader()->SetData("dirLight2", &dirLight2, sizeof(DirectionalLight));
+		mat->getPShader()->SetData("dirLight3", &dirLight3, sizeof(DirectionalLight));
+		mat->getPShader()->SetSamplerState("basicSampler", sampler);
+		mat->getPShader()->SetShaderResourceView("diffuseTexture", shaderResView);
 	
-		entities[i]->draw();
+		entity->draw();
 
-		sampler->Release();
-		shaderResView->Release();
+		//did this as a nice way to use the material
+		mat->ReleaseSampler();
+		mat->ReleaseShaderResView();
+		//sampler->Release();
+		//shaderResView->Release();
 	}
 
 	// Present the back buffer to the user

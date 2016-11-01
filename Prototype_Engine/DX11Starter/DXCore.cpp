@@ -68,12 +68,13 @@ DXCore::DXCore(
 // --------------------------------------------------------
 DXCore::~DXCore()
 {
+	ULONG p;
 	// Release all DirectX resources
 	if (depthStencilView) { depthStencilView->Release(); }
 	if (backBufferRTV) { backBufferRTV->Release();}
 
-	if (swapChain) { swapChain->Release();}
-	if (context) { context->Release();}
+	if (swapChain) { swapChain->Release(); }
+	if (context) { context->Release(); }
 	if (device) { device->Release(); }
 }
 

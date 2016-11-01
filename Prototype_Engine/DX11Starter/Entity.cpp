@@ -18,18 +18,6 @@ Entity::Entity(ID3D11DeviceContext* context, Mesh* mesh, Material* mat, DirectX:
 	rotation = DirectX::XMFLOAT3(0, 0, 1);
 }
 
-Entity::Entity(ID3D11DeviceContext* context, Mesh* mesh, Material* mat, DirectionalLight* dirLight, DirectX::XMFLOAT3 position, uint32_t arrayPosition)
-	: context(context), mesh(mesh), mat(mat), dirLight(*dirLight), position(position), arrayPosition(arrayPosition)
-{
-	context->AddRef();
-	scale = DirectX::XMFLOAT3(0.25, 0.25, 0.25);
-	rotation = DirectX::XMFLOAT3(0, 0, 1);
-
-	//mat->getPShader()->SetData("dirLight", &dirLight, sizeof(DirectionalLight));	//will this work? Is this the right amount of time?
-}
-
-
-
 Entity::~Entity()
 {
 	context->Release();

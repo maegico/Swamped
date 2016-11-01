@@ -15,14 +15,6 @@ Material::Material(SimpleVertexShader* vertexShader, SimplePixelShader* pixelSha
 	sampler->AddRef();
 }
 
-//Material::Material(ID3D11ShaderResourceView* shaderResView, ID3D11SamplerState* sampler, Shaders* shaderLists)
-//	: vertexShader(nullptr), pixelShader(nullptr), shaderResView(shaderResView), sampler(sampler), shaderLists(shaderLists)
-//{
-//	shaderResView->AddRef();
-//	sampler->AddRef();
-//}
-
-
 Material::~Material()
 {
 	shaderResView->Release();
@@ -39,26 +31,6 @@ SimplePixelShader* Material::getPShader()
 	return pixelShader;
 }
 
-//SimpleComputeShader * Material::getCShader()
-//{
-//	return shaderLists->cs;
-//}
-//
-//SimpleGeometryShader * Material::getGShader()
-//{
-//	return shaderLists->gs;
-//}
-//
-//SimpleDomainShader * Material::getDShader()
-//{
-//	return shaderLists->ds;
-//}
-//
-//SimpleHullShader * Material::getHShader()
-//{
-//	return shaderLists->hs;
-//}
-
 ID3D11ShaderResourceView* Material::getShaderResView()
 {
 	shaderResView->AddRef();
@@ -71,12 +43,12 @@ ID3D11SamplerState* Material::getSampler()
 	return sampler;
 }
 
-//void Material::setShaderResView(ID3D11ShaderResourceView* shaderResView)
-//{
-//	this->shaderResView = shaderResView;
-//}
-//
-//void Material::setSampler(ID3D11SamplerState* sampler)
-//{
-//	this->sampler = sampler;
-//}
+void Material::ReleaseShaderResView()
+{
+	shaderResView->Release();
+}
+
+void Material::ReleaseSampler()
+{
+	sampler->Release();
+}

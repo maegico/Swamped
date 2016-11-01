@@ -16,7 +16,6 @@ class Entity
 public:
 	Entity();
 	Entity(ID3D11DeviceContext* context, Mesh* mesh, Material* mat, DirectX::XMFLOAT3 position, uint32_t arrayPosition);
-	Entity(ID3D11DeviceContext* context, Mesh* mesh, Material* mat, DirectionalLight* dirLight, DirectX::XMFLOAT3 position, uint32_t arrayPosition);
 	~Entity();
 	
 	DirectX::XMFLOAT4X4 getWorldMatrix();
