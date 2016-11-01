@@ -281,7 +281,45 @@ void ContentManager::CreateMesh(std::string objFile)
 	// Close the file and create the actual buffers
 	obj.close();
 
-	m_meshes[objFile] = new Mesh(&verts[0], &indices[0], verts.size(), indices.size(), m_device);
+	//m_meshes[objFile] = new Mesh(&verts[0], &indices[0], verts.size(), indices.size(), m_device);
+	size_t vertCount = verts.size();
+	size_t indCount = indices.size();
+	ID3D11Buffer * vertexBuffer = 0;
+	ID3D11Buffer * indexBuffer = 0;
+	
+	// Create the VERTEX BUFFER description
+	D3D11_BUFFER_DESC vbd;
+	vbd.Usage = D3D11_USAGE_IMMUTABLE;
+	vbd.ByteWidth = sizeof(Vertex) * vertCount;       // 3 = number of vertices in the buffer
+	vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER; // Tells DirectX this is a vertex buffer
+	vbd.CPUAccessFlags = 0;
+	vbd.MiscFlags = 0;
+	vbd.StructureByteStride = 0;
+
+	// Create the proper struct to hold the initial vertex data
+	D3D11_SUBRESOURCE_DATA initialVertexData;
+	initialVertexData.pSysMem = &verts;
+
+	// Actually create the buffer with the initial data
+	m_device->CreateBuffer(&vbd, &initialVertexData, &vertexBuffer);
+
+	// Create the INDEX BUFFER description
+	D3D11_BUFFER_DESC ibd;
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+	ibd.ByteWidth = sizeof(unsigned int) * indCount;         // 3 = number of indices in the buffer
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER; // Tells DirectX this is an index buffer
+	ibd.CPUAccessFlags = 0;
+	ibd.MiscFlags = 0;
+	ibd.StructureByteStride = 0;
+
+	// Create the proper struct to hold the initial index data
+	D3D11_SUBRESOURCE_DATA initialIndexData;
+	initialIndexData.pSysMem = &indices;
+
+	// Actually create the buffer with the initial data
+	m_device->CreateBuffer(&ibd, &initialIndexData, &indexBuffer);
+
+	m_meshes[objFile] = { vertexBuffer, indexBuffer, indCount };
 }
 
 void ContentManager::CreateSamplers(std::string name)

@@ -8,7 +8,7 @@
 #include <memory>
 #include <Windows.h>
 
-#include "Shaders.h"
+//#include "Shaders.h"
 #include "SimpleShader.h"
 #include "Vertex.h"
 #include "RenderingComponent.h"
