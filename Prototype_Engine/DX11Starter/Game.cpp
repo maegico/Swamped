@@ -76,7 +76,9 @@ void Game::Init()
 		new Entity(context, cmanager->GetMesh("cone.obj"), cmanager->GetMaterial("styroDirLight"),{ 0, 0, 0 }, 0),
 		new Entity(context, cmanager->GetMesh("helix.obj"), cmanager->GetMaterial("soilDirLight"),{ -1.0f, 0, 0 }, 0),
 		new Entity(context, cmanager->GetMesh("cube.obj"), cmanager->GetMaterial("styroDirLight"),{ 0.0f, -0.5f, 0 }, 0),
-		new Entity(context, cmanager->GetMesh("cone.obj"), cmanager->GetMaterial("soilDirLight"),{ 1.0f, -1.0f, 0 }, 0) };
+		new Entity(context, cmanager->GetMesh("Avent.obj"), cmanager->GetMaterial("soilDirLight"),{ 1.0f, -1.0f, 0 }, 0) };
+
+	ID3D11Buffer* test = entities[0]->getMesh()->GetVertexBuffer();
 
 	camera->updateProjection(width, height);
 	// Tell the input assembler stage of the pipeline what kind of

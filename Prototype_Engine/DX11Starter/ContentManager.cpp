@@ -126,14 +126,15 @@ Material* ContentManager::LoadMaterial(std::string name, std::string samplerName
 	ID3D11SamplerState*  sampler = m_samplers[samplerName];
 	Material* mat;
 
-	std::wstring outputDirPath = L"Assets/Textures/";
-	outputDirPath = outputDirPath + textureName;
-	const wchar_t* texturePath = outputDirPath.c_str();
+	std::wstring releasePath = L"Debug/Assets/Textures/";
+	releasePath = releasePath + textureName;
+	std::wstring debugPath = releasePath.substr(6, releasePath.length() - 6);
+	//const wchar_t* texturePath = debugPath.c_str();
 
 	//do I put these by themselves and hold them in my CM?????
 	ID3D11ShaderResourceView* texture;
 
-	HRESULT result = DirectX::CreateWICTextureFromFile(m_device, m_context, texturePath, 0, &texture);
+	HRESULT result = DirectX::CreateWICTextureFromFile(m_device, m_context, debugPath.c_str(), 0, &texture);
 	if (result != S_OK)
 		printf("ERROR: Failed to Load Texture.");
 
@@ -155,11 +156,11 @@ Material * ContentManager::GetMaterial(std::string name)
 
 void ContentManager::CreateMesh(std::string objFile)
 {
-	std::string outputDirPath = "Assets/Models/";
-	outputDirPath = outputDirPath + objFile;
+	std::string releasePath = "Assets/Models/";
+	releasePath = releasePath + objFile;
 
 	// File input object
-	std::ifstream obj(outputDirPath.c_str());
+	std::ifstream obj(releasePath.c_str());
 
 	// Check for successful open
 	if (!obj.is_open())
@@ -322,8 +323,10 @@ void ContentManager::CreateVShader(std::wstring shader)
 {
 	std::wstring compiledName = shader.substr(0, shader.length() - 4);
 	compiledName += L"cso";
-	std::wstring outputDirPath = L"Debug/";
-	outputDirPath = outputDirPath + compiledName;
+	std::wstring releasePath = L"Debug/";
+	releasePath = releasePath + compiledName;
+
+	std::wstring debugPath = L"Assets/VShaders/" + compiledName;
 
 	//wchar_t begin[] = L"Debug/\0";
 	//size_t len = wcslen(shader);
@@ -331,8 +334,8 @@ void ContentManager::CreateVShader(std::wstring shader)
 	//Want to figure the above out!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <- !!!!
 
 	SimpleVertexShader* vertexShader = new SimpleVertexShader(m_device, m_context);
-	if (!vertexShader->LoadShaderFile(outputDirPath.c_str()))
-		vertexShader->LoadShaderFile(compiledName.c_str());
+	if (!vertexShader->LoadShaderFile(releasePath.c_str()))
+		vertexShader->LoadShaderFile(debugPath.c_str());
 
 	// You'll notice that the code above attempts to load each
 	// compiled shader file (.cso) from two different relative paths.
@@ -345,19 +348,21 @@ void ContentManager::CreateVShader(std::wstring shader)
 	// Checking both paths is the easiest way to ensure both 
 	// scenarios work correctly, although others exist
 
-	std::string shaderString(compiledName.begin(), compiledName.end());
-	m_vshaders[shaderString] = vertexShader;
+	std::string name(compiledName.begin(), compiledName.end());
+	m_vshaders[name] = vertexShader;
 }
 
 void ContentManager::CreatePShader(std::wstring shader)
 {
 	std::wstring compiledName = shader.substr(0, shader.length() - 4);
 	compiledName += L"cso";
-	std::wstring outputDirPath = L"Debug/";
-	outputDirPath = outputDirPath + compiledName;
+	std::wstring releasePath = L"Debug/";
+	releasePath = releasePath + compiledName;
+
+	std::wstring debugPath = L"Assets/VShaders/" + compiledName;
 
 	SimplePixelShader* pixelShader = new SimplePixelShader(m_device, m_context);
-	if (!pixelShader->LoadShaderFile(outputDirPath.c_str()))
+	if (!pixelShader->LoadShaderFile(releasePath.c_str()))
 		pixelShader->LoadShaderFile(compiledName.c_str());
 
 	// You'll notice that the code above attempts to load each

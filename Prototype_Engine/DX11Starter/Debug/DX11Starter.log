@@ -1,6 +1,2 @@
-﻿  ContentManager.cpp
-d:\profiles\spc1802\swamped\prototype_engine\dx11starter\contentmanager.cpp(106): warning C4018: '<': signed/unsigned mismatch
-d:\profiles\spc1802\swamped\prototype_engine\dx11starter\contentmanager.cpp(110): warning C4018: '<': signed/unsigned mismatch
-d:\profiles\spc1802\swamped\prototype_engine\dx11starter\contentmanager.cpp(115): warning C4018: '<': signed/unsigned mismatch
-  DX11Starter.vcxproj -> D:\Profiles\spc1802\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.exe
+﻿  DX11Starter.vcxproj -> D:\Profiles\spc1802\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.exe
   DX11Starter.vcxproj -> D:\Profiles\spc1802\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.pdb (Full PDB)

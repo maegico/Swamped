@@ -24,6 +24,7 @@ public:
 	DirectX::XMFLOAT3 getRotation();
 	DirectX::XMFLOAT3 getScale();
 	Material* getMat();
+	Mesh* getMesh() { return mesh; };
 
 	void setWorldMatrix(DirectX::XMFLOAT4X4 worldMat);
 	void setPosition(DirectX::XMFLOAT3 position);
