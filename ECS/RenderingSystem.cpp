@@ -9,6 +9,9 @@ RenderingSystem::RenderingSystem(IDXGISwapChain * swapChain, ID3D11Device * devi
 	m_context = context;
 	m_backBufferRTV = renderTargetView;
 	m_depthStencilView = depthStencilView;
+	m_dirLights[0] = { {1,0,0,1},{.1f,0,0,1},{0,1,1} };
+	m_dirLights[1] = { { 0,1,0,1 },{ .1f,0,0,1 },{ 1,1,0 } };
+	m_dirLights[2] = { { 0,0,1,1 },{ .1f,0,0,1 },{ 1,0,1 } };
 }
 
 void RenderingSystem::Update(Game * g, float dt) {
@@ -50,8 +53,9 @@ void RenderingSystem::Update(Game * g, float dt) {
 		//  - If you skip this, the "SetMatrix" calls above won't make it to the GPU!
 		vertexShader->CopyAllBufferData();
 
-		//pixelShader->SetData("light", &dLight, sizeof(DirectionalLight));
-		//pixelShader->SetData("light2", &dLight2, sizeof(DirectionalLight));
+		pixelShader->SetData("dirLight1", &m_dirLights[0], sizeof(DirectionalLight));
+		pixelShader->SetData("dirLight2", &m_dirLights[1], sizeof(DirectionalLight));
+		pixelShader->SetData("dirLight3", &m_dirLights[2], sizeof(DirectionalLight));
 		pixelShader->SetShaderResourceView("diffuseTexture", rc.m_material.textureView);
 		pixelShader->SetSamplerState("basicSampler", rc.m_material.samplerState);
 		pixelShader->CopyAllBufferData();
