@@ -57,16 +57,17 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	m_samplers = std::unordered_map<std::string, ID3D11SamplerState*>();
 	m_vshaders = std::unordered_map<std::string, SimpleVertexShader*>();
 	m_pshaders = std::unordered_map<std::string, SimplePixelShader*>();
+	m_textures = std::unordered_map<std::string, ID3D11ShaderResourceView*>();
 	
 
 	//below is placed on the stack, since I won't need them after this
 	//below here is probably where I will probe the files for the needed info
 	//the below isn't so terrible anymore, but still
 	//these make sense though since we will go through all the files in a file location and grab all there names saving them inside the below vectors and more vectors
-	std::vector<std::wstring> vshaders;	//see if I can change this <- this is going to be terrible
-	std::vector<std::wstring> pshaders;	//see if I can change this <- this is going to be terrible
-	std::vector<std::wstring> textures;
-	std::vector<std::string> models;
+	std::vector<std::wstring>	vshaders;	//see if I can change this <- this is going to be terrible
+	std::vector<std::wstring>	pshaders;	//see if I can change this <- this is going to be terrible
+	std::vector<std::wstring>	textures;
+	std::vector<std::string>	models;
 
 	FindFilesInFolderWSTR(L"Assets/VShaders", vshaders);
 	FindFilesInFolderWSTR(L"Assets/PShaders", pshaders);

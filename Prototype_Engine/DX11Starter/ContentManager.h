@@ -36,15 +36,15 @@ public:
 private:
 	//could possibly use an unordered map
 	//also, need to allow for multiple textures
-	std::unordered_map<std::string, Material*>					m_materials;//List of materials
 	std::unordered_map<std::string, Mesh*>						m_meshes;	//List of meshes
 	std::unordered_map<std::string, ID3D11SamplerState*>		m_samplers;	//List of sampler states
 	std::unordered_map<std::string, ID3D11ShaderResourceView*>	m_textures;	//List of textures
 	std::unordered_map<std::string, SimpleVertexShader*>		m_vshaders;	//List of vertex shaders
 	std::unordered_map<std::string, SimplePixelShader*>			m_pshaders;	//List of pixel shaders
+	std::unordered_map<std::string, Material*>					m_materials;//List of materials
 
-	ID3D11Device*								m_device;		//Pointer to the D3D11 Device
-	ID3D11DeviceContext*						m_context;		//Pointer to the D3D11 Device Context
+	ID3D11Device*			m_device;		//Pointer to the D3D11 Device
+	ID3D11DeviceContext*	m_context;		//Pointer to the D3D11 Device Context
 
 	//Creates a mesh of the passed in .obj file and save it into a std::map  
 	void CreateMesh(std::string objFile);

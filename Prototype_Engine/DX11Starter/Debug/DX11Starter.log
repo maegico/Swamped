@@ -1,11 +1,15 @@
-﻿  Game.cpp
+﻿  Main.cpp
+  Game.cpp
 d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(41): warning C4018: '<': signed/unsigned mismatch
 d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(113): warning C4018: '<': signed/unsigned mismatch
 d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(144): warning C4018: '<': signed/unsigned mismatch
 d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(221): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
 d:\profiles\spc1802\swamped\prototype_engine\dx11starter\game.cpp(222): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-  DXCore.cpp
-d:\profiles\spc1802\swamped\prototype_engine\dx11starter\dxcore.cpp(71): warning C4101: 'p': unreferenced local variable
+  ContentManager.cpp
+d:\profiles\spc1802\swamped\prototype_engine\dx11starter\contentmanager.cpp(80): warning C4018: '<': signed/unsigned mismatch
+d:\profiles\spc1802\swamped\prototype_engine\dx11starter\contentmanager.cpp(84): warning C4018: '<': signed/unsigned mismatch
+d:\profiles\spc1802\swamped\prototype_engine\dx11starter\contentmanager.cpp(88): warning C4018: '<': signed/unsigned mismatch
+d:\profiles\spc1802\swamped\prototype_engine\dx11starter\contentmanager.cpp(92): warning C4018: '<': signed/unsigned mismatch
   Generating Code...
   DX11Starter.vcxproj -> D:\Profiles\spc1802\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.exe
   DX11Starter.vcxproj -> D:\Profiles\spc1802\Swamped\Prototype_Engine\DX11Starter\Debug\DX11Starter.pdb (Full PDB)
