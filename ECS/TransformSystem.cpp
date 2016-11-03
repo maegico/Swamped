@@ -16,19 +16,7 @@ void TransformSystem::Update(Game * g, float dt) {
 		TransformComponent tc;
 		tc.m_position = XMFLOAT3((rand() % 50) - 25, (rand() % 50) - 25, (rand() % 50) - 25);
 		vector<CollisionType> cTypes = { CollisionType::none };
-		Constructors::CreateTransform(g, tc, pc, {
-			{
-				{ -1,-1,-1 },
-				{ -1,-1,1 },
-				{ -1,1,-1 },
-				{ -1,1,1 },
-				{ 1,-1,-1 },
-				{ 1,-1,1 },
-				{ 1,1,-1 },
-				{ 1,1,1 }
-			},
-			MakeCollisionMask(cTypes)
-		});
+		Constructors::CreateTransform(g, tc, pc, MakeCollisionMask(cTypes));
 	}
 
 	//Movement

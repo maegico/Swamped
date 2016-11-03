@@ -339,15 +339,17 @@ void ContentManager::CreateMeshStore(std::string objFile)
 	m_device->CreateBuffer(&ibd, &initialIndexData, &indexBuffer);
 	Mesh m = { vertexBuffer, indexBuffer, indCount };
 	MeshStore ms = { m,{
-			{ maxFloat.x,maxFloat.y,maxFloat.z },
-			{ maxFloat.x,maxFloat.y,-maxFloat.z },
-			{ maxFloat.x,-maxFloat.y,maxFloat.z },
-			{ maxFloat.x,-maxFloat.y,-maxFloat.z },
-			{ -maxFloat.x,maxFloat.y,maxFloat.z },
-			{ -maxFloat.x,maxFloat.y,-maxFloat.z },
-			{ -maxFloat.x,-maxFloat.y,maxFloat.z },
-			{ -maxFloat.x,-maxFloat.y,-maxFloat.z }
-		} 
+			{
+				{ maxFloat.x,maxFloat.y,maxFloat.z },
+				{ maxFloat.x,maxFloat.y,-maxFloat.z },
+				{ maxFloat.x,-maxFloat.y,maxFloat.z },
+				{ maxFloat.x,-maxFloat.y,-maxFloat.z },
+				{ -maxFloat.x,maxFloat.y,maxFloat.z },
+				{ -maxFloat.x,maxFloat.y,-maxFloat.z },
+				{ -maxFloat.x,-maxFloat.y,maxFloat.z },
+				{ -maxFloat.x,-maxFloat.y,-maxFloat.z }
+			} 
+		}
 	};
 	m_meshStores[objFile] = ms;
 }
