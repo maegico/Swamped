@@ -164,6 +164,7 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
     <ClInclude Include="FreeVector.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="LockVector.h" />
+    <ClInclude Include="MeshStore.h" />
     <ClInclude Include="RenderingComponent.h" />
     <ClInclude Include="RenderingSystem.h" />
     <ClInclude Include="SimpleShader.h" />

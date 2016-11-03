@@ -71,7 +71,7 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	m_vshaders = std::unordered_map<std::string, SimpleVertexShader*>();
 	m_pshaders = std::unordered_map<std::string, SimplePixelShader*>();*/
 	m_materials = std::map<std::string, Material>();
-	m_meshes = std::map<std::string, Mesh>();
+	m_meshStores = std::map<std::string, MeshStore>();
 	m_samplers = std::map<std::string, ID3D11SamplerState*>();
 	m_vshaders = std::map<std::string, SimpleVertexShader*>();
 	m_pshaders = std::map<std::string, SimplePixelShader*>();
@@ -104,7 +104,7 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 
 	for (unsigned int i = 0; i < models.size(); i++)
 	{
-		CreateMesh(models[i]);
+		CreateMeshStore(models[i]);
 	}
 
 	LoadMaterial("TestMaterial", "sampler", "VertexShader.cso", "PixelShader.cso", L"soilrough.png");
@@ -134,9 +134,9 @@ Material ContentManager::LoadMaterial(std::string name, std::string samplerName,
 	return mat;
 }
 
-Mesh ContentManager::GetMesh(std::string mesh)
+MeshStore ContentManager::GetMeshStore(std::string mesh)
 {
-	return m_meshes[mesh];
+	return m_meshStores[mesh];
 }
 
 Material ContentManager::GetMaterial(std::string name)
@@ -144,7 +144,7 @@ Material ContentManager::GetMaterial(std::string name)
 	return m_materials[name];
 }
 
-void ContentManager::CreateMesh(std::string objFile)
+void ContentManager::CreateMeshStore(std::string objFile)
 {
 	std::string outputDirPath = "Assets/Models/";
 	outputDirPath = outputDirPath + objFile;
@@ -164,7 +164,9 @@ void ContentManager::CreateMesh(std::string objFile)
 	std::vector<UINT> indices;           // Indices of these verts
 	unsigned int vertCounter = 0;        // Count of vertices/indices
 	char chars[100];                     // String for line reading
-
+	DirectX::XMVECTOR max = DirectX::XMVectorZero();
+	DirectX::XMVECTOR min = DirectX::XMVectorZero();
+	DirectX::XMVECTOR current;
 										 // Still good?
 	while (obj.good())
 	{
@@ -204,7 +206,9 @@ void ContentManager::CreateMesh(std::string objFile)
 				chars,
 				"v %f %f %f",
 				&pos.x, &pos.y, &pos.z);
-
+			current = DirectX::XMLoadFloat3(&pos);
+			max = DirectX::XMVectorMax(max, current);
+			min = DirectX::XMVectorMin(min, current);
 			// Add to the positions
 			positions.push_back(pos);
 		}
@@ -287,6 +291,20 @@ void ContentManager::CreateMesh(std::string objFile)
 	size_t indCount = indices.size();
 	ID3D11Buffer * vertexBuffer = 0;
 	ID3D11Buffer * indexBuffer = 0;
+	DirectX::XMFLOAT3 maxFloat;
+	DirectX::XMFLOAT3 minFloat;
+	DirectX::XMStoreFloat3(&maxFloat, max);
+	DirectX::XMStoreFloat3(&minFloat, min);
+	DirectX::XMFLOAT3 bb[8] = {
+		{maxFloat.x,maxFloat.y,maxFloat.z},
+		{ maxFloat.x,maxFloat.y,-maxFloat.z },
+		{ maxFloat.x,-maxFloat.y,maxFloat.z },
+		{ maxFloat.x,-maxFloat.y,-maxFloat.z },
+		{ -maxFloat.x,maxFloat.y,maxFloat.z },
+		{ -maxFloat.x,maxFloat.y,-maxFloat.z },
+		{ -maxFloat.x,-maxFloat.y,maxFloat.z },
+		{ -maxFloat.x,-maxFloat.y,-maxFloat.z }
+	};
 	
 	// Create the VERTEX BUFFER description
 	D3D11_BUFFER_DESC vbd;
@@ -319,8 +337,19 @@ void ContentManager::CreateMesh(std::string objFile)
 
 	// Actually create the buffer with the initial data
 	m_device->CreateBuffer(&ibd, &initialIndexData, &indexBuffer);
-
-	m_meshes[objFile] = { vertexBuffer, indexBuffer, indCount };
+	Mesh m = { vertexBuffer, indexBuffer, indCount };
+	MeshStore ms = { m,{
+			{ maxFloat.x,maxFloat.y,maxFloat.z },
+			{ maxFloat.x,maxFloat.y,-maxFloat.z },
+			{ maxFloat.x,-maxFloat.y,maxFloat.z },
+			{ maxFloat.x,-maxFloat.y,-maxFloat.z },
+			{ -maxFloat.x,maxFloat.y,maxFloat.z },
+			{ -maxFloat.x,maxFloat.y,-maxFloat.z },
+			{ -maxFloat.x,-maxFloat.y,maxFloat.z },
+			{ -maxFloat.x,-maxFloat.y,-maxFloat.z }
+		} 
+	};
+	m_meshStores[objFile] = ms;
 }
 
 void ContentManager::CreateSamplers(std::string name)
