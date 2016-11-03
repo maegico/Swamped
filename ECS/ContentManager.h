@@ -12,6 +12,7 @@
 #include "SimpleShader.h"
 #include "Vertex.h"
 #include "RenderingComponent.h"
+#include "MeshStore.h"
 
 class ContentManager
 {
@@ -26,8 +27,8 @@ public:
 
 	void Init(ID3D11Device* device, ID3D11DeviceContext* context);
 
-	Material LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::wstring textureName);
-	Mesh GetMesh(std::string);
+	Material LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::string textureName);
+	MeshStore GetMeshStore(std::string);
 	Material GetMaterial(std::string);
 
 
@@ -37,7 +38,7 @@ private:
 	//could possibly use an unordered map
 	//also, need to allow for multiple textures
 	std::unordered_map<std::string, Material>					m_materials;	//List of materials
-	std::unordered_map<std::string, Mesh>						m_meshes;		//List of meshes
+	std::unordered_map<std::string, MeshStore>					m_meshStores;		//List of meshes
 	std::unordered_map<std::string, ID3D11SamplerState*>		m_samplers;		//List of sampler states
 	std::unordered_map<std::string, ID3D11ShaderResourceView*>	m_textures;	//List of textures
 	std::unordered_map<std::string, SimpleVertexShader*>		m_vshaders;		//List of vertex shaders
@@ -53,7 +54,7 @@ private:
 	ID3D11DeviceContext*						m_context;		//Pointer to the D3D11 Device Context
 
 	//Creates a mesh of the passed in .obj file and save it into a std::map  
-	void CreateMesh(std::string objFile);
+	void CreateMeshStore(std::string objFile);
 	//Creates a sampler states and save it into a std::map using the passed in name
 	void CreateSamplers(std::string name);
 	void CreateTexture(std::wstring textureName);
