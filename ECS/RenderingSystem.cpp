@@ -74,6 +74,7 @@ void RenderingSystem::Update(Game * g, float dt) {
 		UINT stride = sizeof(Vertex);
 		UINT offset = 0;
 		ID3D11Buffer * vb = m.vertexBuffer;
+		m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		m_context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
 		m_context->IASetIndexBuffer(m.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 

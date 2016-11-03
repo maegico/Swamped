@@ -1,9 +1,12 @@
 #pragma once
 #include "System.h"
 #include "CollisionComponent.h"
+#include "CollisionFunctions.h"
+#include "LockVector.h"
 #include <DirectXMath.h>
 #include <mutex>
 #include <ppl.h>
+#include <map>
 
 using namespace Concurrency;
 
@@ -18,4 +21,5 @@ private:
 	//Pre-allocated list of the current frame's AABBs
 	vector<MaxMin> m_aabbs;
 	mutex m_collisionsMutex;
+	map<CollisionFunction, LockVector<pair<unsigned int, unsigned int>>> m_collisionMap;
 };

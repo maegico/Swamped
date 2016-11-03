@@ -34,6 +34,26 @@ void Game::Init() {
 	m_cm->Init(m_device, m_context);
 	m_rs = new RenderingSystem(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 
+	/*PhysicsComponent pc;
+	pc.m_velocity = XMFLOAT3(0, 0, 0);
+	pc.m_acceleration = XMFLOAT3(0, 0, 0);
+	XMStoreFloat4(&pc.m_rotationalVelocity, XMQuaternionRotationRollPitchYaw(1, 0, 0));
+	XMStoreFloat4(&pc.m_rotationalAcceleration, XMQuaternionRotationRollPitchYaw(0, 0, 0));
+	TransformComponent tc;
+	tc.m_position = XMFLOAT3((rand() % 50) - 25, (rand() % 50) - 25, (rand() % 50) - 25);
+	Constructors::CreateTransform(this, tc, pc, {
+		{
+			{ -1,-1,-1 },
+			{ -1,-1,1 },
+			{ -1,1,-1 },
+			{ -1,1,1 },
+			{ 1,-1,-1 },
+			{ 1,-1,1 },
+			{ 1,1,-1 },
+			{ 1,1,1 }
+		},
+		CollisionType::none
+	});*/
 	//Constructors::CreateTransform(this, {}, {}, {});
 }
 
