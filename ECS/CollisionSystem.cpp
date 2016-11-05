@@ -35,7 +35,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 	FreeVector<TransformComponent> tcs = ts->GetComponentList1();
 	TransformComponent * tc;
 	XMVECTOR original;
-	XMVECTOR rotation;
+	//XMVECTOR rotation;
 	XMFLOAT3 rotatedObb[8];
 	XMMATRIX modelToWorld;
 	XMVECTOR max;
