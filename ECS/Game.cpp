@@ -34,6 +34,7 @@ void Game::Init() {
 	m_cm->Init(m_device, m_context);
 	m_rs = new RenderingSystem(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 
+	Constructors::CreateTransform(this);
 	/*PhysicsComponent pc;
 	pc.m_velocity = XMFLOAT3(0, 0, 0);
 	pc.m_acceleration = XMFLOAT3(0, 0, 0);
@@ -69,19 +70,25 @@ void Game::Update(float dt, float totalTime) {
 	m_ts->Update(this, dt);
 	m_cs->Update(this, dt);
 	m_rs->Update(this, dt);
+
+	//remove all entities queued for removal
+	for (unsigned int eId : m_removeQueue) {
+		//call remove on the entity ID for each system associated with the entity
+		vector<SystemBase*> systems = m_entities[eId];
+		for (SystemBase* s : systems) {
+			s->Remove(eId);
+		}
+		//free the ID in entity list
+		m_entities.free(eId);
+	}
+	m_removeQueue.clear();
 }
 
 //Removes an entity from all its systems
-void Game::RemoveEntity(unsigned int entityId) {
+void Game::QueueRemoveEntity(unsigned int entityId) {
 	//bounds check
 	if (m_entities.size() > entityId)
 	{
-		//call remove on the entity ID for each system associated with the entity
-		vector<SystemBase*> systems = m_entities[entityId];
-		for (SystemBase* s : systems) {
-			s->Remove(entityId);
-		}
-		//free the ID in entity list
-		m_entities.free(entityId);
+		m_removeQueue.push_back(entityId);
 	}
 }

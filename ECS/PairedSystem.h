@@ -36,6 +36,7 @@ public:
 	void Collapse() {
 		m_collapsedCount = 0;
 		m_collapsedComponents1.resize(GetCount());
+		m_collapsedComponents2.resize(GetCount());
 		for (unsigned int c = 0; c < m_componentData.size(); c++)
 			if (m_componentData[c].m_active) {
 				m_collapsedComponents1[m_collapsedCount] = m_components1[c];

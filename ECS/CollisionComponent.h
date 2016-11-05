@@ -3,7 +3,7 @@
 #include <vector>
 using namespace std;
 typedef uint8_t CollisionMask;
-enum CollisionType { none };
+enum CollisionType { none, immobile };
 
 CollisionMask MakeCollisionMask(vector<CollisionType> types);
 

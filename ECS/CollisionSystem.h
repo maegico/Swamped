@@ -9,7 +9,6 @@
 #include <map>
 
 using namespace Concurrency;
-
 //A System implementation
 class CollisionSystem : public System<BoundingBox> {
 public:

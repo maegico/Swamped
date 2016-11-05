@@ -79,9 +79,9 @@ void CollisionSystem::Update(Game * g, float dt) {
 		}
 
 		//store final translated max and min in aabb list
-		position = XMLoadFloat3(&tc->m_position);
-		XMStoreFloat3(&m_aabbs[c].m_max, max + position);
-		XMStoreFloat3(&m_aabbs[c].m_min, min + position);
+		//position = XMLoadFloat3(&tc->m_position);
+		XMStoreFloat3(&m_aabbs[c].m_max, max);
+		XMStoreFloat3(&m_aabbs[c].m_min, min);
 		m_aabbs[c].m_cm = cc->m_cm;
 	}
 

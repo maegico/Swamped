@@ -4,9 +4,11 @@
 #include "TransformComponent.h"
 #include "PhysicsComponent.h"
 #include <DirectXMath.h>
+#include <ppl.h>
+using namespace Concurrency;
 using namespace DirectX;
 class TransformSystem : public PairedSystem<TransformComponent, PhysicsComponent> {
 public:
 	void Update(Game * g, float dT);
-	static DirectX::XMMATRIX GetMatrix(TransformComponent tc);
+	static DirectX::XMMATRIX GetMatrix(TransformComponent& tc);
 };
