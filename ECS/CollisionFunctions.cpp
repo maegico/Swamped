@@ -8,6 +8,12 @@ vector<CollisionFunction> CollisionFunctions::GetCollisionFunction(CollisionMask
 	return returnVector;
 }
 
+vector<CollisionFunction> CollisionFunctions::GetAllCollisionFunctions() {
+	return{
+		&NoOpCollision
+	};
+}
+
 void CollisionFunctions::NoOpCollision(Game * g, unsigned int entityId1, unsigned int entityId2, float dt) {
 	g->QueueRemoveEntity(entityId1);
 	g->QueueRemoveEntity(entityId2);

@@ -33,7 +33,7 @@ void RenderingSystem::Update(Game * g, float dt) {
 	unsigned int transformIndex = 0;
 	for (unsigned int c = 0; c < m_collapsedCount; c++) {
 
-		RenderingComponent& rc = m_collapsedComponents[c];
+		RenderingComponent& rc = m_collapsedComponents[c].m_component;
 
 		SimpleVertexShader * vertexShader = rc.m_material.vertexShader;
 		SimplePixelShader * pixelShader = rc.m_material.pixelShader;
@@ -43,7 +43,7 @@ void RenderingSystem::Update(Game * g, float dt) {
 		//    and then copying that entire buffer to the GPU.  
 		//  - The "SimpleShader" class handles all of that for you.
 		DirectX::XMFLOAT4X4 wm;
-		g->m_ts->SearchForEntityId(transformIndex, m_collapsedEntityIds[c]);
+		g->m_ts->SearchForEntityId(transformIndex, m_collapsedComponents[c].m_entityId);
 		XMStoreFloat4x4(&wm, XMMatrixTranspose(TransformSystem::GetMatrix(g->m_ts->GetComponentList1()[transformIndex])));
 		vertexShader->SetMatrix4x4("world", wm);
 		vertexShader->SetMatrix4x4("view", m_camera.GetView());

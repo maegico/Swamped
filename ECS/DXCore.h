@@ -71,6 +71,8 @@ protected:
 	// Helper function for allocating a console window
 	void CreateConsoleWindow(int bufferLines, int bufferColumns, int windowLines, int windowColumns);
 
+	void virtual UpdateTitleBarForGame(std::string in) = 0;
+
 private:
 	// Timing related data
 	double perfCounterSeconds;

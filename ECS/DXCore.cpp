@@ -478,9 +478,10 @@ void DXCore::UpdateTitleBarStats()
 	}
 
 	// Actually update the title bar and reset fps data
-	SetWindowText(hWnd, output.str().c_str());
+	//SetWindowText(hWnd, output.str().c_str());
 	fpsFrameCount = 0;
 	fpsTimeElapsed += 1.0f;
+	UpdateTitleBarForGame(output.str());
 }
 
 // --------------------------------------------------------

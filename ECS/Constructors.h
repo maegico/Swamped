@@ -10,7 +10,7 @@ public:
 		double f = (double)rand() / RAND_MAX;
 		return min + f * (max - min);
 	}
-	static void CreateTransform(Game * g) {
+	static void CreateTestObject(Game * g) {
 		//get entityID and add system list to game
 		unsigned int index = g->m_entities.add(vector<SystemBase*>{
 			g->m_ts, 
@@ -29,7 +29,7 @@ public:
 		//XMStoreFloat3(&pc.m_rotationalAcceleration, XMQuaternionRotationRollPitchYaw(0, 0, 0));
 		TransformComponent tc;
 		//XMStoreFloat3(&tc.m_rotation, XMQuaternionRotationRollPitchYaw(0, 0, 0));
-		tc.m_position = XMFLOAT3(fRand(-50, 50), fRand(0, 50), fRand(-50, 50));
+		tc.m_position = XMFLOAT3(fRand(-100, 100), fRand(0, 100), fRand(-100, 100));
 		//tc.m_position = XMFLOAT3(0, 10, -45);
 		vector<CollisionType> cTypes = { CollisionType::none };
 		//copy collision mask into bounding box

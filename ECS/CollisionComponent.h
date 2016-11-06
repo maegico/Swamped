@@ -19,3 +19,8 @@ struct MaxMin {
 	DirectX::XMFLOAT3 m_min;
 	CollisionMask m_cm;
 };
+
+struct EntityMaxMin {
+	MaxMin m_mm;
+	unsigned int entityId;
+};
