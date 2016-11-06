@@ -7,34 +7,6 @@ ContentManager::ContentManager()
 {
 }
 
-//ContentManager::ContentManager(ID3D11Device* device, ID3D11DeviceContext* context)
-//	:m_device(device), m_context(context)
-//{
-//	device->AddRef();
-//	context->AddRef();
-//
-//	//m_meshes = std::unordered_map<std::string, Mesh*>();
-//	//m_materials = std::unordered_map<std::string, Material*>();
-//
-//	////below is placed on the stack, since I won't need them after this
-//	////below here is probably where I will probe the files for the needed info
-//	////the below isn't so terrible anymore, but still
-//	//	//these make sense though since we will go through all the files in a file location and grab all there names saving them inside the below vectors and more vectors
-//	//std::vector<std::wstring> vshaderNames = { L"VertexShader.cso" };	//see if I can change this <- this is going to be terrible
-//	//std::vector<std::wstring> pshaderNames = { L"PixelShader.cso" };	//see if I can change this <- this is going to be terrible
-//	//std::vector<std::wstring> textures = { L"soilrough.png" , L"styrofoam.png" };
-//	//std::vector<std::string> models = { "cube.obj", "cone.obj", "helix.obj" };
-//
-//	//CreateVShader(vshaderNames[0]);
-//	//CreatePShader(pshaderNames[0]);
-//
-//	//CreateSamplers("sampler");
-//
-//	//CreateMesh(models[0]);
-//	//CreateMesh(models[1]);
-//	//CreateMesh(models[2]);
-//}
-
 ContentManager::~ContentManager()
 {
 	for (auto i = m_meshStores.begin(); i != m_meshStores.end(); i++) {
@@ -81,26 +53,9 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	m_samplers = std::unordered_map<std::string, ID3D11SamplerState*>();
 	m_vshaders = std::unordered_map<std::string, SimpleVertexShader*>();
 	m_textures = std::unordered_map<std::string, ID3D11ShaderResourceView*>();
-//<<<<<<< HEAD
-//	m_pshaders = std::unordered_map<std::string, SimplePixelShader*>();
-//	/*m_materials = std::map<std::string, Material>();
-//	m_meshes = std::map<std::string, Mesh>();
-//=======
-//	m_pshaders = std::unordered_map<std::string, SimplePixelShader*>();*/
-//	m_materials = std::map<std::string, Material>();
-//	m_meshStores = std::map<std::string, MeshStore>();
-//>>>>>>> refs/remotes/origin/Mike-branch
-//	m_samplers = std::map<std::string, ID3D11SamplerState*>();
-//	m_vshaders = std::map<std::string, SimpleVertexShader*>();
-//	m_pshaders = std::map<std::string, SimplePixelShader*>();*/
 	
-
-	//below is placed on the stack, since I won't need them after this
-	//below here is probably where I will probe the files for the needed info
-	//the below isn't so terrible anymore, but still
-	//these make sense though since we will go through all the files in a file location and grab all there names saving them inside the below vectors and more vectors
-	std::vector<std::wstring> vshaderNames;	//see if I can change this <- this is going to be terrible
-	std::vector<std::wstring> pshaderNames;	//see if I can change this <- this is going to be terrible
+	std::vector<std::wstring> vshaderNames;
+	std::vector<std::wstring> pshaderNames;
 	std::vector<std::wstring> textures;
 	std::vector<std::string> models;
 
@@ -111,7 +66,6 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 
 	CreateSamplers("sampler");
 
-	//The below isn't creating the shaders correctly
 	for (unsigned int i = 0; i < vshaderNames.size(); i++)
 	{
 		CreateVShader(vshaderNames[i]);
@@ -132,7 +86,6 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	LoadMaterial("TestMaterial", "sampler", "VertexShader.cso", "PixelShader.cso", "soilrough.png");
 }
 
-//Should I hold a bunch of textures in CM or create on construction of a material
 Material ContentManager::LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::string textureName)
 {
 	SimpleVertexShader* vshader = m_vshaders[vs];
@@ -389,15 +342,12 @@ void ContentManager::CreateSamplers(std::string name)
 
 void ContentManager::CreateTexture(std::wstring textureName)
 {
-	std::wstring releasePath = L"Debug/Assets/Textures/";
-	releasePath = releasePath + textureName;
-	std::wstring debugPath = releasePath.substr(6, releasePath.length() - 6);
+	std::wstring path = L"Assets/Textures/";
+	path = path + textureName;
 
 	ID3D11ShaderResourceView* texture;
 
-	//needs to check whether it is in release or not and choose a path (release or debug)
-
-	HRESULT result = DirectX::CreateWICTextureFromFile(m_device, m_context, debugPath.c_str(), 0, &texture);
+	HRESULT result = DirectX::CreateWICTextureFromFile(m_device, m_context, path.c_str(), 0, &texture);
 	if (result != S_OK)
 		printf("ERROR: Failed to Load Texture.");
 	std::string name(textureName.begin(), textureName.end());
@@ -408,25 +358,10 @@ void ContentManager::CreateVShader(std::wstring shader)
 {
 	std::wstring releasePath = L"VertexShaders/";
 	releasePath = releasePath + shader;
-	//wchar_t begin[] = L"Debug/\0";
-	//size_t len = wcslen(shader);
-	//wchar_t* projDirFilePath = wcsncat(begin, shader, len+1);
-	//Want to figure the above out!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! <- !!!!
 
 	SimpleVertexShader* vertexShader = new SimpleVertexShader(m_device, m_context);
 	if (!vertexShader->LoadShaderFile(releasePath.c_str()))
 		vertexShader->LoadShaderFile(shader.c_str());
-
-	// You'll notice that the code above attempts to load each
-	// compiled shader file (.cso) from two different relative paths.
-
-	// This is because the "working directory" (where relative paths begin)
-	// will be different during the following two scenarios:
-	//  - Debugging in VS: The "Project Directory" (where your .cpp files are) 
-	//  - Run .exe directly: The "Output Directory" (where the .exe & .cso files are)
-
-	// Checking both paths is the easiest way to ensure both 
-	// scenarios work correctly, although others exist
 
 	std::string shaderString(shader.begin(), shader.end());
 	m_vshaders[shaderString] = vertexShader;
@@ -441,22 +376,9 @@ void ContentManager::CreatePShader(std::wstring shader)
 	if (!pixelShader->LoadShaderFile(releasePath.c_str()))
 		pixelShader->LoadShaderFile(shader.c_str());
 
-	// You'll notice that the code above attempts to load each
-	// compiled shader file (.cso) from two different relative paths.
-
-	// This is because the "working directory" (where relative paths begin)
-	// will be different during the following two scenarios:
-	//  - Debugging in VS: The "Project Directory" (where your .cpp files are) 
-	//  - Run .exe directly: The "Output Directory" (where the .exe & .cso files are)
-
-	// Checking both paths is the easiest way to ensure both 
-	// scenarios work correctly, although others exist
-
 	std::string shaderString(shader.begin(), shader.end());
 	m_pshaders[shaderString] = pixelShader;
 }
-
-//I could make the below better, by
 
 //I took the basic code from below and modified it to work for both UNICODE and non-UNICODE character sets
 //Got it from: http://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
@@ -486,7 +408,7 @@ void ContentManager::FindFilesInFolder(std::wstring folder, std::vector<std::str
 	std::wstring path = folder + L"/*.*";
 	std::string pathSTR(path.begin(), path.end());
 	WIN32_FIND_DATA fd;
-	//for the below to work they need to run with findfilefirstW not A
+
 	HANDLE hFind = ::FindFirstFile(pathSTR.c_str(), &fd);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {
@@ -503,15 +425,14 @@ void ContentManager::FindFilesInFolder(std::wstring folder, std::vector<std::str
 #endif
 }
 
-//I didn't code this
+//I took the basic code from below and modified it to work for both UNICODE and non-UNICODE character sets
 //Got it from: http://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
 void ContentManager::FindFilesInFolderWSTR(std::wstring folder, std::vector<std::wstring>& listOfFiles)
 {
 #ifdef UNICODE
 	std::wstring path = folder + L"/*.*";
-
 	WIN32_FIND_DATA fd;
-	//for the below to work they need to run with findfilefirstW not A
+
 	HANDLE hFind = ::FindFirstFile(path.c_str(), &fd);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {
@@ -530,7 +451,7 @@ void ContentManager::FindFilesInFolderWSTR(std::wstring folder, std::vector<std:
 	std::wstring path = folder + L"/*.*";
 	std::string pathSTR(path.begin(), path.end());
 	WIN32_FIND_DATA fd;
-	//for the below to work they need to run with findfilefirstW not A
+
 	HANDLE hFind = ::FindFirstFile(pathSTR.c_str(), &fd);
 	if (hFind != INVALID_HANDLE_VALUE) {
 		do {
