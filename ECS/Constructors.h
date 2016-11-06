@@ -29,8 +29,8 @@ public:
 		//XMStoreFloat3(&pc.m_rotationalAcceleration, XMQuaternionRotationRollPitchYaw(0, 0, 0));
 		TransformComponent tc;
 		//XMStoreFloat3(&tc.m_rotation, XMQuaternionRotationRollPitchYaw(0, 0, 0));
-		//tc.m_position = XMFLOAT3(fRand(-50, 50), fRand(0, 50), fRand(-50, 50));
-		tc.m_position = XMFLOAT3(0, 10, -45);
+		tc.m_position = XMFLOAT3(fRand(-50, 50), fRand(0, 50), fRand(-50, 50));
+		//tc.m_position = XMFLOAT3(0, 10, -45);
 		vector<CollisionType> cTypes = { CollisionType::none };
 		//copy collision mask into bounding box
 		ms.m_bb.m_cm = MakeCollisionMask(cTypes);

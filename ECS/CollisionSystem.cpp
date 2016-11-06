@@ -55,7 +55,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 		//	continue;
 
 		cc = &m_collapsedComponents[c]; //get component
-		entityId = m_componentData[c].GetEntityId(); //get entityID
+		entityId = m_collapsedEntityIds[c]; //get entityID
 
 		//search for the index of this component's corresponding transform
 		ts->SearchForEntityId(transformIndex, entityId);
@@ -120,7 +120,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 					auto pair = std::make_pair(cf, LockVector<std::pair<unsigned int, unsigned int>>());
 					m_collisionMap.emplace(pair);
 					//push the entityIDs to the vector under this collision function
-					m_collisionMap[pair.first].push_back(std::make_pair(c, n));
+					m_collisionMap[pair.first].push_back(std::make_pair(m_collapsedEntityIds[c], m_collapsedEntityIds[n]));
 				}
 			}
 		}

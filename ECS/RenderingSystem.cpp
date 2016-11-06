@@ -2,7 +2,8 @@
 #include "Game.h"
 
 RenderingSystem::RenderingSystem(IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView) {
-	m_camera = Camera(XMFLOAT3(0, 0, -50));
+	m_camera = Camera(XMFLOAT3(0, 5, -50));
+	m_camera.RotationDelta(.5, 0);
 	m_camera.CreateProjectionMatrix(1920, 1080, 103);
 	m_swapChain = swapChain;
 	m_device = device;
@@ -15,6 +16,8 @@ RenderingSystem::RenderingSystem(IDXGISwapChain * swapChain, ID3D11Device * devi
 }
 
 void RenderingSystem::Update(Game * g, float dt) {
+	Collapse();
+	m_camera.Update();
 	// Background color (Cornflower Blue in this case) for clearing
 	const float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };
 
@@ -28,11 +31,9 @@ void RenderingSystem::Update(Game * g, float dt) {
 		1.0f,
 		0);
 	unsigned int transformIndex = 0;
-	for (unsigned int c = 0; c < m_componentData.size(); c++) {
-		if (!m_componentData[c].m_active)
-			continue;
+	for (unsigned int c = 0; c < m_collapsedCount; c++) {
 
-		RenderingComponent& rc = m_components[c];
+		RenderingComponent& rc = m_collapsedComponents[c];
 
 		SimpleVertexShader * vertexShader = rc.m_material.vertexShader;
 		SimplePixelShader * pixelShader = rc.m_material.pixelShader;
@@ -42,7 +43,7 @@ void RenderingSystem::Update(Game * g, float dt) {
 		//    and then copying that entire buffer to the GPU.  
 		//  - The "SimpleShader" class handles all of that for you.
 		DirectX::XMFLOAT4X4 wm;
-		g->m_ts->SearchForEntityId(transformIndex, m_componentData[c].GetEntityId());
+		g->m_ts->SearchForEntityId(transformIndex, m_collapsedEntityIds[c]);
 		XMStoreFloat4x4(&wm, XMMatrixTranspose(TransformSystem::GetMatrix(g->m_ts->GetComponentList1()[transformIndex])));
 		vertexShader->SetMatrix4x4("world", wm);
 		vertexShader->SetMatrix4x4("view", m_camera.GetView());

@@ -37,10 +37,14 @@ public:
 		m_collapsedCount = 0;
 		m_collapsedComponents1.resize(GetCount());
 		m_collapsedComponents2.resize(GetCount());
+		m_collapsedEntityIds.resize(GetCount());
+		m_collapsedHandles.resize(GetCount());
 		for (unsigned int c = 0; c < m_componentData.size(); c++)
 			if (m_componentData[c].m_active) {
 				m_collapsedComponents1[m_collapsedCount] = m_components1[c];
 				m_collapsedComponents2[m_collapsedCount] = m_components2[c];
+				m_collapsedEntityIds[m_collapsedCount] = m_componentData[c].GetEntityId();
+				m_collapsedHandles[m_collapsedCount] = c;
 				m_collapsedCount++;
 			}
 	}
@@ -79,6 +83,8 @@ public:
 	PairedSystem() : SystemBase(){
 		m_components1 = FreeVector<T>();
 		m_components2 = FreeVector<U>();
+		m_collapsedEntityIds = vector<unsigned int>();
+		m_collapsedHandles = vector<unsigned int>();
 		m_handles = map<unsigned int, unsigned int>();
 	}
 	~PairedSystem() {}
@@ -91,6 +97,8 @@ protected:
 
 	vector<T> m_collapsedComponents1;
 	vector<U> m_collapsedComponents2;
+	vector<unsigned int> m_collapsedEntityIds;
+	vector<unsigned int> m_collapsedHandles;
 	unsigned int m_collapsedCount = 0;
 private:
 	//Holds entityId - index pairs
