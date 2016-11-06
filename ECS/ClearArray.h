@@ -10,8 +10,8 @@ public:
 			m_count++;
 		}
 	}
-	T& operator[](const int index) {
-		if (index >= m_count || index < 0)
+	T& operator[](const unsigned int index) {
+		if (index >= m_count)
 			throw "Out of range";
 		return m_data[index];
 	}

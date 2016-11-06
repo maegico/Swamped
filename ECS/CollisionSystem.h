@@ -9,7 +9,7 @@
 #include <mutex>
 #include <ppl.h>
 #include <map>
-
+using namespace DirectX;
 using namespace Concurrency;
 //A System implementation
 class CollisionSystem : public System<BoundingBox> {
@@ -20,7 +20,11 @@ public:
 	~CollisionSystem();
 private:
 	//Pre-allocated list of the current frame's AABBs
-	vector<MaxMin> m_aabbs;
+	vector<CollapsedComponent<MaxMin>> m_aabbs;
 	mutex m_collisionsMutex;
 	map<CollisionFunction, LockVector<pair<unsigned int, unsigned int>>> m_collisionMap;
+	ClearVector<ClearVector<CollapsedComponent<MaxMin>>> m_spatialHashGrid;
+	// m_mapMin;
+	//XMFLOAT3 m_cellDimensions;
+	XMFLOAT3 m_cellCounts;
 };

@@ -3,6 +3,8 @@
 #include "Game.h"
 #include "CollisionFunctions.h"
 
+#define CELL_DIVISIONS 9
+
 using namespace DirectX;
 
 CollisionMask MakeCollisionMask(vector<CollisionType> types) {
@@ -16,7 +18,10 @@ CollisionMask MakeCollisionMask(vector<CollisionType> types) {
 }
 
 CollisionSystem::CollisionSystem() {
-	
+	auto cfs = CollisionFunctions::GetAllCollisionFunctions();
+	for (auto cf : cfs) {
+		m_collisionMap.emplace(pair<CollisionFunction, LockVector<pair<unsigned int, unsigned int>>>(cf, LockVector<pair<unsigned int, unsigned int>>()));
+	}
 }
 
 CollisionSystem::~CollisionSystem() {
@@ -41,7 +46,10 @@ void CollisionSystem::Update(Game * g, float dt) {
 	XMMATRIX modelToWorld;
 	XMVECTOR max;
 	XMVECTOR min;
-	XMVECTOR position;
+	XMVECTOR globalMax = XMLoadFloat3(&XMFLOAT3(-FLT_MAX, -FLT_MAX, -FLT_MAX));
+	XMVECTOR globalMin = XMLoadFloat3(&XMFLOAT3(FLT_MAX, FLT_MAX, FLT_MAX));
+	XMVECTOR globalPad = XMLoadFloat3(&XMFLOAT3(1, 1, 1));
+	//XMVECTOR position;
 
 	//size aabb list appropriately
 	m_aabbs.resize(m_components.count()); //use count to avoid dead elements in aabb list
@@ -54,8 +62,8 @@ void CollisionSystem::Update(Game * g, float dt) {
 		//if (!m_componentData[c].m_active)
 		//	continue;
 
-		cc = &m_collapsedComponents[c]; //get component
-		entityId = m_collapsedEntityIds[c]; //get entityID
+		cc = &m_collapsedComponents[c].m_component; //get component
+		entityId = m_collapsedComponents[c].m_entityId; //get entityID
 
 		//search for the index of this component's corresponding transform
 		ts->SearchForEntityId(transformIndex, entityId);
@@ -89,38 +97,83 @@ void CollisionSystem::Update(Game * g, float dt) {
 		}
 		//store final translated max and min in aabb list
 		//position = XMLoadFloat3(&tc->m_position);
-		XMStoreFloat3(&m_aabbs[c].m_max, max);
-		XMStoreFloat3(&m_aabbs[c].m_min, min);
-		m_aabbs[c].m_cm = cc->m_cm;
+		XMStoreFloat3(&m_aabbs[c].m_component.m_max, max);
+		XMStoreFloat3(&m_aabbs[c].m_component.m_min, min);
+		globalMax = XMVectorMax(globalMax, max);
+		globalMin = XMVectorMin(globalMin, min);
+		m_aabbs[c].m_component.m_cm = cc->m_cm;
+		m_aabbs[c].m_entityId = entityId;
+		m_aabbs[c].m_handle = m_collapsedComponents[c].m_handle;
 	}
 
-	//Collision checking
+	globalMax = XMVectorAdd(globalMax, globalPad);
+	globalMin = XMVectorSubtract(globalMin, globalPad);
+
+	//prep spatial hash grid
+	//XMStoreFloat3(&m_mapMin, globalMin);
+	XMVECTOR dimensions = XMVectorSubtract(globalMax, globalMin);
+	dimensions = XMVectorScale(dimensions, 1.0f/CELL_DIVISIONS);
+	//XMStoreFloat3(&m_cellDimensions, dimensions);
+	m_cellCounts = XMFLOAT3(CELL_DIVISIONS, CELL_DIVISIONS, CELL_DIVISIONS);
+	for (unsigned int c = 0; c < m_spatialHashGrid.size(); c++)
+		m_spatialHashGrid[c].clear();
+	m_spatialHashGrid.resize(m_cellCounts.x * m_cellCounts.y * m_cellCounts.z);
+
+	//populate spatial hash grid
+	parallel_for(size_t(0), m_collapsedCount, [&](unsigned int c) {
+		MaxMin aabb = m_aabbs[c].m_component;
+		XMFLOAT3 bb[8] = {
+			{aabb.m_max.x, aabb.m_max.y, aabb.m_max.z},
+			{ aabb.m_max.x, aabb.m_max.y, aabb.m_min.z },
+			{ aabb.m_max.x, aabb.m_min.y, aabb.m_max.z },
+			{ aabb.m_max.x, aabb.m_min.y, aabb.m_min.z },
+			{ aabb.m_min.x, aabb.m_max.y, aabb.m_max.z },
+			{ aabb.m_min.x, aabb.m_max.y, aabb.m_min.z },
+			{ aabb.m_min.x, aabb.m_min.y, aabb.m_max.z },
+			{ aabb.m_min.x, aabb.m_min.y, aabb.m_min.z }
+		};
+		XMVECTOR pointxm;
+		ClearArray<8, unsigned int> gridIndices;
+		for (auto& point : bb) {
+			pointxm = XMLoadFloat3(&point);
+			XMStoreFloat3(&point, XMVectorFloor(XMVectorDivide(XMVectorSubtract(pointxm, globalMin), dimensions)));
+			gridIndices.push(point.z * m_cellCounts.x * m_cellCounts.y + point.y * m_cellCounts.x + point.x, true);
+		}
+		for (unsigned int n = 0; n < gridIndices.size(); n++) {
+			m_spatialHashGrid[gridIndices[n]].add(m_aabbs[c]);
+		}
+	});
 
 	//clear collision map
 	for (auto& kv : m_collisionMap) {
 		kv.second.clear();
 	}
 
-	//iterate through all unique pairs
-	parallel_for(size_t(0), m_collapsedCount - 1, [&](unsigned int c) {
-		MaxMin aabb1 = m_aabbs[c];
-		MaxMin aabb2;
-		for (unsigned int n = c + 1; n < m_collapsedCount; n++) {
-			aabb2 = m_aabbs[n];
+	//check collisions
+	parallel_for(size_t(0), m_spatialHashGrid.size(), [&](unsigned int b) {
+		auto bucketCv = m_spatialHashGrid[b];
+		if (bucketCv.size() == 0)
+			return;
+		for (unsigned int c = 0; c < bucketCv.size()-1; c++) {
+			MaxMin aabb1 = bucketCv[c].m_component;
+			MaxMin aabb2;
+			for (unsigned int n = c + 1; n < bucketCv.size(); n++) {
+				aabb2 = bucketCv[n].m_component;
 
-			//add pair of indices on collision
-			if (aabb1.m_max.x > aabb2.m_min.x && aabb1.m_min.x < aabb2.m_max.x
-				&& aabb1.m_max.y > aabb2.m_min.y && aabb1.m_min.y < aabb2.m_max.y
-				&& aabb1.m_max.z > aabb2.m_min.z && aabb1.m_min.z < aabb2.m_max.z)
-			{
-				//Get correct collision function and emplace it into the collision map along with an empty lock vector
-				vector<CollisionFunction> cfs = CollisionFunctions::GetCollisionFunction(aabb1.m_cm, aabb2.m_cm);
-				for (auto cf : cfs)
+				//add pair of indices on collision
+				if (aabb1.m_max.x > aabb2.m_min.x && aabb1.m_min.x < aabb2.m_max.x
+					&& aabb1.m_max.y > aabb2.m_min.y && aabb1.m_min.y < aabb2.m_max.y
+					&& aabb1.m_max.z > aabb2.m_min.z && aabb1.m_min.z < aabb2.m_max.z)
 				{
-					auto pair = std::make_pair(cf, LockVector<std::pair<unsigned int, unsigned int>>());
-					m_collisionMap.emplace(pair);
-					//push the entityIDs to the vector under this collision function
-					m_collisionMap[pair.first].push_back(std::make_pair(m_collapsedEntityIds[c], m_collapsedEntityIds[n]));
+					//Get correct collision function and emplace it into the collision map along with an empty lock vector
+					vector<CollisionFunction> cfs = CollisionFunctions::GetCollisionFunction(aabb1.m_cm, aabb2.m_cm);
+					for (auto cf : cfs)
+					{
+						//auto pair = std::make_pair(cf, LockVector<std::pair<unsigned int, unsigned int>>());
+						//m_collisionMap.emplace(pair);
+						//push the entityIDs to the vector under this collision function
+						m_collisionMap[cf].push_back(std::make_pair(bucketCv[c].m_entityId, bucketCv[n].m_entityId));
+					}
 				}
 			}
 		}

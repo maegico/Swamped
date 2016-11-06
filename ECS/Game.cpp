@@ -34,7 +34,7 @@ void Game::Init() {
 	m_cm->Init(m_device, m_context);
 	m_rs = new RenderingSystem(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 
-	Constructors::CreateTransform(this);
+	Constructors::CreateTestObject(this);
 	/*PhysicsComponent pc;
 	pc.m_velocity = XMFLOAT3(0, 0, 0);
 	pc.m_acceleration = XMFLOAT3(0, 0, 0);
@@ -92,4 +92,8 @@ void Game::QueueRemoveEntity(unsigned int entityId) {
 	{
 		m_removeQueue.push_back(entityId);
 	}
+}
+
+void Game::UpdateTitleBarForGame(std::string in) {
+	SetWindowText(hWnd, (in + " " + std::to_string(m_ts->GetCount())).c_str());
 }

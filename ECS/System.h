@@ -1,6 +1,7 @@
 #pragma once
 #include "SystemBase.h"
 #include "ComponentData.h"
+#include "CollapsedComponent.h"
 #include "FreeVector.h"
 #include <vector>
 #include <map>
@@ -37,13 +38,13 @@ public:
 	void Collapse() {
 		m_collapsedCount = 0;
 		m_collapsedComponents.resize(GetCount());
-		m_collapsedEntityIds.resize(GetCount());
-		m_collapsedHandles.resize(GetCount());
+		//m_collapsedEntityIds.resize(GetCount());
+		//m_collapsedHandles.resize(GetCount());
 		for (unsigned int c = 0; c < m_componentData.size(); c++)
 			if (m_componentData[c].m_active) {
-				m_collapsedComponents[m_collapsedCount] = m_components[c];
-				m_collapsedEntityIds[m_collapsedCount] = m_componentData[c].GetEntityId();
-				m_collapsedHandles[m_collapsedCount] = c;
+				m_collapsedComponents[m_collapsedCount] = { m_components[c], m_componentData[c].GetEntityId(), c };
+				//m_collapsedEntityIds[m_collapsedCount] = m_componentData[c].GetEntityId();
+				//m_collapsedHandles[m_collapsedCount] = c;
 				m_collapsedCount++;
 			}
 	}
@@ -66,18 +67,18 @@ public:
 	//Initializes m_components and m_handles
 	System() : SystemBase() {
 		m_components = FreeVector<T>();
-		m_collapsedComponents = vector<T>();
-		m_collapsedEntityIds = vector<unsigned int>();
-		m_collapsedHandles = vector<unsigned int>();
+		m_collapsedComponents = vector<CollapsedComponent<T>>();
+		//m_collapsedEntityIds = vector<unsigned int>();
+		//m_collapsedHandles = vector<unsigned int>();
 		m_handles = map<unsigned int, unsigned int>();
 	}
 	~System(){}
 protected:
 	//Holds components
 	FreeVector<T>  m_components;
-	vector<T> m_collapsedComponents;
-	vector<unsigned int> m_collapsedEntityIds;
-	vector<unsigned int> m_collapsedHandles;
+	vector<CollapsedComponent<T>> m_collapsedComponents;
+	//vector<unsigned int> m_collapsedEntityIds;
+	//vector<unsigned int> m_collapsedHandles;
 	unsigned int m_collapsedCount = 0;
 private:
 	//Holds entityId - index pairs
