@@ -1,15 +1,15 @@
 #include "TransformSystem.h"
 #include "Constructors.h"
 void TransformSystem::Update(Game * g, float dt) {
-	for (unsigned int c = 0; c < m_components1.size(); c++) {
+	/*for (unsigned int c = 0; c < m_components1.size(); c++) {
 		if (m_componentData[c].m_active && rand() % 50 < 1)
 			g->QueueRemoveEntity(m_componentData[c].GetEntityId());
-	}
-	unsigned int newComponents = rand() % 100;
+	}*/
+	/*unsigned int newComponents = rand() % 10;
 	for (unsigned int c = 0; c < newComponents; c++)
 	{
 		Constructors::CreateTransform(g);
-	}
+	}*/
 	Collapse();
 	//Movement
 	//Pre-allocate stuff
@@ -27,10 +27,13 @@ void TransformSystem::Update(Game * g, float dt) {
 		position = XMLoadFloat3(&m_components1[c].m_position);
 		rotation = XMLoadFloat4(&m_components1[c].m_rotation);
 		velocity = XMLoadFloat3(&m_components2[c].m_velocity);
-		acceleration = XMLoadFloat3(&m_components2[c].m_acceleration);
+		acceleration = XMVectorAdd(XMLoadFloat3(&m_components2[c].m_acceleration), XMLoadFloat3(&XMFLOAT3(0, m_gravity, 0)));
 		rotationalVelocity = XMLoadFloat3(&m_components2[c].m_rotationalVelocity);
-		//spin = XMVectorScale(XMQuaternionMultiply(XMLoadFloat4(&XMFLOAT4(0, rotationalVelocity.x, rotationalVelocity.y, rotationalVelocity.z)), rotation), .5f);
-		rotation = XMQuaternionSlerp(rotation, XMQuaternionMultiply(rotation, XMQuaternionRotationAxis(rotationalVelocity, XMVectorGetX(XMVector4Length(rotationalVelocity)))), dt);
+		if (XMVectorGetX(XMVector3Length(rotationalVelocity)) != 0)
+		{
+			//spin = XMVectorScale(XMQuaternionMultiply(XMLoadFloat4(&XMFLOAT4(0, rotationalVelocity.x, rotationalVelocity.y, rotationalVelocity.z)), rotation), .5f);
+			rotation = XMQuaternionSlerp(rotation, XMQuaternionMultiply(rotation, XMQuaternionRotationAxis(rotationalVelocity, XMVectorGetX(XMVector3Length(rotationalVelocity)))), dt);
+		}
 		//rotationalVelocity = XMLoadFloat4(&m_components2[c].m_rotationalVelocity);//XMLoadFloat4(&m_components2[c].m_rotationalVelocity);
 		//rotationalAcceleration = XMLoadFloat4(&m_components2[c].m_rotationalAcceleration);//XMLoadFloat4(&m_components2[c].m_rotationalAcceleration);
 

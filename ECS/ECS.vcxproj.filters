@@ -119,6 +119,9 @@
     <ClInclude Include="MeshStore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GameForwardDecl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="CollisionFunctionTypeDef.h">
       <Filter>Header Files</Filter>
     </ClInclude>

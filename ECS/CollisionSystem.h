@@ -1,7 +1,7 @@
 #pragma once
 #include "System.h"
 #include "CollisionComponent.h"
-#include "CollisionFunctions.h"
+#include "CollisionFunctionTypeDef.h"
 #include "LockVector.h"
 #include <DirectXMath.h>
 #include <mutex>
