@@ -37,6 +37,12 @@ ContentManager::ContentManager()
 
 ContentManager::~ContentManager()
 {
+	for (auto i = m_meshStores.begin(); i != m_meshStores.end(); i++) {
+		Mesh& m = i->second.m_m;
+		m.vertexBuffer->Release();
+		m.indexBuffer->Release();
+	}
+
 	for (auto i = m_samplers.begin(); i != m_samplers.end(); i++)
 	{
 		if (i->second != nullptr)

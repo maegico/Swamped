@@ -63,6 +63,7 @@ Game::~Game() {
 	delete m_cs;
 	delete m_ts;
 	delete m_rs;
+	delete m_cm;
 }
 
 //Advances the game in time
