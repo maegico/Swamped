@@ -2,11 +2,15 @@
 #include "Game.h"
 #include "ContentManager.h"
 
+using namespace DirectX;
 //Contains static constructors for preformed entities
 class Constructors {
 public:
-
-	static void CreateTransform(Game * g, TransformComponent tc, PhysicsComponent pc, CollisionMask cm) {
+	static double fRand(double min, double max) {
+		double f = (double)rand() / RAND_MAX;
+		return min + f * (max - min);
+	}
+	static void CreateTransform(Game * g) {
 		//get entityID and add system list to game
 		unsigned int index = g->m_entities.add(vector<SystemBase*>{
 			g->m_ts, 
@@ -15,9 +19,21 @@ public:
 		});
 
 		//get mesh and bounding box
-		MeshStore ms = g->m_cm->GetMeshStore("cube.obj");
+		MeshStore ms = g->m_cm->GetMeshStore("cone.obj");
+		PhysicsComponent pc;
+		pc.m_velocity = XMFLOAT3(0, 0, 0);
+		pc.m_acceleration = XMFLOAT3(0, 0, 0);
+		
+		//XMStoreFloat4(&pc.m_rotationalVelocity, XMQuaternionRotationRollPitchYaw(0, 15, 1));
+		pc.m_rotationalVelocity = XMFLOAT3(fRand(-30, 30), fRand(-30, 30), fRand(-30, 30));
+		//XMStoreFloat3(&pc.m_rotationalAcceleration, XMQuaternionRotationRollPitchYaw(0, 0, 0));
+		TransformComponent tc;
+		//XMStoreFloat3(&tc.m_rotation, XMQuaternionRotationRollPitchYaw(0, 0, 0));
+		tc.m_position = XMFLOAT3(fRand(-50, 50), fRand(0, 50), fRand(-50, 50));
+		//tc.m_position = XMFLOAT3(0, 10, -45);
+		vector<CollisionType> cTypes = { CollisionType::none };
 		//copy collision mask into bounding box
-		ms.m_bb.m_cm = cm;
+		ms.m_bb.m_cm = MakeCollisionMask(cTypes);
 
 		//create components
 		g->m_ts->Create(index, tc, pc);

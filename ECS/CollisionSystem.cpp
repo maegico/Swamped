@@ -1,6 +1,7 @@
 #include "CollisionSystem.h"
 #include "TransformSystem.h"
 #include "Game.h"
+#include "CollisionFunctions.h"
 
 using namespace DirectX;
 
@@ -31,8 +32,8 @@ void CollisionSystem::Update(Game * g, float dt) {
 	unsigned int entityId;
 	TransformSystem * ts = g->m_ts;
 	BoundingBox * cc;
-	vector<ComponentData> tcds = ts->GetComponentData();
-	FreeVector<TransformComponent> tcs = ts->GetComponentList1();
+	vector<ComponentData> & tcds = ts->GetComponentData();
+	FreeVector<TransformComponent> & tcs = ts->GetComponentList1();
 	TransformComponent * tc;
 	XMVECTOR original;
 	//XMVECTOR rotation;
@@ -54,7 +55,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 		//	continue;
 
 		cc = &m_collapsedComponents[c]; //get component
-		entityId = m_componentData[c].GetEntityId(); //get entityID
+		entityId = m_collapsedEntityIds[c]; //get entityID
 
 		//search for the index of this component's corresponding transform
 		ts->SearchForEntityId(transformIndex, entityId);
@@ -77,11 +78,19 @@ void CollisionSystem::Update(Game * g, float dt) {
 			max = XMVectorMax(original, max);
 			min = XMVectorMin(original, min);
 		}
-
+		float distanceFromGround = XMVectorGetY(min) - 0;
+		if (distanceFromGround < 0)
+		{
+			XMVECTOR offset = XMLoadFloat3(&XMFLOAT3(0, -distanceFromGround, 0));
+			max = XMVectorAdd(max, offset);
+			min = XMVectorAdd(min, offset);
+			XMStoreFloat3(&(tc->m_position), XMVectorAdd(XMLoadFloat3(&tc->m_position), offset));
+			ts->GetComponentList2()[transformIndex].m_velocity.y = 0;
+		}
 		//store final translated max and min in aabb list
-		position = XMLoadFloat3(&tc->m_position);
-		XMStoreFloat3(&m_aabbs[c].m_max, max + position);
-		XMStoreFloat3(&m_aabbs[c].m_min, min + position);
+		//position = XMLoadFloat3(&tc->m_position);
+		XMStoreFloat3(&m_aabbs[c].m_max, max);
+		XMStoreFloat3(&m_aabbs[c].m_min, min);
 		m_aabbs[c].m_cm = cc->m_cm;
 	}
 
@@ -91,6 +100,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 	for (auto& kv : m_collisionMap) {
 		kv.second.clear();
 	}
+
 	//iterate through all unique pairs
 	parallel_for(size_t(0), m_collapsedCount - 1, [&](unsigned int c) {
 		MaxMin aabb1 = m_aabbs[c];
@@ -110,7 +120,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 					auto pair = std::make_pair(cf, LockVector<std::pair<unsigned int, unsigned int>>());
 					m_collisionMap.emplace(pair);
 					//push the entityIDs to the vector under this collision function
-					m_collisionMap[pair.first].push_back(std::make_pair(c, n));
+					m_collisionMap[pair.first].push_back(std::make_pair(m_collapsedEntityIds[c], m_collapsedEntityIds[n]));
 				}
 			}
 		}
@@ -121,7 +131,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 		auto collisions = kv.second; //get list of actual collisions
 		for (unsigned int c = 0; c < collisions.size(); c++) {
 			//pass both entityIDs and dT to collision function
-			kv.first(collisions[c].first, collisions[c].second, dt);
+			kv.first(g, collisions[c].first, collisions[c].second, dt);
 		}
 	}
 }

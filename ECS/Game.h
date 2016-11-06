@@ -27,10 +27,11 @@ public:
 	void Update(float dT, float totalTime);
 
 	//Frees an entity's components, and frees its entry in m_entities
-	void RemoveEntity(unsigned int entityId);
+	void QueueRemoveEntity(unsigned int entityId);
 
 	friend class Constructors;
 private:
 	//Associates systems with entity IDs for deletion
 	FreeVector<vector<SystemBase*>> m_entities;
+	vector<unsigned int> m_removeQueue;
 };

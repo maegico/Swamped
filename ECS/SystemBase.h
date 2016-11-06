@@ -1,8 +1,8 @@
 #pragma once
 #include "ComponentData.h"
+#include "GameForwardDecl.h"
 #include <vector>
 using namespace std;
-class Game;
 class SystemBase {
 public:
 	void virtual Update(Game * g, float dT) = 0;

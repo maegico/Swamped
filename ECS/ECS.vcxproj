@@ -76,6 +76,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)DirectXTK\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -92,6 +93,7 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)DirectXTK\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -110,6 +112,7 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)DirectXTK\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -130,6 +133,7 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)DirectXTK\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -144,6 +148,7 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CollisionFunctions.cpp" />
     <ClCompile Include="ContentManager.cpp" />
     <ClCompile Include="DXCore.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -156,6 +161,7 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionFunctions.h" />
+    <ClInclude Include="CollisionFunctionTypeDef.h" />
     <ClInclude Include="ComponentData.h" />
     <ClInclude Include="Constructors.h" />
     <ClInclude Include="ContentManager.h" />
@@ -163,6 +169,7 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
     <ClInclude Include="DXCore.h" />
     <ClInclude Include="FreeVector.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameForwardDecl.h" />
     <ClInclude Include="LockVector.h" />
     <ClInclude Include="MeshStore.h" />
     <ClInclude Include="RenderingComponent.h" />
