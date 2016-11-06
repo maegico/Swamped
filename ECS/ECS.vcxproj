@@ -160,6 +160,8 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ClearArray.h" />
+    <ClInclude Include="ClearVector.h" />
     <ClInclude Include="CollisionFunctions.h" />
     <ClInclude Include="CollisionFunctionTypeDef.h" />
     <ClInclude Include="ComponentData.h" />

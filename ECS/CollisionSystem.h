@@ -3,6 +3,8 @@
 #include "CollisionComponent.h"
 #include "CollisionFunctionTypeDef.h"
 #include "LockVector.h"
+#include "ClearVector.h"
+#include "ClearArray.h"
 #include <DirectXMath.h>
 #include <mutex>
 #include <ppl.h>

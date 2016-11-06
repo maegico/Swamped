@@ -4,7 +4,7 @@ template <size_t N, typename T>
 class ClearArray {
 public:
 	void push(T item, bool prune = false) {
-		if (m_count < N && !(prune && contains(item))
+		if (m_count < N && !(prune && contains(item)))
 		{
 			m_data[m_count] = item;
 			m_count++;

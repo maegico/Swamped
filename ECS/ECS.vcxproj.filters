@@ -125,6 +125,12 @@
     <ClInclude Include="CollisionFunctionTypeDef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ClearVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ClearArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\PixelShader.hlsl">
