@@ -342,12 +342,10 @@ void ContentManager::CreateSamplers(std::string name)
 
 void ContentManager::CreateTexture(std::wstring textureName)
 {
-	std::wstring path = L"Debug/Assets/Textures/";
+	std::wstring path = L"Assets/Textures/";
 	path = path + textureName;
 
 	ID3D11ShaderResourceView* texture;
-
-	//needs to check whether it is in release or not and choose a path (release or debug)
 
 	HRESULT result = DirectX::CreateWICTextureFromFile(m_device, m_context, path.c_str(), 0, &texture);
 	if (result != S_OK)
