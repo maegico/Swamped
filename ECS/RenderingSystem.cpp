@@ -1,7 +1,7 @@
 #include "RenderingSystem.h"
 #include "Game.h"
 
-RenderingSystem::RenderingSystem(IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView) {
+void RenderingSystem::Init(IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView) {
 	m_camera = Camera(XMFLOAT3(0, 5, -50));
 	m_camera.RotationDelta(.5, 0);
 	m_camera.CreateProjectionMatrix(1920, 1080, 103);
@@ -43,8 +43,8 @@ void RenderingSystem::Update(Game * g, float dt) {
 		//    and then copying that entire buffer to the GPU.  
 		//  - The "SimpleShader" class handles all of that for you.
 		DirectX::XMFLOAT4X4 wm;
-		g->m_ts->SearchForEntityId(transformIndex, m_collapsedComponents[c].m_entityId);
-		XMStoreFloat4x4(&wm, XMMatrixTranspose(TransformSystem::GetMatrix(g->m_ts->GetComponentList1()[transformIndex])));
+		g->m_ts.SearchForEntityId(transformIndex, m_collapsedComponents[c].m_entityId);
+		XMStoreFloat4x4(&wm, XMMatrixTranspose(TransformSystem::GetMatrix(g->m_ts.GetComponentList1()[transformIndex])));
 		vertexShader->SetMatrix4x4("world", wm);
 		vertexShader->SetMatrix4x4("view", m_camera.GetView());
 		vertexShader->SetMatrix4x4("projection", m_camera.GetProjection());

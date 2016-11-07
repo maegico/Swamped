@@ -7,22 +7,6 @@ Game::Game(HINSTANCE hInstance)
 	"DirectX Game",			   // Height of the window's client area
 	true)			   // Show extra stats (fps) in title bar?
 {
-	m_entities = FreeVector<vector<SystemBase*>>();
-	m_cs = new CollisionSystem();
-	m_ts = new TransformSystem();
-	m_cm = new ContentManager();
-	// Initialize fields
-	//vertexBuffer = 0;
-	//indexBuffer = 0;
-	/*entities = std::vector<Entity*>();
-	vertexShader = 0;
-	pixelShader = 0;
-	mainCamera = new Camera(XMFLOAT3(0, 0, -10));
-	mainCamera->CreateProjectionMatrix(width, height, 80);
-	SetCursorPos(width / 2, height / 2);
-	prevMousePos.x = 0;
-	prevMousePos.y = 0;*/
-
 #if defined(DEBUG) || defined(_DEBUG)
 	// Do we want a console window?  Probably only in debug mode
 	CreateConsoleWindow(500, 120, 32, 120);
@@ -31,8 +15,8 @@ Game::Game(HINSTANCE hInstance)
 }
 
 void Game::Init() {
-	m_cm->Init(m_device, m_context);
-	m_rs = new RenderingSystem(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
+	m_cm.Init(m_device, m_context);
+	m_rs.Init(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 
 	Constructors::CreateTestObject(this);
 	/*PhysicsComponent pc;
@@ -60,17 +44,13 @@ void Game::Init() {
 
 //delete system objects
 Game::~Game() {
-	delete m_cs;
-	delete m_ts;
-	delete m_rs;
-	delete m_cm;
 }
 
 //Advances the game in time
 void Game::Update(float dt, float totalTime) {
-	m_ts->Update(this, dt);
-	m_cs->Update(this, dt);
-	m_rs->Update(this, dt);
+	m_ts.Update(this, dt);
+	m_cs.Update(this, dt);
+	m_rs.Update(this, dt);
 
 	//remove all entities queued for removal
 	for (unsigned int eId : m_removeQueue) {
@@ -95,5 +75,5 @@ void Game::QueueRemoveEntity(unsigned int entityId) {
 }
 
 void Game::UpdateTitleBarForGame(std::string in) {
-	SetWindowText(hWnd, (in + " " + std::to_string(m_ts->GetCount())).c_str());
+	SetWindowText(hWnd, (in + " " + std::to_string(m_ts.GetCount())).c_str());
 }

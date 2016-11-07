@@ -9,7 +9,8 @@
 class RenderingSystem : public System<RenderingComponent> {
 public:
 	void Update(Game * g, float dt);
-	RenderingSystem(IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView);
+	void Init(IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView);
+	RenderingSystem() {};
 private:
 	IDXGISwapChain*			m_swapChain;
 	ID3D11Device*			m_device;

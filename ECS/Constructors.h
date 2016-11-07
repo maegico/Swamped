@@ -13,13 +13,13 @@ public:
 	static void CreateTestObject(Game * g) {
 		//get entityID and add system list to game
 		unsigned int index = g->m_entities.add(vector<SystemBase*>{
-			g->m_ts, 
-			g->m_cs,
-			g->m_rs
+			&g->m_ts, 
+			&g->m_cs,
+			&g->m_rs
 		});
 
 		//get mesh and bounding box
-		MeshStore ms = g->m_cm->GetMeshStore("cone.obj");
+		MeshStore ms = g->m_cm.GetMeshStore("cone.obj");
 		PhysicsComponent pc;
 		pc.m_velocity = XMFLOAT3(0, 0, 0);
 		pc.m_acceleration = XMFLOAT3(0, 0, 0);
@@ -36,10 +36,10 @@ public:
 		ms.m_bb.m_cm = MakeCollisionMask(cTypes);
 
 		//create components
-		g->m_ts->Create(index, tc, pc);
-		g->m_cs->Create(index, ms.m_bb);
-		g->m_rs->Create(index, {
-			g->m_cm->GetMaterial("TestMaterial"),
+		g->m_ts.Create(index, tc, pc);
+		g->m_cs.Create(index, ms.m_bb);
+		g->m_rs.Create(index, {
+			g->m_cm.GetMaterial("TestMaterial"),
 			ms.m_m
 		});
 	}
