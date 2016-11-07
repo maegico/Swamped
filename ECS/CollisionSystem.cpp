@@ -35,7 +35,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 		return;
 	//pre-allocate stuff
 	unsigned int entityId;
-	TransformSystem * ts = g->m_ts;
+	TransformSystem * ts = &g->m_ts;
 	BoundingBox * cc;
 	vector<ComponentData> & tcds = ts->GetComponentData();
 	FreeVector<TransformComponent> & tcs = ts->GetComponentList1();
