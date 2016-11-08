@@ -5,11 +5,6 @@ void TransformSystem::Update(Game * g, float dt) {
 		if (m_componentData[c].m_active && rand() % 50 < 1)
 			g->QueueRemoveEntity(m_componentData[c].GetEntityId());
 	}*/
-	unsigned int newComponents = 200;
-	for (unsigned int c = 0; c < newComponents; c++)
-	{
-		Constructors::CreateTestObject(g);
-	}
 	Collapse();
 	//Movement
 	//Pre-allocate stuff

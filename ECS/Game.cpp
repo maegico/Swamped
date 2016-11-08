@@ -48,6 +48,11 @@ Game::~Game() {
 
 //Advances the game in time
 void Game::Update(float dt, float totalTime) {
+	unsigned int newComponents = 200;
+	for (unsigned int c = 0; c < newComponents; c++)
+	{
+		Constructors::CreateTestObject(this);
+	}
 	m_ts.Update(this, dt);
 	m_cs.Update(this, dt);
 	m_rs.Update(this, dt);
@@ -75,5 +80,5 @@ void Game::QueueRemoveEntity(unsigned int entityId) {
 }
 
 void Game::UpdateTitleBarForGame(std::string in) {
-	SetWindowText(hWnd, (in + " " + std::to_string(m_ts.GetCount())).c_str());
+	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_ts.GetCount())).c_str());
 }
