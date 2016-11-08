@@ -140,17 +140,17 @@ void CollisionSystem::Update(Game * g, float dt) {
 			XMStoreFloat3(&point, XMVectorFloor(XMVectorDivide(XMVectorSubtract(pointxm, globalMin), dimensions)));
 			gridIndices.push(point.z * m_cellCounts.x * m_cellCounts.y + point.y * m_cellCounts.x + point.x, true);
 		}
-		if (gridIndices.size() == 1)
-			m_spatialHashGrid[gridIndices[0]].add(m_aabbs[c]);
-		else {
-			m_cellCrossers.add(std::make_pair(m_aabbs[c], gridIndices));
-		}
+		for(unsigned int n = 0;n<gridIndices.size();n++)
+			m_spatialHashGrid[gridIndices[n]].add(m_aabbs[c]);
 	});
 
 	//clear collision map
 	for (auto& kv : m_collisionMap) {
 		kv.second.clear();
 	}
+	m_registeredCollisions.resize(m_componentData.size());
+	for (auto& cl : m_registeredCollisions)
+		cl.clear();
 
 	//check collisions
 	parallel_for(size_t(0), m_spatialHashGrid.size(), [&](unsigned int b) {
@@ -170,8 +170,12 @@ void CollisionSystem::Update(Game * g, float dt) {
 				//add pair of indices on collision
 				if (aabb1.m_max.x > aabb2.m_min.x && aabb1.m_min.x < aabb2.m_max.x
 					&& aabb1.m_max.y > aabb2.m_min.y && aabb1.m_min.y < aabb2.m_max.y
-					&& aabb1.m_max.z > aabb2.m_min.z && aabb1.m_min.z < aabb2.m_max.z)
+					&& aabb1.m_max.z > aabb2.m_min.z && aabb1.m_min.z < aabb2.m_max.z
+					&& !m_registeredCollisions[caabb1.m_handle].contains(caabb2.m_entityId)
+					&& !m_registeredCollisions[caabb2.m_handle].contains(caabb1.m_entityId))
 				{
+					m_registeredCollisions[caabb1.m_handle].add(caabb2.m_entityId);
+					m_registeredCollisions[caabb2.m_handle].add(caabb1.m_entityId);
 					//Get correct collision function and emplace it into the collision map along with an empty lock vector
 					vector<CollisionFunction> cfs = CollisionFunctions::GetCollisionFunction(aabb1.m_cm, aabb2.m_cm);
 					for (auto cf : cfs)

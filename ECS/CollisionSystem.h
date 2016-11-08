@@ -29,4 +29,5 @@ private:
 	//XMFLOAT3 m_cellDimensions;
 	XMFLOAT3 m_cellCounts;
 	ClearVector<pair<CollapsedComponent<MaxMin>, ClearArray<8,unsigned int>>> m_cellCrossers;
+	ClearVector<ClearVector<unsigned int>> m_registeredCollisions;
 };
