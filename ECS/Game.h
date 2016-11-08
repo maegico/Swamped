@@ -33,6 +33,6 @@ public:
 private:
 	//Associates systems with entity IDs for deletion
 	FreeVector<vector<SystemBase*>> m_entities;
-	vector<unsigned int> m_removeQueue;
+	ClearVector<unsigned int> m_removeQueue;
 	void UpdateTitleBarForGame(std::string in);
 };
