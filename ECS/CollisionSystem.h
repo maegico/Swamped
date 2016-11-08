@@ -9,6 +9,7 @@
 #include <mutex>
 #include <ppl.h>
 #include <map>
+#include <unordered_set>
 using namespace DirectX;
 using namespace Concurrency;
 //A System implementation
@@ -27,4 +28,5 @@ private:
 	// m_mapMin;
 	//XMFLOAT3 m_cellDimensions;
 	XMFLOAT3 m_cellCounts;
+	ClearVector<pair<CollapsedComponent<MaxMin>, ClearArray<8,unsigned int>>> m_cellCrossers;
 };
