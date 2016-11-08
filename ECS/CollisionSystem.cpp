@@ -140,8 +140,10 @@ void CollisionSystem::Update(Game * g, float dt) {
 			XMStoreFloat3(&point, XMVectorFloor(XMVectorDivide(XMVectorSubtract(pointxm, globalMin), dimensions)));
 			gridIndices.push(point.z * m_cellCounts.x * m_cellCounts.y + point.y * m_cellCounts.x + point.x, true);
 		}
-		if (gridIndices.size() == 1)
+		if (gridIndices.size() == 1) {
 			m_spatialHashGrid[gridIndices[0]].add(m_aabbs[c]);
+			//g->QueueRemoveEntity(m_aabbs[c].m_entityId);
+		}
 		else {
 			m_cellCrossers.add(std::make_pair(m_aabbs[c], gridIndices));
 		}
@@ -158,14 +160,14 @@ void CollisionSystem::Update(Game * g, float dt) {
 		if (bucketCv.size() == 0)
 			return;
 		for (unsigned int c = 0; c < bucketCv.size()-1; c++) {
-			CollapsedComponent<MaxMin> caabb1 = bucketCv[c];
-			MaxMin aabb1 = caabb1.m_component;
-			CollapsedComponent<MaxMin> caabb2;
+			CollapsedComponent<MaxMin> collapsedCollider1 = bucketCv[c];
+			MaxMin aabb1 = collapsedCollider1.m_component;
+			CollapsedComponent<MaxMin> collapsedCollider2;
 			MaxMin aabb2;
 			//pair<unsigned int, unsigned int> p = (caabb1.m_entityId < caabb2.m_entityId) ? std::make_pair(caabb1.m_entityId, caabb2.m_entityId) : std::make_pair(caabb2.m_entityId, caabb1.m_entityId);
 			for (unsigned int n = c + 1; n < bucketCv.size(); n++) {
-				caabb2 = bucketCv[n];
-				aabb2 = caabb2.m_component;
+				collapsedCollider2 = bucketCv[n];
+				aabb2 = collapsedCollider2.m_component;
 
 				//add pair of indices on collision
 				if (aabb1.m_max.x > aabb2.m_min.x && aabb1.m_min.x < aabb2.m_max.x
@@ -179,12 +181,65 @@ void CollisionSystem::Update(Game * g, float dt) {
 						//auto pair = std::make_pair(cf, LockVector<std::pair<unsigned int, unsigned int>>());
 						//m_collisionMap.emplace(pair);
 						//push the entityIDs to the vector under this collision function
-						m_collisionMap[cf].push_back(std::make_pair(bucketCv[c].m_entityId, bucketCv[n].m_entityId));
+						m_collisionMap[cf].push_back(std::make_pair(collapsedCollider1.m_entityId, collapsedCollider2.m_entityId));
 					}
 				}
 			}
 		}
 	});
+
+	if (m_cellCrossers.size() > 0) {
+		parallel_for(size_t(0), m_cellCrossers.size(), [&](unsigned int c) {
+			auto collapsedCollider = m_cellCrossers[c].first;
+			MaxMin aabb1 = collapsedCollider.m_component;
+			auto& cells = m_cellCrossers[c].second;
+			CollapsedComponent<MaxMin> collapsedCollider2;
+			MaxMin aabb2;
+			for (unsigned int n = 0; n < cells.size(); n++) {
+				ClearVector<CollapsedComponent<MaxMin>> & cell = m_spatialHashGrid[cells[n]];
+				for (unsigned int b = 0; b < cell.size(); b++) {
+					collapsedCollider2 = cell[b];
+					aabb2 = collapsedCollider2.m_component;
+					//add pair of indices on collision
+					if (aabb1.m_max.x > aabb2.m_min.x && aabb1.m_min.x < aabb2.m_max.x
+						&& aabb1.m_max.y > aabb2.m_min.y && aabb1.m_min.y < aabb2.m_max.y
+						&& aabb1.m_max.z > aabb2.m_min.z && aabb1.m_min.z < aabb2.m_max.z)
+					{
+						//Get correct collision function and emplace it into the collision map along with an empty lock vector
+						vector<CollisionFunction> cfs = CollisionFunctions::GetCollisionFunction(aabb1.m_cm, aabb2.m_cm);
+						for (auto cf : cfs)
+						{
+							//auto pair = std::make_pair(cf, LockVector<std::pair<unsigned int, unsigned int>>());
+							//m_collisionMap.emplace(pair);
+							//push the entityIDs to the vector under this collision function
+							m_collisionMap[cf].push_back(std::make_pair(collapsedCollider.m_entityId, collapsedCollider2.m_entityId));
+						}
+					}
+				}
+			}
+			if (c == m_cellCrossers.size() - 1)
+				return;
+			for (unsigned int n = c + 1; n < m_cellCrossers.size(); n++) {
+				collapsedCollider2 = m_cellCrossers[n].first;
+				aabb2 = collapsedCollider2.m_component;
+				//add pair of indices on collision
+				if (aabb1.m_max.x > aabb2.m_min.x && aabb1.m_min.x < aabb2.m_max.x
+					&& aabb1.m_max.y > aabb2.m_min.y && aabb1.m_min.y < aabb2.m_max.y
+					&& aabb1.m_max.z > aabb2.m_min.z && aabb1.m_min.z < aabb2.m_max.z)
+				{
+					//Get correct collision function and emplace it into the collision map along with an empty lock vector
+					vector<CollisionFunction> cfs = CollisionFunctions::GetCollisionFunction(aabb1.m_cm, aabb2.m_cm);
+					for (auto cf : cfs)
+					{
+						//auto pair = std::make_pair(cf, LockVector<std::pair<unsigned int, unsigned int>>());
+						//m_collisionMap.emplace(pair);
+						//push the entityIDs to the vector under this collision function
+						m_collisionMap[cf].push_back(std::make_pair(collapsedCollider.m_entityId, collapsedCollider2.m_entityId));
+					}
+				}
+			}
+		});
+	}
 	
 	//loop through all collision functions
 	for (auto& kv : m_collisionMap) {

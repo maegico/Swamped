@@ -55,7 +55,7 @@ void Game::Update(float dt, float totalTime) {
 	}
 	m_ts.Update(this, dt);
 	m_cs.Update(this, dt);
-	m_rs.Update(this, dt);
+	//m_rs.Update(this, dt);
 
 	//remove all entities queued for removal
 	for (unsigned int eId : m_removeQueue) {
@@ -75,7 +75,7 @@ void Game::QueueRemoveEntity(unsigned int entityId) {
 	//bounds check
 	if (m_entities.size() > entityId)
 	{
-		m_removeQueue.push_back(entityId);
+		m_removeQueue.add(entityId);
 	}
 }
 

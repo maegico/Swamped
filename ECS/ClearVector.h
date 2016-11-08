@@ -32,6 +32,12 @@ public:
 	size_t size() {
 		return m_count;
 	}
+	typename std::vector<T>::iterator begin() {
+		return m_data.begin();
+	}
+	typename std::vector<T>::iterator end() {
+		return m_data.end();
+	}
 
 	ClearVector(const ClearVector<T> & other) {
 		m_data = other.m_data;

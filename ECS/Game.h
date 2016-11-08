@@ -3,6 +3,7 @@
 #include "TransformSystem.h"
 #include "RenderingSystem.h"
 #include "ContentManager.h"
+#include "ClearVector.h"
 #include "DXCore.h"
 #include <vector>
 
@@ -33,6 +34,6 @@ public:
 private:
 	//Associates systems with entity IDs for deletion
 	FreeVector<vector<SystemBase*>> m_entities;
-	vector<unsigned int> m_removeQueue;
+	ClearVector<unsigned int> m_removeQueue;
 	void UpdateTitleBarForGame(std::string in);
 };
