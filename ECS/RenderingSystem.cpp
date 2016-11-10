@@ -15,6 +15,14 @@ void RenderingSystem::Init(IDXGISwapChain * swapChain, ID3D11Device * device, ID
 	m_dirLights[2] = { { 0,0,1,1 },{ .1f,0,0,1 },{ 1,0,1 } };
 }
 
+void RenderingSystem::CreateInstance(unsigned int entityId, RenderingComponent rc) {
+	/*unsigned int index = Create(entityId, {});
+	if (index > m_instancedComponentData.size())
+		m_instancedComponentData.resize(m_componentData.size());
+	auto * collection = &m_instancedComponents[rc];
+	m_instancedComponentData[index] = { collection, collection->add(entityId) };*/
+}
+
 void RenderingSystem::Update(Game * g, float dt) {
 	Collapse();
 	m_camera.Update();
@@ -32,9 +40,9 @@ void RenderingSystem::Update(Game * g, float dt) {
 		0);
 	unsigned int transformIndex = 0;
 	for (unsigned int c = 0; c < m_collapsedCount; c++) {
-
 		RenderingComponent& rc = m_collapsedComponents[c].m_component;
-
+		if (rc.m_material.vertexShader == nullptr)
+			continue;
 		SimpleVertexShader * vertexShader = rc.m_material.vertexShader;
 		SimplePixelShader * pixelShader = rc.m_material.pixelShader;
 		// Send data to shader variables
@@ -89,6 +97,20 @@ void RenderingSystem::Update(Game * g, float dt) {
 			0,     // Offset to the first index we want to use
 			0);    // Offset to add to each index when looking up vertices
 	}
+
+	/*for (auto& rcp : m_instancedComponents)
+	{
+		const RenderingComponent & rc = rcp.first;
+		FreeVector<unsigned int> & collection = rcp.second;
+		vector<XMFLOAT4X4> worldMatrices;
+
+		for (unsigned int c = 0; c < collection.size(); c++)
+		{
+			if()
+		}
+	}*/
+	RenderingComponent rc;
+	vector<XMFLOAT4X4> worldMatrices;
 
 	// Present the back buffer to the user
 	//  - Puts the final frame we're drawing into the window so the user can see it
