@@ -15,12 +15,11 @@ void RenderingSystem::Init(IDXGISwapChain * swapChain, ID3D11Device * device, ID
 	m_dirLights[2] = { { 0,0,1,1 },{ .1f,0,0,1 },{ 1,0,1 } };
 }
 
-void RenderingSystem::CreateInstance(unsigned int entityId, RenderingComponent rc) {
-	/*unsigned int index = Create(entityId, {});
-	if (index > m_instancedComponentData.size())
-		m_instancedComponentData.resize(m_componentData.size());
-	auto * collection = &m_instancedComponents[rc];
-	m_instancedComponentData[index] = { collection, collection->add(entityId) };*/
+void RenderingSystem::CreateInstance(unsigned int entityId, RenderingComponent * rc) {
+	unsigned int index = Create(entityId, {});
+	FreeVector<unsigned int> * collection = &m_instancedComponents[rc];
+	collection->add(entityId);
+	m_instancedComponentData[index] = { collection, collection->add(entityId) };
 }
 
 void RenderingSystem::Update(Game * g, float dt) {
@@ -100,7 +99,7 @@ void RenderingSystem::Update(Game * g, float dt) {
 
 	/*for (auto& rcp : m_instancedComponents)
 	{
-		const RenderingComponent & rc = rcp.first;
+		const RenderingComponent rc = *rcp.first;
 		FreeVector<unsigned int> & collection = rcp.second;
 		vector<XMFLOAT4X4> worldMatrices;
 
