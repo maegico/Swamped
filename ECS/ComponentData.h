@@ -1,4 +1,5 @@
 #pragma once
+#include "EntityIdTypeDef.h"
 
 //Wrapper for component data
 class ComponentData {
@@ -6,14 +7,14 @@ public:
 	//Whether the component is active
 	bool m_active = false;
 	ComponentData() {}
-	ComponentData(unsigned int entityId) {
+	ComponentData(EntityId entityId) {
 		m_entityId = entityId;
 	}
 
 	//Getter for entity ID
-	unsigned int GetEntityId() {
+	EntityId GetEntityId() {
 		return m_entityId;
 	}
 private:
-	unsigned int m_entityId;
+	EntityId m_entityId;
 };

@@ -15,7 +15,7 @@ void RenderingSystem::Init(IDXGISwapChain * swapChain, ID3D11Device * device, ID
 	m_dirLights[2] = { { 0,0,1,1 },{ .1f,0,0,1 },{ 1,0,1 } };
 }
 
-void RenderingSystem::CreateInstance(unsigned int entityId, RenderingComponent * rc) {
+void RenderingSystem::CreateInstance(EntityId entityId, RenderingComponent * rc) {
 	unsigned int index = Create(entityId, {});
 	FreeVector<unsigned int> * collection = &m_instancedComponents[rc];
 	collection->add(entityId);
@@ -108,8 +108,6 @@ void RenderingSystem::Update(Game * g, float dt) {
 			if()
 		}
 	}*/
-	RenderingComponent rc;
-	vector<XMFLOAT4X4> worldMatrices;
 
 	// Present the back buffer to the user
 	//  - Puts the final frame we're drawing into the window so the user can see it

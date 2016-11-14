@@ -71,7 +71,7 @@ void Game::Update(float dt, float totalTime) {
 }
 
 //Removes an entity from all its systems
-void Game::QueueRemoveEntity(unsigned int entityId) {
+void Game::QueueRemoveEntity(EntityId entityId) {
 	//bounds check
 	if (m_entities.size() > entityId)
 	{

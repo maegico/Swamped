@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "DirectionalLight.h"
 #include "FreeVector.h"
+#include "EntityIdTypeDef.h"
 #include <d3d11.h>
 #include <unordered_map>
 
@@ -17,7 +18,7 @@ class RenderingSystem : public System<RenderingComponent> {
 public:
 	void Update(Game * g, float dt);
 	void Init(IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView);
-	void CreateInstance(unsigned int entityId, RenderingComponent * rc);
+	void CreateInstance(EntityId entityId, RenderingComponent * rc);
 	RenderingSystem() {};
 private:
 	IDXGISwapChain*			m_swapChain;
@@ -26,7 +27,7 @@ private:
 	ID3D11RenderTargetView* m_backBufferRTV;
 	ID3D11DepthStencilView* m_depthStencilView;
 	Camera					m_camera;
-	unordered_map<RenderingComponent*, FreeVector<unsigned int>>	m_instancedComponents;
+	unordered_map<RenderingComponent*, FreeVector<EntityId>>	m_instancedComponents;
 	vector<RenderingComponentData> m_instancedComponentData;
 	DirectionalLight		m_dirLights[3];
 };

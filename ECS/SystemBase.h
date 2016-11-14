@@ -1,12 +1,13 @@
 #pragma once
 #include "ComponentData.h"
 #include "GameForwardDecl.h"
+#include "EntityIdTypeDef.h"
 #include <vector>
 using namespace std;
 class SystemBase {
 public:
 	void virtual Update(Game * g, float dT) = 0;
-	void virtual Remove(unsigned int entityId) = 0;
+	void virtual Remove(EntityId entityId) = 0;
 	//Returns a reference to the ComponentData vector
 	vector<ComponentData> & GetComponentData() {
 		return m_componentData;
@@ -15,7 +16,7 @@ public:
 	//Increments the given index until it matches the given entityID
 	//Wraps the end of the collection and stops after looping the length of m_componentData
 	//Returns true on success and false on fail
-	bool SearchForEntityId(unsigned int& transformIndex, unsigned int entityId) {
+	bool SearchForEntityId(unsigned int& transformIndex, EntityId entityId) {
 		unsigned int total = 0;
 		while (m_componentData[transformIndex].GetEntityId() != entityId)
 		{
