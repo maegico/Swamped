@@ -25,6 +25,18 @@ public:
 			throw "Out of range";
 		return m_data[index];
 	}
+	typename vector<T>::iterator begin() {
+		return m_data.begin();
+	}
+	typename vector<T>::iterator end() {
+		return m_data.end();
+	}
+	bool contains(T item) {
+		for (auto& member : m_data)
+			if (member == item)
+				return true;
+		return false;
+	}
 	void resize(size_t size) {
 		m_data.resize(size);
 		m_count = size;

@@ -1,4 +1,5 @@
 #pragma once
+#include "EntityIdTypeDef.h"
 #include <DirectXMath.h>
 #include <vector>
 using namespace std;
@@ -22,5 +23,5 @@ struct MaxMin {
 
 struct EntityMaxMin {
 	MaxMin m_mm;
-	unsigned int entityId;
+	EntityId entityId;
 };

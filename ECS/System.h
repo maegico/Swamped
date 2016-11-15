@@ -3,6 +3,7 @@
 #include "ComponentData.h"
 #include "CollapsedComponent.h"
 #include "FreeVector.h"
+#include "EntityIdTypeDef.h"
 #include <vector>
 #include <map>
 
@@ -15,7 +16,7 @@ public:
 	void virtual Update(Game * g, float dT) = 0;
 
 	//Creates a component of type T and adds it to m_components and m_handles
-	void virtual Create(unsigned int entityId, T tc) {
+	unsigned int virtual Create(EntityId entityId, T tc) {
 		auto comp = ComponentData(entityId);
 		comp.m_active = true;
 		//FreeVector::add returns the index of the added element
@@ -25,10 +26,11 @@ public:
 			m_componentData.push_back(comp);
 		else
 			m_componentData[index] = comp;
+		return index;
 	}
 
 	//Deactivates the component with the given ID, frees the space in m_components, and erases the handle
-	void virtual Remove(unsigned int entityId) {
+	void virtual Remove(EntityId entityId) {
 		unsigned int index = m_handles[entityId];
 		m_componentData[index].m_active = false;
 		m_components.free(index);
@@ -50,7 +52,7 @@ public:
 	}
 
 	//Returns a reference to the component with the given ID
-	T& GetComponent(unsigned int entityId) {
+	T& GetComponent(EntityId entityId) {
 		return m_components[m_handles[entityId]];
 	}
 
@@ -82,5 +84,5 @@ protected:
 	unsigned int m_collapsedCount = 0;
 private:
 	//Holds entityId - index pairs
-	map<unsigned int, unsigned int> m_handles;
+	map<EntityId, unsigned int> m_handles;
 };

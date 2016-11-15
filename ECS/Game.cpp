@@ -17,7 +17,7 @@ Game::Game(HINSTANCE hInstance)
 void Game::Init() {
 	m_cm.Init(m_device, m_context);
 	m_rs.Init(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
-
+	Constructors::Init(this);
 	Constructors::CreateTestObject(this);
 	/*PhysicsComponent pc;
 	pc.m_velocity = XMFLOAT3(0, 0, 0);
@@ -48,15 +48,20 @@ Game::~Game() {
 
 //Advances the game in time
 void Game::Update(float dt, float totalTime) {
+	unsigned int newComponents = 200;
+	for (unsigned int c = 0; c < newComponents; c++)
+	{
+		Constructors::CreateTestObject(this);
+	}
 	m_ts.Update(this, dt);
 	m_cs.Update(this, dt);
 	m_rs.Update(this, dt);
-
+	//std::cout << std::to_string(m_removeQueue.size()) << std::endl;
 	//remove all entities queued for removal
 	for (unsigned int eId : m_removeQueue) {
 		//call remove on the entity ID for each system associated with the entity
-		vector<SystemBase*> systems = m_entities[eId];
-		for (SystemBase* s : systems) {
+		vector<ISystem*> systems = m_entities[eId];
+		for (ISystem* s : systems) {
 			s->Remove(eId);
 		}
 		//free the ID in entity list
@@ -66,14 +71,14 @@ void Game::Update(float dt, float totalTime) {
 }
 
 //Removes an entity from all its systems
-void Game::QueueRemoveEntity(unsigned int entityId) {
+void Game::QueueRemoveEntity(EntityId entityId) {
 	//bounds check
 	if (m_entities.size() > entityId)
 	{
-		m_removeQueue.push_back(entityId);
+		m_removeQueue.add(entityId);
 	}
 }
 
 void Game::UpdateTitleBarForGame(std::string in) {
-	SetWindowText(hWnd, (in + " " + std::to_string(m_ts.GetCount())).c_str());
+	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_ts.GetCount())).c_str());
 }

@@ -34,7 +34,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 	if (m_collapsedCount == 0)
 		return;
 	//pre-allocate stuff
-	unsigned int entityId;
+	EntityId entityId;
 	TransformSystem * ts = &g->m_ts;
 	BoundingBox * cc;
 	vector<ComponentData> & tcds = ts->GetComponentData();
@@ -118,6 +118,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 	for (unsigned int c = 0; c < m_spatialHashGrid.size(); c++)
 		m_spatialHashGrid[c].clear();
 	m_spatialHashGrid.resize(m_cellCounts.x * m_cellCounts.y * m_cellCounts.z);
+	m_cellCrossers.clear();
 
 	//populate spatial hash grid
 	parallel_for(size_t(0), m_collapsedCount, [&](unsigned int c) {
@@ -139,15 +140,17 @@ void CollisionSystem::Update(Game * g, float dt) {
 			XMStoreFloat3(&point, XMVectorFloor(XMVectorDivide(XMVectorSubtract(pointxm, globalMin), dimensions)));
 			gridIndices.push(point.z * m_cellCounts.x * m_cellCounts.y + point.y * m_cellCounts.x + point.x, true);
 		}
-		for (unsigned int n = 0; n < gridIndices.size(); n++) {
+		for(unsigned int n = 0;n<gridIndices.size();n++)
 			m_spatialHashGrid[gridIndices[n]].add(m_aabbs[c]);
-		}
 	});
 
 	//clear collision map
 	for (auto& kv : m_collisionMap) {
 		kv.second.clear();
 	}
+	m_registeredCollisions.resize(m_componentData.size());
+	for (auto& cl : m_registeredCollisions)
+		cl.clear();
 
 	//check collisions
 	parallel_for(size_t(0), m_spatialHashGrid.size(), [&](unsigned int b) {
@@ -155,16 +158,24 @@ void CollisionSystem::Update(Game * g, float dt) {
 		if (bucketCv.size() == 0)
 			return;
 		for (unsigned int c = 0; c < bucketCv.size()-1; c++) {
-			MaxMin aabb1 = bucketCv[c].m_component;
+			CollapsedComponent<MaxMin> caabb1 = bucketCv[c];
+			MaxMin aabb1 = caabb1.m_component;
+			CollapsedComponent<MaxMin> caabb2;
 			MaxMin aabb2;
+			//pair<unsigned int, unsigned int> p = (caabb1.m_entityId < caabb2.m_entityId) ? std::make_pair(caabb1.m_entityId, caabb2.m_entityId) : std::make_pair(caabb2.m_entityId, caabb1.m_entityId);
 			for (unsigned int n = c + 1; n < bucketCv.size(); n++) {
-				aabb2 = bucketCv[n].m_component;
+				caabb2 = bucketCv[n];
+				aabb2 = caabb2.m_component;
 
 				//add pair of indices on collision
 				if (aabb1.m_max.x > aabb2.m_min.x && aabb1.m_min.x < aabb2.m_max.x
 					&& aabb1.m_max.y > aabb2.m_min.y && aabb1.m_min.y < aabb2.m_max.y
-					&& aabb1.m_max.z > aabb2.m_min.z && aabb1.m_min.z < aabb2.m_max.z)
+					&& aabb1.m_max.z > aabb2.m_min.z && aabb1.m_min.z < aabb2.m_max.z
+					&& !m_registeredCollisions[caabb1.m_handle].contains(caabb2.m_entityId)
+					&& !m_registeredCollisions[caabb2.m_handle].contains(caabb1.m_entityId))
 				{
+					m_registeredCollisions[caabb1.m_handle].add(caabb2.m_entityId);
+					m_registeredCollisions[caabb2.m_handle].add(caabb1.m_entityId);
 					//Get correct collision function and emplace it into the collision map along with an empty lock vector
 					vector<CollisionFunction> cfs = CollisionFunctions::GetCollisionFunction(aabb1.m_cm, aabb2.m_cm);
 					for (auto cf : cfs)

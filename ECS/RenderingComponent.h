@@ -1,5 +1,7 @@
 #pragma once
 #include "SimpleShader.h"
+#include "FreeVector.h"
+#include "ComponentData.h"
 
 struct Material {
 	SimpleVertexShader * vertexShader;
@@ -17,4 +19,9 @@ struct Mesh {
 struct RenderingComponent {
 	Material m_material;
 	Mesh m_mesh;
+};
+
+struct RenderingHandle {
+	FreeVector<ComponentData> * m_rcList;
+	unsigned int m_index;
 };

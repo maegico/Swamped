@@ -4,6 +4,7 @@
 #include "RenderingSystem.h"
 #include "ContentManager.h"
 #include "DXCore.h"
+#include "EntityIdTypeDef.h"
 #include <vector>
 
 using namespace std;
@@ -27,12 +28,12 @@ public:
 	void Update(float dT, float totalTime);
 
 	//Frees an entity's components, and frees its entry in m_entities
-	void QueueRemoveEntity(unsigned int entityId);
+	void QueueRemoveEntity(EntityId entityId);
 
 	friend class Constructors;
 private:
 	//Associates systems with entity IDs for deletion
-	FreeVector<vector<SystemBase*>> m_entities;
-	vector<unsigned int> m_removeQueue;
+	FreeVector<vector<ISystem*>> m_entities;
+	ClearVector<EntityId> m_removeQueue;
 	void UpdateTitleBarForGame(std::string in);
 };

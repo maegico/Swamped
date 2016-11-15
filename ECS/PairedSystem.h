@@ -3,6 +3,7 @@
 #include "ComponentData.h"
 #include "CollapsedComponent.h"
 #include "FreeVector.h"
+#include "EntityIdTypeDef.h"
 #include <vector>
 #include <map>
 
@@ -13,7 +14,7 @@ public:
 	void virtual Update(Game * g, float dT) = 0;
 
 	//Creates a component of type T and adds it to m_components and m_handles
-	void virtual Create(unsigned int entityId, T tc, U uc) {
+	void virtual Create(EntityId entityId, T tc, U uc) {
 		ComponentData comp = ComponentData(entityId);
 		comp.m_active = true;
 		unsigned int index = m_components1.add(tc);
@@ -26,7 +27,7 @@ public:
 	}
 
 	//Deactivates the component with the given ID, frees the space in m_components, and erases the handle
-	void virtual Remove(unsigned int entityId) {
+	void virtual Remove(EntityId entityId) {
 		unsigned int handle = m_handles[entityId];
 		m_componentData[handle].m_active = false;
 		m_components1.free(handle);
@@ -51,12 +52,12 @@ public:
 	}
 
 	//Returns a reference to the component of type T with the given ID
-	T& GetComponent1(unsigned int entityId) {
+	T& GetComponent1(EntityId entityId) {
 		return m_components1[m_handles[entityId]];
 	}
 
 	//Returns a reference to the component of type U with the given ID
-	U& GetComponent2(unsigned int entityId) {
+	U& GetComponent2(EntityId entityId) {
 		return m_components2[m_handles[entityId]];
 	}
 
@@ -86,7 +87,7 @@ public:
 		m_components2 = FreeVector<U>();
 		//m_collapsedEntityIds = vector<unsigned int>();
 		//m_collapsedHandles = vector<unsigned int>();
-		m_handles = map<unsigned int, unsigned int>();
+		m_handles = map<EntityId, unsigned int>();
 	}
 	~PairedSystem() {}
 protected:
@@ -103,5 +104,5 @@ protected:
 	unsigned int m_collapsedCount = 0;
 private:
 	//Holds entityId - index pairs
-	map<unsigned int, unsigned int> m_handles;
+	map<EntityId, unsigned int> m_handles;
 };
