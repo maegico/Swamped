@@ -10,6 +10,7 @@
 #include <mutex>
 #include <ppl.h>
 #include <map>
+#include <unordered_map>
 #include <unordered_set>
 using namespace DirectX;
 using namespace Concurrency;
@@ -24,7 +25,7 @@ private:
 	//Pre-allocated list of the current frame's AABBs
 	vector<CollapsedComponent<MaxMin>> m_aabbs;
 	mutex m_collisionsMutex;
-	map<CollisionFunction, LockVector<pair<EntityId, EntityId>>> m_collisionMap;
+	unordered_map<CollisionFunction, LockVector<pair<EntityId, EntityId>>> m_collisionMap;
 	ClearVector<ClearVector<CollapsedComponent<MaxMin>>> m_spatialHashGrid;
 	// m_mapMin;
 	//XMFLOAT3 m_cellDimensions;

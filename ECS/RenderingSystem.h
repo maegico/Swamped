@@ -31,9 +31,8 @@ private:
 	ID3D11RenderTargetView* m_backBufferRTV;
 	ID3D11DepthStencilView* m_depthStencilView;
 	Camera					m_camera;
-	map<RenderingComponent*, FreeVector<ComponentData>>	m_instancedComponents;
-	map<RenderingComponent*, ClearVector<EntityId>> m_collapsedInstancedComponents;
-	map<EntityId, RenderingHandle> m_renderHandles;
-	//vector<RenderingComponentData> m_instancedComponentData;
+	unordered_map<RenderingComponent*, FreeVector<ComponentData>>	m_instancedComponents;
+	unordered_map<RenderingComponent*, ClearVector<EntityId>> m_collapsedInstancedComponents;
+	unordered_map<EntityId, RenderingHandle> m_renderHandles;
 	DirectionalLight		m_dirLights[3];
 };
