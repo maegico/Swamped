@@ -1,18 +1,27 @@
 #pragma once
 #include "Game.h"
 #include "ContentManager.h"
+#include "RenderingComponent.h"
+#include <unordered_map>
 
 using namespace DirectX;
 //Contains static constructors for preformed entities
 class Constructors {
+	static unordered_map<std::string, RenderingComponent> m_renderingComponents;
 public:
 	static double fRand(double min, double max) {
 		double f = (double)rand() / RAND_MAX;
 		return min + f * (max - min);
 	}
+	static void Init(Game * g) {
+		m_renderingComponents["testObj"] = {
+			g->m_cm.GetMaterial("TestMaterial"),
+			g->m_cm.GetMeshStore("cone.obj").m_m
+		};
+	}
 	static void CreateTestObject(Game * g) {
 		//get entityID and add system list to game
-		EntityId eid = g->m_entities.add(vector<SystemBase*>{
+		EntityId eid = g->m_entities.add(vector<ISystem*>{
 			&g->m_ts, 
 			&g->m_cs,
 			&g->m_rs
@@ -38,9 +47,6 @@ public:
 		//create components
 		g->m_ts.Create(eid, tc, pc);
 		g->m_cs.Create(eid, ms.m_bb);
-		g->m_rs.Create(eid, {
-			g->m_cm.GetMaterial("TestMaterial"),
-			ms.m_m
-		});
+		g->m_rs.Create(eid, &m_renderingComponents["testObj"]);
 	}
 };

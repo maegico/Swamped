@@ -1,10 +1,8 @@
 #pragma once
-#include "ComponentData.h"
-#include "GameForwardDecl.h"
-#include "EntityIdTypeDef.h"
+#include "ISystem.h"
 #include <vector>
 using namespace std;
-class SystemBase {
+class SystemBase : public ISystem {
 public:
 	void virtual Update(Game * g, float dT) = 0;
 	void virtual Remove(EntityId entityId) = 0;

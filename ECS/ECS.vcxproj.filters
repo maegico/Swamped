@@ -60,6 +60,9 @@
     <ClCompile Include="Ghost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Constructors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -151,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="EntityIdTypeDef.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ISystem.h">
+      <Filter>Header Files\Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

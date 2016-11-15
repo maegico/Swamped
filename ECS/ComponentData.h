@@ -5,7 +5,7 @@
 class ComponentData {
 public:
 	//Whether the component is active
-	bool m_active = false;
+	bool m_active = true;
 	ComponentData() {}
 	ComponentData(EntityId entityId) {
 		m_entityId = entityId;

@@ -149,6 +149,7 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionFunctions.cpp" />
+    <ClCompile Include="Constructors.cpp" />
     <ClCompile Include="ContentManager.cpp" />
     <ClCompile Include="DXCore.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -176,6 +177,7 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameForwardDecl.h" />
     <ClInclude Include="Ghost.h" />
+    <ClInclude Include="ISystem.h" />
     <ClInclude Include="LockVector.h" />
     <ClInclude Include="MeshStore.h" />
     <ClInclude Include="RenderingComponent.h" />

@@ -17,7 +17,7 @@ Game::Game(HINSTANCE hInstance)
 void Game::Init() {
 	m_cm.Init(m_device, m_context);
 	m_rs.Init(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
-
+	Constructors::Init(this);
 	Constructors::CreateTestObject(this);
 	/*PhysicsComponent pc;
 	pc.m_velocity = XMFLOAT3(0, 0, 0);
@@ -60,8 +60,8 @@ void Game::Update(float dt, float totalTime) {
 	//remove all entities queued for removal
 	for (unsigned int eId : m_removeQueue) {
 		//call remove on the entity ID for each system associated with the entity
-		vector<SystemBase*> systems = m_entities[eId];
-		for (SystemBase* s : systems) {
+		vector<ISystem*> systems = m_entities[eId];
+		for (ISystem* s : systems) {
 			s->Remove(eId);
 		}
 		//free the ID in entity list

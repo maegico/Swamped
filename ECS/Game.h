@@ -33,7 +33,7 @@ public:
 	friend class Constructors;
 private:
 	//Associates systems with entity IDs for deletion
-	FreeVector<vector<SystemBase*>> m_entities;
+	FreeVector<vector<ISystem*>> m_entities;
 	ClearVector<EntityId> m_removeQueue;
 	void UpdateTitleBarForGame(std::string in);
 };
