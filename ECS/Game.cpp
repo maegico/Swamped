@@ -48,10 +48,11 @@ Game::~Game() {
 
 //Advances the game in time
 void Game::Update(float dt, float totalTime) {
-	unsigned int newComponents = 200;
+	unsigned int newComponents = 100;
 	for (unsigned int c = 0; c < newComponents; c++)
 	{
 		Constructors::CreateTestObject(this);
+		Constructors::CreateTestObject2(this);
 	}
 	m_ts.Update(this, dt);
 	m_cs.Update(this, dt);

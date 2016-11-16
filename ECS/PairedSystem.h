@@ -6,6 +6,7 @@
 #include "EntityIdTypeDef.h"
 #include <vector>
 #include <map>
+#include <unordered_map>
 
 //A two component system that ensures the two component lists stay in sync
 template <typename T, typename U>
@@ -83,11 +84,11 @@ public:
 
 	//Initializes members
 	PairedSystem() : SystemBase(){
-		m_components1 = FreeVector<T>();
-		m_components2 = FreeVector<U>();
+		//m_components1 = FreeVector<T>();
+		//m_components2 = FreeVector<U>();
 		//m_collapsedEntityIds = vector<unsigned int>();
 		//m_collapsedHandles = vector<unsigned int>();
-		m_handles = map<EntityId, unsigned int>();
+		//m_handles = map<EntityId, unsigned int>();
 	}
 	~PairedSystem() {}
 protected:
@@ -104,5 +105,5 @@ protected:
 	unsigned int m_collapsedCount = 0;
 private:
 	//Holds entityId - index pairs
-	map<EntityId, unsigned int> m_handles;
+	unordered_map<EntityId, unsigned int> m_handles;
 };

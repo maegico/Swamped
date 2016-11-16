@@ -6,6 +6,7 @@
 #include "EntityIdTypeDef.h"
 #include <vector>
 #include <map>
+#include <unordered_map>
 
 using namespace std;
 
@@ -68,11 +69,11 @@ public:
 
 	//Initializes m_components and m_handles
 	System() : SystemBase() {
-		m_components = FreeVector<T>();
-		m_collapsedComponents = vector<CollapsedComponent<T>>();
+		//m_components = FreeVector<T>();
+		//m_collapsedComponents = vector<CollapsedComponent<T>>();
 		//m_collapsedEntityIds = vector<unsigned int>();
 		//m_collapsedHandles = vector<unsigned int>();
-		m_handles = map<unsigned int, unsigned int>();
+		//m_handles = unordered_map<unsigned int, unsigned int>();
 	}
 	~System(){}
 protected:
@@ -84,5 +85,5 @@ protected:
 	unsigned int m_collapsedCount = 0;
 private:
 	//Holds entityId - index pairs
-	map<EntityId, unsigned int> m_handles;
+	unordered_map<EntityId, unsigned int> m_handles;
 };
