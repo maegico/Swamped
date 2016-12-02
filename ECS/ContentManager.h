@@ -4,6 +4,7 @@
 #include <fstream>
 #include <d3d11.h>
 #include <WICTextureLoader.h>
+#include <DDSTextureLoader.h>
 #include <map>
 #include <memory>
 #include <Windows.h>
@@ -26,7 +27,7 @@ public:
 
 	void Init(ID3D11Device* device, ID3D11DeviceContext* context);
 
-	Material LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::string textureName);
+	Material LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::string textureName, std::string normalMapName);
 	MeshStore GetMeshStore(std::string);
 	Material GetMaterial(std::string);
 
@@ -35,17 +36,20 @@ private:
 	std::unordered_map<std::string, MeshStore>					m_meshStores;		//List of meshes
 	std::unordered_map<std::string, ID3D11SamplerState*>		m_samplers;		//List of sampler states
 	std::unordered_map<std::string, ID3D11ShaderResourceView*>	m_textures;	//List of textures
+	std::unordered_map<std::string, ID3D11ShaderResourceView*>	m_cubemaps;	//List of textures
 	std::unordered_map<std::string, SimpleVertexShader*>		m_vshaders;		//List of vertex shaders
 	std::unordered_map<std::string, SimplePixelShader*>			m_pshaders;		//List of pixel shaders
 
 	ID3D11Device*								m_device;		//Pointer to the D3D11 Device
 	ID3D11DeviceContext*						m_context;		//Pointer to the D3D11 Device Context
 
+	void CalculateTangents(Vertex* verts, int numVerts, unsigned int* indices, int numIndices);
 	//Creates a mesh of the passed in .obj file and save it into a std::map  
 	void CreateMeshStore(std::string objFile);
 	//Creates a sampler states and save it into a std::map using the passed in name
 	void CreateSamplers(std::string name);
 	void CreateTexture(std::wstring textureName);
+	void CreateCubeMap(std::wstring cubeName);
 	//Creates a vertex shader of the passed in wide string .cso file and saves it into a std::map
 	void CreateVShader(std::wstring shader);
 	//Creates a pixel shader of the passed in wide string .cso file and saves it into a std::map
