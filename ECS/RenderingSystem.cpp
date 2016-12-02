@@ -11,9 +11,27 @@ void RenderingSystem::Init(IDXGISwapChain * swapChain, ID3D11Device * device, ID
 	m_context = context;
 	m_backBufferRTV = renderTargetView;
 	m_depthStencilView = depthStencilView;
-	m_dirLights[0] = { {1,0,0,1},{.1f,0,0,1},{0,1,1} };
-	m_dirLights[1] = { { 0,1,0,1 },{ .1f,0,0,1 },{ 1,1,0 } };
-	m_dirLights[2] = { { 0,0,1,1 },{ .1f,0,0,1 },{ 1,0,1 } };
+	DirectionalLight dirLight1 = { XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f),
+		XMFLOAT3(1.0f, -1.0f, 0.0f) };
+
+	PointLight pointLight = { XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),
+		XMFLOAT3(1.0f, -1.0f, 0.0f),
+		2.0f };
+
+	SpotLight spotLight = { XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
+		XMFLOAT3(1.0f, 0.0f, 0.0f),
+		2.0f,
+		XMFLOAT3(-1.0f, 0.0f, 0.0f) };
+
+	m_lights = { { spotLight },
+	{ pointLight },
+		dirLight1,
+		XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),
+		1,
+		1 };
+	//m_dirLights[0] = { {1,0,0,1},{.1f,0,0,1},{0,1,1} };
+	//m_dirLights[1] = { { 0,1,0,1 },{ .1f,0,0,1 },{ 1,1,0 } };
+	//m_dirLights[2] = { { 0,0,1,1 },{ .1f,0,0,1 },{ 1,0,1 } };
 	m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
@@ -111,11 +129,13 @@ void RenderingSystem::Update(Game * game, float dt) {
 
 		vertexShader->CopyAllBufferData();
 
-		pixelShader->SetData("dirLight1", &m_dirLights[0], sizeof(DirectionalLight));
-		pixelShader->SetData("dirLight2", &m_dirLights[1], sizeof(DirectionalLight));
-		pixelShader->SetData("dirLight3", &m_dirLights[2], sizeof(DirectionalLight));
-		pixelShader->SetShaderResourceView("diffuseTexture", rc.m_material.textureView);
-		pixelShader->SetSamplerState("basicSampler", rc.m_material.samplerState);
+		//pixelShader->SetData("dirLight1", &m_dirLights[0], sizeof(DirectionalLight));
+		//pixelShader->SetData("dirLight2", &m_dirLights[1], sizeof(DirectionalLight));
+		//pixelShader->SetData("dirLight3", &m_dirLights[2], sizeof(DirectionalLight));
+		pixelShader->SetData("lights", &m_lights, sizeof(Lights));
+		pixelShader->SetShaderResourceView("Texture", rc.m_material.textureView);
+		pixelShader->SetShaderResourceView("NormalMap", rc.m_material.normalMap);
+		pixelShader->SetSamplerState("Sampler", rc.m_material.samplerState);
 
 		pixelShader->CopyAllBufferData();
 

@@ -7,6 +7,7 @@ struct Material {
 	SimpleVertexShader * vertexShader;
 	SimplePixelShader * pixelShader;
 	ID3D11ShaderResourceView * textureView;
+	ID3D11ShaderResourceView* normalMap;
 	ID3D11SamplerState * samplerState;
 };
 
