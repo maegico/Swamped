@@ -44,9 +44,9 @@ public:
 		//XMStoreFloat3(&tc.m_rotation, XMQuaternionRotationRollPitchYaw(0, 0, 0));
 		tc.m_position = XMFLOAT3(fRand(-100, 100), fRand(0, 100), fRand(-100, 100));
 		//tc.m_position = XMFLOAT3(0, 10, -45);
-		vector<CollisionType> cTypes = { CollisionType::none };
+		//vector<CollisionType> cTypes = { CollisionType::none };
 		//copy collision mask into bounding box
-		ms.m_bb.m_cm = MakeCollisionMask(cTypes);
+		ms.m_bb.m_ct = CollisionType::none;
 
 		//create components
 		g->m_ts.Create(eid, tc, pc);
@@ -77,7 +77,7 @@ public:
 		//tc.m_position = XMFLOAT3(0, 10, -45);
 		vector<CollisionType> cTypes = { CollisionType::none };
 		//copy collision mask into bounding box
-		ms.m_bb.m_cm = MakeCollisionMask(cTypes);
+		ms.m_bb.m_ct = CollisionType::player;
 
 		//create components
 		g->m_ts.Create(eid, tc, pc);

@@ -16,8 +16,7 @@ public:
 
 	//Creates a component of type T and adds it to m_components and m_handles
 	void virtual Create(EntityId entityId, T tc, U uc) {
-		ComponentData comp = ComponentData(entityId);
-		comp.m_active = true;
+		ComponentData comp = { true,entityId };
 		unsigned int index = m_components1.add(tc);
 		m_handles[entityId] = index;
 		m_components2.add(uc);
@@ -44,8 +43,8 @@ public:
 		//m_collapsedHandles.resize(GetCount());
 		for (unsigned int c = 0; c < m_componentData.size(); c++)
 			if (m_componentData[c].m_active) {
-				m_collapsedComponents1[m_collapsedCount] = { m_components1[c], m_componentData[c].GetEntityId(),c };
-				m_collapsedComponents2[m_collapsedCount] = { m_components2[c],m_componentData[c].GetEntityId(),c };
+				m_collapsedComponents1[m_collapsedCount] = { m_components1[c], m_componentData[c].m_entityId,c };
+				m_collapsedComponents2[m_collapsedCount] = { m_components2[c],m_componentData[c].m_entityId,c };
 				//m_collapsedEntityIds[m_collapsedCount] = m_componentData[c].GetEntityId();
 				//m_collapsedHandles[m_collapsedCount] = c;
 				m_collapsedCount++;

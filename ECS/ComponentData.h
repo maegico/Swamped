@@ -2,19 +2,8 @@
 #include "EntityIdTypeDef.h"
 
 //Wrapper for component data
-class ComponentData {
-public:
+struct ComponentData {
 	//Whether the component is active
-	bool m_active = true;
-	ComponentData() {}
-	ComponentData(EntityId entityId) {
-		m_entityId = entityId;
-	}
-
-	//Getter for entity ID
-	EntityId GetEntityId() {
-		return m_entityId;
-	}
-private:
+	bool m_active;
 	EntityId m_entityId;
 };

@@ -16,7 +16,7 @@ public:
 	//Returns true on success and false on fail
 	bool SearchForEntityId(unsigned int& transformIndex, EntityId entityId) {
 		unsigned int total = 0;
-		while (m_componentData[transformIndex].GetEntityId() != entityId)
+		while (m_componentData[transformIndex].m_entityId != entityId)
 		{
 			transformIndex++;
 			total++;

@@ -23,13 +23,14 @@ public:
 	~CollisionSystem();
 private:
 	//Pre-allocated list of the current frame's AABBs
-	vector<CollapsedComponent<MaxMin>> m_aabbs;
+	vector<CollapsedComponent<TypedMaxMin>> m_aabbs;
 	mutex m_collisionsMutex;
 	unordered_map<CollisionFunction, LockVector<pair<EntityId, EntityId>>> m_collisionMap;
-	ClearVector<ClearVector<CollapsedComponent<MaxMin>>> m_spatialHashGrid;
+	ClearVector<vector<ClearVector<CollapsedComponent<MaxMin>>>> m_spatialHashGrid;
 	// m_mapMin;
 	//XMFLOAT3 m_cellDimensions;
 	XMFLOAT3 m_cellCounts;
-	ClearVector<pair<CollapsedComponent<MaxMin>, ClearArray<8,unsigned int>>> m_cellCrossers;
+	//ClearVector<pair<CollapsedComponent<MaxMin>, ClearArray<8,unsigned int>>> m_cellCrossers;
 	ClearVector<ClearVector<EntityId>> m_registeredCollisions;
+	vector<tuple<CollisionType, CollisionType, CollisionFunction>> m_collisionFunctions;
 };

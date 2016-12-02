@@ -41,6 +41,10 @@ public:
 		m_data.resize(size);
 		m_count = size;
 	}
+	void resize(size_t size, T &defValue) {
+		m_data.resize(size, defValue);
+		m_count = size;
+	}
 	size_t size() {
 		return m_count;
 	}
@@ -48,6 +52,12 @@ public:
 	ClearVector(const ClearVector<T> & other) {
 		m_data = other.m_data;
 		m_count = other.m_count;
+	}
+
+	ClearVector<T>& operator=(ClearVector<T> other) {
+		m_data = other.m_data;
+		m_count = other.m_count;
+		return *this;
 	}
 
 	ClearVector() {
