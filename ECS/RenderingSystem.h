@@ -3,7 +3,7 @@
 #include "ISystem.h"
 #include "Vertex.h"
 #include "Camera.h"
-#include "DirectionalLight.h"
+#include "Lights.h"
 #include "FreeVector.h"
 #include "EntityIdTypeDef.h"
 #include "ClearVector.h"
@@ -34,5 +34,6 @@ private:
 	unordered_map<RenderingComponent*, FreeVector<ComponentData>>	m_instancedComponents;
 	unordered_map<RenderingComponent*, ClearVector<EntityId>> m_collapsedInstancedComponents;
 	unordered_map<EntityId, RenderingHandle> m_renderHandles;
-	DirectionalLight		m_dirLights[3];
+	//DirectionalLight		m_dirLights[3];
+	Lights					m_lights;
 };

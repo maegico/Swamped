@@ -15,11 +15,11 @@ public:
 	}
 	static void Init(Game * g) {
 		m_renderingComponents["testObj"] = {
-			g->m_contentManager.GetMaterial("TestMaterial"),
+			g->m_contentManager.GetMaterial("brickLightingNormalMap"),
 			g->m_contentManager.GetMeshStore("cone.obj").m_m
 		};
 		m_renderingComponents["testObj2"] = {
-			g->m_contentManager.GetMaterial("TestMaterial"),
+			g->m_contentManager.GetMaterial("brickLightingNormalMap"),
 			g->m_contentManager.GetMeshStore("cube.obj").m_m
 		};
 	}

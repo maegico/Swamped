@@ -6,6 +6,7 @@
 // - The name of the cbuffer itself is unimportant
 cbuffer externalData : register(b0)
 {
+	matrix world;
 	matrix view;
 	matrix projection;
 };
@@ -25,7 +26,6 @@ struct VertexShaderInput
 	float3 position		: POSITION;     // XYZ position
 	float3 normal		: NORMAL;       // XYZ normal
 	float2 uv			: TEXTCOORD;	// XY texture coordinate
-	matrix world		: WORLD_PER_INSTANCE;
 };
 
 // Struct representing the data we're sending down the pipeline
@@ -64,7 +64,7 @@ VertexToPixel main( VertexShaderInput input )
 	//
 	// First we multiply them together to get a single matrix which represents
 	// all of those transformations (world to view to projection space)
-	matrix worldViewProj = mul(mul(input.world, view), projection);
+	matrix worldViewProj = mul(mul(world, view), projection);
 
 	// Then we convert our 3-component position vector to a 4-component vector
 	// and multiply it by our final 4x4 matrix.
@@ -72,7 +72,7 @@ VertexToPixel main( VertexShaderInput input )
 	// The result is essentially the position (XY) of the vertex on our 2D 
 	// screen and the distance (Z) from the camera (the "depth" of the pixel)
 	output.position = mul(float4(input.position, 1.0f), worldViewProj);
-	output.normal = mul(input.normal, (float3x3)input.world);
+	output.normal = mul(input.normal, (float3x3)world);
 
 	output.uv = input.uv;
 
