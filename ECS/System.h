@@ -18,8 +18,7 @@ public:
 
 	//Creates a component of type T and adds it to m_components and m_handles
 	unsigned int virtual Create(EntityId entityId, T tc) {
-		auto comp = ComponentData(entityId);
-		comp.m_active = true;
+		ComponentData comp = { true, entityId };
 		//FreeVector::add returns the index of the added element
 		unsigned int index = m_components.add(tc);
 		m_handles[entityId] = index;
@@ -45,7 +44,7 @@ public:
 		//m_collapsedHandles.resize(GetCount());
 		for (unsigned int c = 0; c < m_componentData.size(); c++)
 			if (m_componentData[c].m_active) {
-				m_collapsedComponents[m_collapsedCount] = { m_components[c], m_componentData[c].GetEntityId(), c };
+				m_collapsedComponents[m_collapsedCount] = { m_components[c], m_componentData[c].m_entityId, c };
 				//m_collapsedEntityIds[m_collapsedCount] = m_componentData[c].GetEntityId();
 				//m_collapsedHandles[m_collapsedCount] = c;
 				m_collapsedCount++;

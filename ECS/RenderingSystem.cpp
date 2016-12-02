@@ -22,7 +22,7 @@ void RenderingSystem::Create(EntityId entityId, RenderingComponent * rc) {
 	//get collection in map
 	FreeVector<ComponentData> * collection = &(m_instancedComponents[rc]);
 	//create render handle and add to collection
-	m_renderHandles[entityId] = { collection, collection->add(ComponentData(entityId)) };
+	m_renderHandles[entityId] = { collection, collection->add({true, entityId}) };
 }
 
 //Remove a rendering component
@@ -52,7 +52,7 @@ void RenderingSystem::Collapse() {
 		{
 			//if a component in the collection is active, copy its entityID to the corresponding collapsed collection
 			if (collection[c].m_active)
-				m_collapsedInstancedComponents[rcp.first].add(collection[c].GetEntityId());
+				m_collapsedInstancedComponents[rcp.first].add(collection[c].m_entityId);
 		}
 	}
 }
