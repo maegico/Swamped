@@ -11,8 +11,8 @@ enum CollisionType { none, terrain, ghost, player, NUMTYPES };
 
 //Points in a bounding box
 struct BoundingBox {
-	DirectX::XMFLOAT3 m_bb[8];
-	CollisionType m_ct;
+	DirectX::XMFLOAT3 m_corners[8];
+	CollisionType m_collisionType;
 	//CollisionMask m_cm;
 };
 
@@ -24,7 +24,7 @@ struct MaxMin {
 };
 
 struct TypedMaxMin : public MaxMin {
-	CollisionType m_ct;
+	CollisionType m_collisionType;
 
 	operator MaxMin() const {
 		return{ m_max,m_min };

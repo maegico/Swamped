@@ -1,6 +1,6 @@
 #include "TransformSystem.h"
 #include "Constructors.h"
-void TransformSystem::Update(Game * g, float dt) {
+void TransformSystem::Update(Game * game, float dt) {
 	/*for (unsigned int c = 0; c < m_components1.size(); c++) {
 		if (m_componentData[c].m_active && rand() % 50 < 1)
 			g->QueueRemoveEntity(m_componentData[c].GetEntityId());
