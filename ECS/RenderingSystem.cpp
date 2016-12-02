@@ -58,7 +58,7 @@ void RenderingSystem::Collapse() {
 }
 
 //Draws all the stuff
-void RenderingSystem::Update(Game * g, float dt) {
+void RenderingSystem::Update(Game * game, float dt) {
 	Collapse();
 	m_camera.Update();
 
@@ -82,7 +82,7 @@ void RenderingSystem::Update(Game * g, float dt) {
 		vector<XMFLOAT4X4> worldMatrices;
 		worldMatrices.resize(collection.size());
 		parallel_for(size_t(0), collection.size(),[&](unsigned int c){
-			TransformComponent tc = g->m_ts.GetComponent1(collection[c]);
+			TransformComponent tc = game->m_transformSystem.GetComponent1(collection[c]);
 			XMStoreFloat4x4(&worldMatrices[c], XMMatrixTranspose(TransformSystem::GetMatrix(tc)));
 		});
 

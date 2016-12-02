@@ -26,13 +26,13 @@ CollisionSystem::~CollisionSystem() {
 }
 
 //Generates AABBs then checks them for collisions
-void CollisionSystem::Update(Game * g, float dt) {
+void CollisionSystem::Update(Game * game, float dt) {
 	Collapse();
 	if (m_collapsedCount == 0)
 		return;
 	//pre-allocate stuff
 	EntityId entityId;
-	TransformSystem * ts = &g->m_ts;
+	TransformSystem * ts = &game->m_transformSystem;
 	BoundingBox * cc;
 	vector<ComponentData> & tcds = ts->GetComponentData();
 	FreeVector<TransformComponent> & tcs = ts->GetComponentList1();
@@ -77,7 +77,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 		//loop through eight bounding box points
 		for (unsigned int n = 0; n < 8; n++) {
 			//load and translate to world space
-			original = DirectX::XMLoadFloat3(&cc->m_bb[n]);
+			original = DirectX::XMLoadFloat3(&cc->m_corners[n]);
 			original = XMVector3Transform(original, modelToWorld);
 			//check against max and min
 			max = XMVectorMax(original, max);
@@ -99,7 +99,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 		globalMax = XMVectorMax(globalMax, max);
 		globalMin = XMVectorMin(globalMin, min);
 		//m_aabbs[c].m_component.m_cm = cc->m_cm;
-		m_aabbs[c].m_component.m_ct = cc->m_ct;
+		m_aabbs[c].m_component.m_collisionType = cc->m_collisionType;
 		m_aabbs[c].m_entityId = entityId;
 		m_aabbs[c].m_handle = m_collapsedComponents[c].m_handle;
 	}
@@ -148,7 +148,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 			//auto one = m_spatialHashGrid[gridIndices[n]];
 			//auto two = one[caabb.m_component.m_ct];
 			//two.add({ aabb, caabb.m_entityId, caabb.m_handle });
-			m_spatialHashGrid[gridIndices[n]][caabb.m_component.m_ct].add({ aabb, caabb.m_entityId, caabb.m_handle });
+			m_spatialHashGrid[gridIndices[n]][caabb.m_component.m_collisionType].add({ aabb, caabb.m_entityId, caabb.m_handle });
 		}
 #ifdef _DEBUG
 	}
@@ -223,7 +223,7 @@ void CollisionSystem::Update(Game * g, float dt) {
 		auto collisions = kv.second; //get list of actual collisions
 		for (unsigned int c = 0; c < collisions.size(); c++) {
 			//pass both entityIDs and dT to collision function
-			kv.first(g, collisions[c].first, collisions[c].second, dt);
+			kv.first(game, collisions[c].first, collisions[c].second, dt);
 		}
 	}
 }

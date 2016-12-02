@@ -12,7 +12,7 @@
 template <typename T, typename U>
 class PairedSystem : public SystemBase {
 public:
-	void virtual Update(Game * g, float dT) = 0;
+	void virtual Update(Game * game, float dT) = 0;
 
 	//Creates a component of type T and adds it to m_components and m_handles
 	void virtual Create(EntityId entityId, T tc, U uc) {

@@ -18,7 +18,7 @@ using namespace Concurrency;
 class CollisionSystem : public System<BoundingBox> {
 public:
 	//Generates AABBs and checks collision
-	void Update(Game * g, float dT);
+	void Update(Game * game, float dT);
 	CollisionSystem();
 	~CollisionSystem();
 private:

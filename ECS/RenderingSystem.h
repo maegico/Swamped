@@ -18,7 +18,7 @@ struct RenderingComponentData{
 
 class RenderingSystem : public ISystem {
 public:
-	void Update(Game * g, float dt);
+	void Update(Game * game, float dt);
 	void Init(IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView);
 	void Create(EntityId entityId, RenderingComponent * rc);
 	void Remove(EntityId enttyId);

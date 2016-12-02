@@ -13,11 +13,11 @@ using namespace std;
 class Game : public DXCore {
 public:
 	//Systems
-	CollisionSystem m_cs;
-	TransformSystem m_ts;
-	RenderingSystem m_rs;
+	CollisionSystem m_collisionSystem;
+	TransformSystem m_transformSystem;
+	RenderingSystem m_renderingSystem;
 
-	ContentManager m_cm;
+	ContentManager m_contentManager;
 
 	Game(HINSTANCE hInstance);
 	~Game();

@@ -15,24 +15,24 @@ public:
 	}
 	static void Init(Game * g) {
 		m_renderingComponents["testObj"] = {
-			g->m_cm.GetMaterial("TestMaterial"),
-			g->m_cm.GetMeshStore("cone.obj").m_m
+			g->m_contentManager.GetMaterial("TestMaterial"),
+			g->m_contentManager.GetMeshStore("cone.obj").m_m
 		};
 		m_renderingComponents["testObj2"] = {
-			g->m_cm.GetMaterial("TestMaterial"),
-			g->m_cm.GetMeshStore("cube.obj").m_m
+			g->m_contentManager.GetMaterial("TestMaterial"),
+			g->m_contentManager.GetMeshStore("cube.obj").m_m
 		};
 	}
-	static void CreateTestObject(Game * g) {
+	static void CreateTestObject(Game * game) {
 		//get entityID and add system list to game
-		EntityId eid = g->m_entities.add(vector<ISystem*>{
-			&g->m_ts, 
-			&g->m_cs,
-			&g->m_rs
+		EntityId eid = game->m_entities.add(vector<ISystem*>{
+			&game->m_transformSystem, 
+			&game->m_collisionSystem,
+			&game->m_renderingSystem
 		});
 
 		//get mesh and bounding box
-		MeshStore ms = g->m_cm.GetMeshStore("cone.obj");
+		MeshStore ms = game->m_contentManager.GetMeshStore("cone.obj");
 		PhysicsComponent pc;
 		pc.m_velocity = XMFLOAT3(0, 0, 0);
 		pc.m_acceleration = XMFLOAT3(0, 0, 0);
@@ -46,24 +46,24 @@ public:
 		//tc.m_position = XMFLOAT3(0, 10, -45);
 		//vector<CollisionType> cTypes = { CollisionType::none };
 		//copy collision mask into bounding box
-		ms.m_bb.m_ct = CollisionType::none;
+		ms.m_bb.m_collisionType = CollisionType::none;
 
 		//create components
-		g->m_ts.Create(eid, tc, pc);
-		g->m_cs.Create(eid, ms.m_bb);
-		g->m_rs.Create(eid, &m_renderingComponents["testObj"]);
+		game->m_transformSystem.Create(eid, tc, pc);
+		game->m_collisionSystem.Create(eid, ms.m_bb);
+		game->m_renderingSystem.Create(eid, &m_renderingComponents["testObj"]);
 	}
 
-	static void CreateTestObject2(Game * g) {
+	static void CreateTestObject2(Game * game) {
 		//get entityID and add system list to game
-		EntityId eid = g->m_entities.add(vector<ISystem*>{
-			&g->m_ts,
-			&g->m_cs,
-			&g->m_rs
+		EntityId eid = game->m_entities.add(vector<ISystem*>{
+			&game->m_transformSystem,
+			&game->m_collisionSystem,
+			&game->m_renderingSystem
 		});
 
 		//get mesh and bounding box
-		MeshStore ms = g->m_cm.GetMeshStore("cube.obj");
+		MeshStore ms = game->m_contentManager.GetMeshStore("cube.obj");
 		PhysicsComponent pc;
 		pc.m_velocity = XMFLOAT3(0, 0, 0);
 		pc.m_acceleration = XMFLOAT3(0, 0, 0);
@@ -75,13 +75,13 @@ public:
 		//XMStoreFloat3(&tc.m_rotation, XMQuaternionRotationRollPitchYaw(0, 0, 0));
 		tc.m_position = XMFLOAT3(fRand(-100, 100), fRand(0, 100), fRand(-100, 100));
 		//tc.m_position = XMFLOAT3(0, 10, -45);
-		vector<CollisionType> cTypes = { CollisionType::none };
+		//vector<CollisionType> cTypes = { CollisionType::none };
 		//copy collision mask into bounding box
-		ms.m_bb.m_ct = CollisionType::player;
+		ms.m_bb.m_collisionType = CollisionType::player;
 
 		//create components
-		g->m_ts.Create(eid, tc, pc);
-		g->m_cs.Create(eid, ms.m_bb);
-		g->m_rs.Create(eid, &m_renderingComponents["testObj2"]);
+		game->m_transformSystem.Create(eid, tc, pc);
+		game->m_collisionSystem.Create(eid, ms.m_bb);
+		game->m_renderingSystem.Create(eid, &m_renderingComponents["testObj2"]);
 	}
 };
