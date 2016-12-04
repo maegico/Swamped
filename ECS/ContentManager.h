@@ -30,6 +30,9 @@ public:
 	Material LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::string textureName, std::string normalMapName);
 	MeshStore GetMeshStore(std::string);
 	Material GetMaterial(std::string);
+	SimpleGeometryShader* GetGShader(std::string);
+	SimpleVertexShader* GetVShader(std::string);
+	SimplePixelShader* GetPShader(std::string);
 
 private:
 	std::unordered_map<std::string, Material>					m_materials;	//List of materials
@@ -39,6 +42,7 @@ private:
 	std::unordered_map<std::string, ID3D11ShaderResourceView*>	m_cubemaps;	//List of textures
 	std::unordered_map<std::string, SimpleVertexShader*>		m_vshaders;		//List of vertex shaders
 	std::unordered_map<std::string, SimplePixelShader*>			m_pshaders;		//List of pixel shaders
+	std::unordered_map<std::string, SimpleGeometryShader*>		m_gshaders;
 
 	ID3D11Device*								m_device;		//Pointer to the D3D11 Device
 	ID3D11DeviceContext*						m_context;		//Pointer to the D3D11 Device Context
@@ -54,6 +58,7 @@ private:
 	void CreateVShader(std::wstring shader);
 	//Creates a pixel shader of the passed in wide string .cso file and saves it into a std::map
 	void CreatePShader(std::wstring shader);
+	void CreateGShader(std::wstring shader);
 	void FindFilesInFolder(std::wstring folder, std::vector<std::string>& listOfFiles);
 	void FindFilesInFolderWSTR(std::wstring folder, std::vector<std::wstring>& listOfFiles);
 };

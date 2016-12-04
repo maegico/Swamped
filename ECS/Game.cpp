@@ -16,7 +16,7 @@ Game::Game(HINSTANCE hInstance)
 
 void Game::Init() {
 	m_contentManager.Init(m_device, m_context);
-	m_renderingSystem.Init(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
+	m_renderingSystem.Init(this, m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 	Constructors::Init(this);
 	Constructors::CreateTestObject(this);
 	/*PhysicsComponent pc;
@@ -55,6 +55,7 @@ void Game::Update(float dt, float totalTime) {
 		Constructors::CreateTestObject2(this);
 	}
 	m_transformSystem.Update(this, dt);
+	m_particleSystem.Update(this, dt);
 	m_collisionSystem.Update(this, dt);
 	m_renderingSystem.Update(this, dt);
 	//std::cout << std::to_string(m_removeQueue.size()) << std::endl;
@@ -81,5 +82,5 @@ void Game::QueueRemoveEntity(EntityId entityId) {
 }
 
 void Game::UpdateTitleBarForGame(std::string in) {
-	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_transformSystem.GetCount())).c_str());
+	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_transformSystem.GetCount()) + "  Particles: " + std::to_string(m_particleSystem.GetParticleCount())).c_str());
 }

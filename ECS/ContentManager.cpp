@@ -62,12 +62,14 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	
 	std::vector<std::wstring> vshaderNames;
 	std::vector<std::wstring> pshaderNames;
+	std::vector<std::wstring> gshaderNames;
 	std::vector<std::wstring> textures;
 	std::vector<std::wstring>	cubemaps;
 	std::vector<std::string> models;
 
 	FindFilesInFolderWSTR(L"VertexShaders", vshaderNames);
 	FindFilesInFolderWSTR(L"PixelShaders", pshaderNames);
+	FindFilesInFolderWSTR(L"GeometryShaders", gshaderNames);
 	FindFilesInFolderWSTR(L"assets/Textures", textures);
 	FindFilesInFolderWSTR(L"assets/CubeMaps", cubemaps);
 	FindFilesInFolder(L"assets/Models", models);
@@ -81,6 +83,10 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	for (unsigned int i = 0; i < pshaderNames.size(); i++)
 	{
 		CreatePShader(pshaderNames[i]);
+	}
+	for (unsigned int i = 0; i < gshaderNames.size(); i++)
+	{
+		CreateGShader(gshaderNames[i]);
 	}
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
@@ -121,6 +127,18 @@ MeshStore ContentManager::GetMeshStore(std::string mesh)
 Material ContentManager::GetMaterial(std::string name)
 {
 	return m_materials[name];
+}
+
+SimpleGeometryShader* ContentManager::GetGShader(std::string name) {
+	return m_gshaders[name];
+}
+
+SimpleVertexShader* ContentManager::GetVShader(std::string name) {
+	return m_vshaders[name];
+}
+
+SimplePixelShader* ContentManager::GetPShader(std::string name) {
+	return m_pshaders[name];
 }
 
 //took from Chris Cascioli's code
@@ -483,6 +501,19 @@ void ContentManager::CreatePShader(std::wstring shader)
 
 	std::string shaderString(shader.begin(), shader.end());
 	m_pshaders[shaderString] = pixelShader;
+}
+
+void ContentManager::CreateGShader(std::wstring shader)
+{
+	std::wstring releasePath = L"GeometryShaders/";
+	releasePath = releasePath + shader;
+
+	SimpleGeometryShader* geometryShader = new SimpleGeometryShader(m_device, m_context);
+	if (!geometryShader->LoadShaderFile(releasePath.c_str()))
+		geometryShader->LoadShaderFile(shader.c_str());
+
+	std::string shaderString(shader.begin(), shader.end());
+	m_gshaders[shaderString] = geometryShader;
 }
 
 //I took the basic code from below and modified it to work for both UNICODE and non-UNICODE character sets

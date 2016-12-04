@@ -116,7 +116,7 @@ void CollisionSystem::Update(Game * game, float dt) {
 	for (unsigned int c = 0; c < m_spatialHashGrid.size(); c++)
 		for (unsigned int n = 0; n < CollisionType::NUMTYPES;n++)
 			m_spatialHashGrid[c][n].clear();
-	m_spatialHashGrid.resize(m_cellCounts.x * m_cellCounts.y * m_cellCounts.z, vector<ClearVector<CollapsedComponent<MaxMin>>>(CollisionType::NUMTYPES));
+	m_spatialHashGrid.resize(static_cast<size_t>(m_cellCounts.x * m_cellCounts.y * m_cellCounts.z), vector<ClearVector<CollapsedComponent<MaxMin>>>(CollisionType::NUMTYPES));
 	//m_cellCrossers.clear();
 
 	//populate spatial hash grid
@@ -142,7 +142,7 @@ void CollisionSystem::Update(Game * game, float dt) {
 		for (auto& point : bb) {
 			pointxm = XMLoadFloat3(&point);
 			XMStoreFloat3(&point, XMVectorFloor(XMVectorDivide(XMVectorSubtract(pointxm, globalMin), dimensions)));
-			gridIndices.push(point.z * m_cellCounts.x * m_cellCounts.y + point.y * m_cellCounts.x + point.x, true);
+			gridIndices.push(static_cast<unsigned int>(point.z * m_cellCounts.x * m_cellCounts.y + point.y * m_cellCounts.x + point.x), true);
 		}
 		for (unsigned int n = 0; n < gridIndices.size(); n++) {
 			//auto one = m_spatialHashGrid[gridIndices[n]];

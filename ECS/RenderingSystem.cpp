@@ -2,7 +2,7 @@
 #include "Game.h"
 
 //Initializes the rendering system
-void RenderingSystem::Init(IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView) {
+void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView) {
 	m_camera = Camera(XMFLOAT3(0, 5, -50));
 	m_camera.RotationDelta(.5, 0);
 	m_camera.CreateProjectionMatrix(1920, 1080, 90);
@@ -29,10 +29,13 @@ void RenderingSystem::Init(IDXGISwapChain * swapChain, ID3D11Device * device, ID
 		XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),
 		1,
 		1 };
+
+	m_particleVS = game->m_contentManager.GetVShader("ParticleVS.cso");
+	m_particleGS = game->m_contentManager.GetGShader("BillboardGS.cso");
+	m_particlePS = game->m_contentManager.GetPShader("ParticlePS.cso");
 	//m_dirLights[0] = { {1,0,0,1},{.1f,0,0,1},{0,1,1} };
 	//m_dirLights[1] = { { 0,1,0,1 },{ .1f,0,0,1 },{ 1,1,0 } };
 	//m_dirLights[2] = { { 0,0,1,1 },{ .1f,0,0,1 },{ 1,0,1 } };
-	m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 //Create a rendering component
@@ -90,6 +93,8 @@ void RenderingSystem::Update(Game * game, float dt) {
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0f,
 		0);
+
+	m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//for each mesh/material combination
 	for (auto& rcp : m_collapsedInstancedComponents)
@@ -165,6 +170,20 @@ void RenderingSystem::Update(Game * game, float dt) {
 
 		instanceBuffer->Release();
 	}
+
+	vector<CollapsedNonComponent<Particle>> & particles = game->m_particleSystem.GetCollapsedParticles();
+
+	m_particleVS->SetShader();
+	m_particleGS->SetShader();
+	m_particlePS->SetShader();
+
+	m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+	for (auto& p : particles) {
+
+	}
+
+	m_context->GSSetShader(NULL, 0, 0);
 
 	// Present the back buffer to the user
 	m_swapChain->Present(0, 0);
