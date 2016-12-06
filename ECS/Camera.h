@@ -10,6 +10,7 @@ public:
 	~Camera();
 	XMFLOAT4X4 GetProjection();
 	XMFLOAT4X4 GetView();
+	XMFLOAT3 GetPosition();
 	void RelativePositionDelta(float x, float y, float z);
 	void RotationDelta(float x, float y);
 	void CreateProjectionMatrix(float width, float height, float fov);

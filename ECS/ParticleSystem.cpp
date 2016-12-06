@@ -15,8 +15,13 @@ size_t ParticleSystem::GetParticleCount() {
 	return m_particles.count();
 }
 
-vector<CollapsedNonComponent<Particle>> & ParticleSystem::GetCollapsedParticles() {
-	return m_collapsedParticles;
+vector<ParticleInput> ParticleSystem::GetParticles() {
+	vector<ParticleInput> particles;
+	particles.resize(m_collapsedCount);
+	for (unsigned int c = 0; c < m_collapsedCount; c++) {
+		particles[c] = { m_collapsedParticles[c].m_component.m_position,m_collapsedParticles[c].m_component.m_size };
+	}
+	return particles;
 }
 
 void ParticleSystem::Collapse() {
@@ -33,7 +38,12 @@ void ParticleSystem::Collapse() {
 void ParticleSystem::Update(Game * g, float dt) {
 	//generate new particles
 	for (unsigned int c = 0; c < 200; c++) {
-		unsigned int index = m_particles.add({ XMFLOAT3(fRand(-100, 100), fRand(0, 100), fRand(-100, 100)) });
+		Particle p;
+		p.m_position = XMFLOAT3(fRand(-100, 100), fRand(0, 100), fRand(-100, 100));
+		p.m_velocity = XMFLOAT3(fRand(-1, 1), fRand(-1, 0), fRand(-1, 1));
+		float size = fRand(.1, .15);
+		p.m_size = XMFLOAT2(size, size);
+		unsigned int index = m_particles.add(p);
 		if (index == m_activeParticles.size())
 			m_activeParticles.push_back(true);
 		else

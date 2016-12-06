@@ -5,6 +5,7 @@
 #include "FreeVector.h"
 #include "ClearVector.h"
 #include "Particle.h"
+#include "ParticleInput.h"
 #include "CollapsedComponent.h"
 #include "CollisionComponent.h"
 
@@ -14,7 +15,7 @@ public:
 	~ParticleSystem();
 	void Update(Game * g, float dt);
 	size_t GetParticleCount();
-	vector<CollapsedNonComponent<Particle>> & GetCollapsedParticles();
+	vector<ParticleInput> GetParticles();
 private:
 	void Collapse();
 

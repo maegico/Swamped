@@ -9,6 +9,7 @@
 #include "ClearVector.h"
 #include "CollapsedComponent.h"
 #include "Particle.h"
+#include "ParticleInput.h"
 #include <d3d11.h>
 #include <unordered_map>
 #include <map>

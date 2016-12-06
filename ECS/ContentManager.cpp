@@ -508,7 +508,7 @@ void ContentManager::CreateGShader(std::wstring shader)
 	std::wstring releasePath = L"GeometryShaders/";
 	releasePath = releasePath + shader;
 
-	SimpleGeometryShader* geometryShader = new SimpleGeometryShader(m_device, m_context);
+	SimpleGeometryShader* geometryShader = new SimpleGeometryShader(m_device, m_context, true, true);
 	if (!geometryShader->LoadShaderFile(releasePath.c_str()))
 		geometryShader->LoadShaderFile(shader.c_str());
 

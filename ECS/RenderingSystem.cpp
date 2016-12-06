@@ -171,17 +171,41 @@ void RenderingSystem::Update(Game * game, float dt) {
 		instanceBuffer->Release();
 	}
 
-	vector<CollapsedNonComponent<Particle>> & particles = game->m_particleSystem.GetCollapsedParticles();
+	vector<ParticleInput> particles = game->m_particleSystem.GetParticles();
 
 	m_particleVS->SetShader();
 	m_particleGS->SetShader();
+	m_particleGS->SetMatrix4x4("view", m_camera.GetView());
+	m_particleGS->SetMatrix4x4("projection", m_camera.GetProjection());
+	m_particleGS->SetData("cameraPos", &m_camera.GetPosition(), sizeof(XMFLOAT3));
 	m_particlePS->SetShader();
+
+	m_particleGS->CopyAllBufferData();
 
 	m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	for (auto& p : particles) {
+	//create buffer for world matrices
+	D3D11_BUFFER_DESC partDesc = {};
+	partDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	partDesc.ByteWidth = sizeof(ParticleInput) * particles.size();
+	partDesc.CPUAccessFlags = 0;
+	partDesc.MiscFlags = 0;
+	partDesc.StructureByteStride = 0;
+	partDesc.Usage = D3D11_USAGE_IMMUTABLE;
 
-	}
+	D3D11_SUBRESOURCE_DATA particleStructs = {};
+	particleStructs.pSysMem = &particles[0];
+
+	ID3D11Buffer * particleBuffer;
+	m_device->CreateBuffer(&partDesc, &particleStructs, &particleBuffer);
+
+	UINT stride = sizeof(ParticleInput);
+	UINT offset = 0;
+
+	m_context->IASetVertexBuffers(0, 1, &particleBuffer, &stride, &offset);
+	//m_context->IASetIndexBuffer(NULL, DXGI_FORMAT_R32_UINT, 0);
+
+	m_context->Draw(particles.size(), 0);
 
 	m_context->GSSetShader(NULL, 0, 0);
 
