@@ -12,6 +12,8 @@ struct GSInput {
 struct GSOutput
 {
 	float4 position : SV_POSITION;
+	float3 center : POSITION;
+	float2 size : SIZE;
 };
 
 [maxvertexcount(4)]
@@ -26,7 +28,6 @@ void main(
 	// Compute the local coordinate system of the sprite relative to the world
 	// space such that the billboard is aligned with the y-axis and faces the eye.
 	//
-
 	float3 up = float3(0.0f, 1.0f, 0.0f);
 	float3 look = cameraPos - gin[0].position;
 	//look.y = 0.0f; // y-axis aligned, so project to xz-plane
@@ -50,6 +51,8 @@ void main(
 	// them as a triangle strip.
 	//
 	GSOutput gout;
+	gout.center = gin[0].position;
+	gout.size = gin[0].size;
 	[unroll]
 	for (int i = 0; i < 4; ++i)
 	{
