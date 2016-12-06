@@ -29,7 +29,7 @@ void main(
 
 	float3 up = float3(0.0f, 1.0f, 0.0f);
 	float3 look = cameraPos - gin[0].position;
-	look.y = 0.0f; // y-axis aligned, so project to xz-plane
+	//look.y = 0.0f; // y-axis aligned, so project to xz-plane
 	look = normalize(look);
 	float3 right = cross(up, look);
 

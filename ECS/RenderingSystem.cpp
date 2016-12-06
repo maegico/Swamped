@@ -207,6 +207,8 @@ void RenderingSystem::Update(Game * game, float dt) {
 
 	m_context->Draw(particles.size(), 0);
 
+	particleBuffer->Release();
+
 	m_context->GSSetShader(NULL, 0, 0);
 
 	// Present the back buffer to the user
