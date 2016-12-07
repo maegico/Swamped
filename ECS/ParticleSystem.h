@@ -18,10 +18,11 @@ public:
 	vector<ParticleInput> GetParticles();
 private:
 	void Collapse();
-
+	void QueueRemove(unsigned int index);
 	unsigned int m_collapsedCount;
 	vector<bool> m_activeParticles;
 	FreeVector<Particle> m_particles;
 	vector<CollapsedNonComponent<Particle>> m_collapsedParticles;
+	ClearVector<unsigned int> m_removalQueue;
 	MaxMin m_bounds;
 };

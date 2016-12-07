@@ -35,6 +35,10 @@ void ParticleSystem::Collapse() {
 	}
 }
 
+void ParticleSystem::QueueRemove(unsigned int index) {
+	m_removalQueue.add(index);
+}
+
 void ParticleSystem::Update(Game * g, float dt) {
 	//generate new particles
 	for (unsigned int c = 0; c < 200; c++) {
@@ -42,7 +46,7 @@ void ParticleSystem::Update(Game * g, float dt) {
 		p.m_position = XMFLOAT3(fRand(-100, 100), fRand(0, 100), fRand(-100, 100));
 		p.m_velocity = XMFLOAT3(fRand(-1, 1), fRand(-1, 0), fRand(-1, 1));
 		float size = fRand(.1, .15);
-		p.m_size = XMFLOAT2(size, size);
+		p.m_size = size;
 		unsigned int index = m_particles.add(p);
 		if (index == m_activeParticles.size())
 			m_activeParticles.push_back(true);
@@ -53,26 +57,38 @@ void ParticleSystem::Update(Game * g, float dt) {
 	Collapse();
 	mutex freeMutex;
 	//update positions
+#ifdef _DEBUG
+	for (unsigned int c = 0; c < m_collapsedCount; c++) {
+#else
 	parallel_for(size_t(0), m_collapsedCount, [&](unsigned int c) {
+#endif
 		XMVECTOR position;
 		XMVECTOR velocity;
 		auto& cp = m_collapsedParticles[c];
 		auto& p = cp.m_component;
 
 		//load stuff
-		position = XMLoadFloat3(&cp.m_component.m_position);
-		velocity = XMLoadFloat3(&cp.m_component.m_velocity);
+		position = XMLoadFloat3(&p.m_position);
+		velocity = XMLoadFloat3(&p.m_velocity);
 		position += dt*velocity;
 
 		//store stuff
 		XMStoreFloat3(&m_particles[cp.m_handle].m_velocity, velocity);
 		XMStoreFloat3(&m_particles[cp.m_handle].m_position, position);
 
-		if (rand() % 500 == 0) {
-			freeMutex.lock();
-			m_activeParticles[cp.m_handle] = false;
-			m_particles.free(cp.m_handle);
-			freeMutex.unlock();
+		if (rand() % 500 == 0 || p.m_position.y<0) {
+			QueueRemove(cp.m_handle);
 		}
+#ifdef _DEBUG
+	}
+#else
 	});
+#endif
+
+	for (unsigned int c = 0; c < m_removalQueue.size(); c++) {
+		unsigned int index = m_removalQueue[c];
+		m_activeParticles[index] = false;
+		m_particles.free(index);
+	}
+	m_removalQueue.clear();
 }

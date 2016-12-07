@@ -6,14 +6,14 @@ cbuffer externalData : register(b1) {
 
 struct GSInput {
 	float4 position : SV_POSITION;
-	float2 size : SIZE;
+	float size : SIZE;
 };
 
 struct GSOutput
 {
 	float4 position : SV_POSITION;
-	float3 center : POSITION;
-	float2 size : SIZE;
+	//float3 center : POSITION;
+	//float size : SIZE;
 };
 
 [maxvertexcount(4)]
@@ -37,8 +37,8 @@ void main(
 	//
 	// Compute triangle strip vertices (quad) in world space.
 	//
-	float halfWidth = 0.5f*gin[0].size.x;
-	float halfHeight = 0.5f*gin[0].size.y;
+	float halfWidth = 0.5f*gin[0].size;
+	float halfHeight = 0.5f*gin[0].size;
 
 	float4 v[4];
 	v[0] = float4(gin[0].position + halfWidth*right - halfHeight*up, 1.0f);
@@ -51,8 +51,8 @@ void main(
 	// them as a triangle strip.
 	//
 	GSOutput gout;
-	gout.center = gin[0].position;
-	gout.size = gin[0].size;
+	//gout.center = gin[0].position;
+	//gout.size = gin[0].size;
 	[unroll]
 	for (int i = 0; i < 4; ++i)
 	{
