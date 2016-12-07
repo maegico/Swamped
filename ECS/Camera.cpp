@@ -35,6 +35,10 @@ XMFLOAT4X4 Camera::GetView() {
 	return view;
 }
 
+XMFLOAT3 Camera::GetPosition() {
+	return position;
+}
+
 void Camera::RelativePositionDelta(float x, float y, float z)
 {
 	XMFLOAT3 delta = XMFLOAT3(x, y, z);

@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "ContentManager.h"
 #include "RenderingComponent.h"
+#include "GlobalFunctions.h"
 #include <unordered_map>
 
 using namespace DirectX;
@@ -9,10 +10,6 @@ using namespace DirectX;
 class Constructors {
 	static unordered_map<std::string, RenderingComponent> m_renderingComponents;
 public:
-	static double fRand(double min, double max) {
-		double f = (double)rand() / RAND_MAX;
-		return min + f * (max - min);
-	}
 	static void Init(Game * g) {
 		m_renderingComponents["testObj"] = {
 			g->m_contentManager.GetMaterial("brickLightingNormalMap"),

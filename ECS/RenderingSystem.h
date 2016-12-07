@@ -7,6 +7,9 @@
 #include "FreeVector.h"
 #include "EntityIdTypeDef.h"
 #include "ClearVector.h"
+#include "CollapsedComponent.h"
+#include "Particle.h"
+#include "ParticleInput.h"
 #include <d3d11.h>
 #include <unordered_map>
 #include <map>
@@ -18,8 +21,8 @@ struct RenderingComponentData{
 
 class RenderingSystem : public ISystem {
 public:
-	void Update(Game * game, float dt);
-	void Init(IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView);
+	void Update(Game * game, float dt, float totalTime);
+	void Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView);
 	void Create(EntityId entityId, RenderingComponent * rc);
 	void Remove(EntityId enttyId);
 	void Collapse();
@@ -36,4 +39,8 @@ private:
 	unordered_map<EntityId, RenderingHandle> m_renderHandles;
 	//DirectionalLight		m_dirLights[3];
 	Lights					m_lights;
+
+	ParticleMaterial		m_particleMaterial;
+	ID3D11BlendState *		m_particleBlendState;
+	D3D11_BLEND_DESC		bd;
 };

@@ -16,7 +16,7 @@ Game::Game(HINSTANCE hInstance)
 
 void Game::Init() {
 	m_contentManager.Init(m_device, m_context);
-	m_renderingSystem.Init(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
+	m_renderingSystem.Init(this, m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 	Constructors::Init(this);
 	Constructors::CreateTestObject(this);
 	/*PhysicsComponent pc;
@@ -55,8 +55,9 @@ void Game::Update(float dt, float totalTime) {
 		Constructors::CreateTestObject2(this);
 	}
 	m_transformSystem.Update(this, dt);
+	m_particleSystem.Update(this, dt, totalTime);
 	m_collisionSystem.Update(this, dt);
-	m_renderingSystem.Update(this, dt);
+	m_renderingSystem.Update(this, dt, totalTime);
 	//std::cout << std::to_string(m_removeQueue.size()) << std::endl;
 	//remove all entities queued for removal
 	for (unsigned int eId : m_removeQueue) {
@@ -81,5 +82,6 @@ void Game::QueueRemoveEntity(EntityId entityId) {
 }
 
 void Game::UpdateTitleBarForGame(std::string in) {
-	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_transformSystem.GetCount())).c_str());
+	XMFLOAT3 cellCounts = m_collisionSystem.GetCellCounts();
+	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_transformSystem.GetCount()) + "  Particles: " + std::to_string(m_particleSystem.GetParticleCount()) + " Cell Counts: " + std::to_string(cellCounts.x) +", "+std::to_string(cellCounts.y)+", "+std::to_string(cellCounts.z)).c_str());
 }

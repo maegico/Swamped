@@ -2,6 +2,7 @@
 #include "CollisionSystem.h"
 #include "TransformSystem.h"
 #include "RenderingSystem.h"
+#include "ParticleSystem.h"
 #include "ContentManager.h"
 #include "DXCore.h"
 #include "EntityIdTypeDef.h"
@@ -16,6 +17,7 @@ public:
 	CollisionSystem m_collisionSystem;
 	TransformSystem m_transformSystem;
 	RenderingSystem m_renderingSystem;
+	ParticleSystem m_particleSystem;
 
 	ContentManager m_contentManager;
 

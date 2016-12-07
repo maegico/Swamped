@@ -29,7 +29,7 @@ public:
 		return m_data.begin();
 	}
 	typename vector<T>::iterator end() {
-		return m_data.end();
+		return m_data.begin() + m_count;
 	}
 	bool contains(T item) {
 		for (auto& member : m_data)
