@@ -18,6 +18,8 @@ public:
 	void virtual Create(EntityId entityId, T tc, U uc) {
 		ComponentData comp = { true,entityId };
 		unsigned int index = m_components1.add(tc);
+		if (entityId+1 > m_handles.size())
+			m_handles.resize(entityId+1);
 		m_handles[entityId] = index;
 		m_components2.add(uc);
 		if (index == m_componentData.size())
@@ -32,7 +34,7 @@ public:
 		m_componentData[handle].m_active = false;
 		m_components1.free(handle);
 		m_components2.free(handle);
-		m_handles.erase(entityId);
+		//m_handles.free(entityId);
 	}
 
 	void Collapse() {
@@ -104,5 +106,5 @@ protected:
 	unsigned int m_collapsedCount = 0;
 private:
 	//Holds entityId - index pairs
-	unordered_map<EntityId, unsigned int> m_handles;
+	vector<unsigned int> m_handles;
 };

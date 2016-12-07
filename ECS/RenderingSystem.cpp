@@ -3,7 +3,7 @@
 
 //Initializes the rendering system
 void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView) {
-	//D3D11_BLEND_DESC bd;
+	D3D11_BLEND_DESC bd = {};
 	bd.RenderTarget[0].BlendEnable = true;
 	bd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
 	bd.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;

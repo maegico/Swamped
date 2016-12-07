@@ -70,10 +70,10 @@ void CollisionSystem::Update(Game * game, float dt) {
 		entityId = m_collapsedComponents[c].m_entityId; //get entityID
 
 		//search for the index of this component's corresponding transform
-		ts->SearchForEntityId(transformIndex, entityId);
+		//ts->SearchForEntityId(transformIndex, entityId);
 
 		//save the transform and its quat
-		tc = &tcs[transformIndex];
+		tc = &ts->GetComponent1(entityId);//&tcs[transformIndex];
 		//rotation = XMLoadFloat4(&tc->m_rotation);
 		modelToWorld = TransformSystem::GetMatrix(*tc);
 

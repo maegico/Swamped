@@ -42,5 +42,5 @@ private:
 
 	ParticleMaterial		m_particleMaterial;
 	ID3D11BlendState *		m_particleBlendState;
-	D3D11_BLEND_DESC		bd;
+	//D3D11_BLEND_DESC		bd;
 };
