@@ -44,7 +44,7 @@ void ParticleSystem::Update(Game * g, float dt) {
 	for (unsigned int c = 0; c < 200; c++) {
 		Particle p;
 		p.m_position = XMFLOAT3(fRand(-100, 100), fRand(0, 100), fRand(-100, 100));
-		p.m_velocity = XMFLOAT3(fRand(-1, 1), fRand(-1, 0), fRand(-1, 1));
+		p.m_velocity = XMFLOAT3(fRand(-1, 1), fRand(-2, -1), fRand(-1, 1));
 		float size = fRand(.1, .15);
 		p.m_size = size;
 		unsigned int index = m_particles.add(p);
@@ -76,7 +76,7 @@ void ParticleSystem::Update(Game * g, float dt) {
 		XMStoreFloat3(&m_particles[cp.m_handle].m_velocity, velocity);
 		XMStoreFloat3(&m_particles[cp.m_handle].m_position, position);
 
-		if (rand() % 500 == 0 || p.m_position.y<0) {
+		if (p.m_position.y<0) {
 			QueueRemove(cp.m_handle);
 		}
 #ifdef _DEBUG

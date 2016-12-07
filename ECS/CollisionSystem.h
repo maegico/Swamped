@@ -19,6 +19,7 @@ class CollisionSystem : public System<BoundingBox> {
 public:
 	//Generates AABBs and checks collision
 	void Update(Game * game, float dT);
+	XMFLOAT3 GetCellCounts();
 	CollisionSystem();
 	~CollisionSystem();
 private:

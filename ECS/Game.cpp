@@ -82,5 +82,6 @@ void Game::QueueRemoveEntity(EntityId entityId) {
 }
 
 void Game::UpdateTitleBarForGame(std::string in) {
-	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_transformSystem.GetCount()) + "  Particles: " + std::to_string(m_particleSystem.GetParticleCount())).c_str());
+	XMFLOAT3 cellCounts = m_collisionSystem.GetCellCounts();
+	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_transformSystem.GetCount()) + "  Particles: " + std::to_string(m_particleSystem.GetParticleCount()) + " Cell Counts: " + std::to_string(cellCounts.x) +", "+std::to_string(cellCounts.y)+", "+std::to_string(cellCounts.z)).c_str());
 }

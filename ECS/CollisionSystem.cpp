@@ -4,6 +4,7 @@
 #include "CollisionFunctions.h"
 
 #define CELL_DIVISIONS 9
+#define DESIRED_OBJECT_DENSITY 1500
 
 using namespace DirectX;
 
@@ -19,10 +20,16 @@ using namespace DirectX;
 
 CollisionSystem::CollisionSystem() {
 	m_collisionFunctions.push_back(std::make_tuple(CollisionType::none, CollisionType::player, &CollisionFunctions::NoOpCollision));
+	m_collisionFunctions.push_back(std::make_tuple(CollisionType::none, CollisionType::none, &CollisionFunctions::NoOpCollision));
+	m_collisionFunctions.push_back(std::make_tuple(CollisionType::player, CollisionType::player, &CollisionFunctions::NoOpCollision));
 }
 
 CollisionSystem::~CollisionSystem() {
 
+}
+
+XMFLOAT3 CollisionSystem::GetCellCounts() {
+	return m_cellCounts;
 }
 
 //Generates AABBs then checks them for collisions
@@ -110,9 +117,13 @@ void CollisionSystem::Update(Game * game, float dt) {
 	//prep spatial hash grid
 	//XMStoreFloat3(&m_mapMin, globalMin);
 	XMVECTOR dimensions = XMVectorSubtract(globalMax, globalMin);
-	dimensions = XMVectorScale(dimensions, 1.0f/CELL_DIVISIONS);
+	//XMVECTOR cellCounts = XMVectorScale(m_collapsedCount, 1.0f / DESIRED_OBJECT_DENSITY);
+	//cellCounts = XMVectorCeiling(cellCounts);
+	float cellDivisions = ceilf(static_cast<float>(m_collapsedCount) / DESIRED_OBJECT_DENSITY);
+	dimensions = XMVectorScale(dimensions, 1.0f/cellDivisions);
 	//XMStoreFloat3(&m_cellDimensions, dimensions);
-	m_cellCounts = XMFLOAT3(CELL_DIVISIONS, CELL_DIVISIONS, CELL_DIVISIONS);
+	m_cellCounts = XMFLOAT3(cellDivisions, cellDivisions, cellDivisions);
+	//XMStoreFloat3(&m_cellCounts, cellCounts);
 	for (unsigned int c = 0; c < m_spatialHashGrid.size(); c++)
 		for (unsigned int n = 0; n < CollisionType::NUMTYPES;n++)
 			m_spatialHashGrid[c][n].clear();

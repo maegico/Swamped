@@ -3,8 +3,8 @@
 
 //Initializes the rendering system
 void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView) {
-	m_camera = Camera(XMFLOAT3(0, 5, -50));
-	m_camera.RotationDelta(.5, 0);
+	m_camera = Camera(XMFLOAT3(0, 50, -100));
+	m_camera.RotationDelta(.7, 0);
 	m_camera.CreateProjectionMatrix(1920, 1080, 90);
 	m_swapChain = swapChain;
 	m_device = device;
@@ -173,43 +173,46 @@ void RenderingSystem::Update(Game * game, float dt) {
 
 	vector<ParticleInput> particles = game->m_particleSystem.GetParticles();
 
-	m_particleVS->SetShader();
-	m_particleGS->SetShader();
-	m_particleGS->SetMatrix4x4("view", m_camera.GetView());
-	m_particleGS->SetMatrix4x4("projection", m_camera.GetProjection());
-	m_particleGS->SetData("cameraPos", &m_camera.GetPosition(), sizeof(XMFLOAT3));
-	m_particlePS->SetShader();
+	if (particles.size() > 0) {
 
-	m_particleGS->CopyAllBufferData();
+		m_particleVS->SetShader();
+		m_particleGS->SetShader();
+		m_particleGS->SetMatrix4x4("view", m_camera.GetView());
+		m_particleGS->SetMatrix4x4("projection", m_camera.GetProjection());
+		m_particleGS->SetData("cameraPos", &m_camera.GetPosition(), sizeof(XMFLOAT3));
+		m_particlePS->SetShader();
 
-	m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
+		m_particleGS->CopyAllBufferData();
 
-	//create buffer for world matrices
-	D3D11_BUFFER_DESC partDesc = {};
-	partDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	partDesc.ByteWidth = sizeof(ParticleInput) * particles.size();
-	partDesc.CPUAccessFlags = 0;
-	partDesc.MiscFlags = 0;
-	partDesc.StructureByteStride = 0;
-	partDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
-	D3D11_SUBRESOURCE_DATA particleStructs = {};
-	particleStructs.pSysMem = &particles[0];
+		//create buffer for world matrices
+		D3D11_BUFFER_DESC partDesc = {};
+		partDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		partDesc.ByteWidth = sizeof(ParticleInput) * particles.size();
+		partDesc.CPUAccessFlags = 0;
+		partDesc.MiscFlags = 0;
+		partDesc.StructureByteStride = 0;
+		partDesc.Usage = D3D11_USAGE_IMMUTABLE;
 
-	ID3D11Buffer * particleBuffer;
-	m_device->CreateBuffer(&partDesc, &particleStructs, &particleBuffer);
+		D3D11_SUBRESOURCE_DATA particleStructs = {};
+		particleStructs.pSysMem = &particles[0];
 
-	UINT stride = sizeof(ParticleInput);
-	UINT offset = 0;
+		ID3D11Buffer * particleBuffer;
+		m_device->CreateBuffer(&partDesc, &particleStructs, &particleBuffer);
 
-	m_context->IASetVertexBuffers(0, 1, &particleBuffer, &stride, &offset);
-	//m_context->IASetIndexBuffer(NULL, DXGI_FORMAT_R32_UINT, 0);
+		UINT stride = sizeof(ParticleInput);
+		UINT offset = 0;
 
-	m_context->Draw(particles.size(), 0);
+		m_context->IASetVertexBuffers(0, 1, &particleBuffer, &stride, &offset);
+		//m_context->IASetIndexBuffer(NULL, DXGI_FORMAT_R32_UINT, 0);
 
-	particleBuffer->Release();
+		m_context->Draw(particles.size(), 0);
 
-	m_context->GSSetShader(NULL, 0, 0);
+		particleBuffer->Release();
+
+		m_context->GSSetShader(NULL, 0, 0);
+	}
 
 	// Present the back buffer to the user
 	m_swapChain->Present(0, 0);
