@@ -3,6 +3,20 @@
 
 //Initializes the rendering system
 void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView) {
+	//D3D11_BLEND_DESC bd;
+	bd.RenderTarget[0].BlendEnable = true;
+	bd.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	bd.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	bd.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	bd.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	bd.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	bd.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	bd.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+	bd.IndependentBlendEnable = true;
+	bd.AlphaToCoverageEnable = true;
+
+	HRESULT blendStateCreate = device->CreateBlendState(&bd, &m_particleBlendState);
+	
 	m_camera = Camera(XMFLOAT3(0, 50, -100));
 	m_camera.RotationDelta(.7, 0);
 	m_camera.CreateProjectionMatrix(1920, 1080, 90);
@@ -30,9 +44,10 @@ void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device
 		1,
 		1 };
 
-	m_particleVS = game->m_contentManager.GetVShader("ParticleVS.cso");
-	m_particleGS = game->m_contentManager.GetGShader("BillboardGS.cso");
-	m_particlePS = game->m_contentManager.GetPShader("ParticlePS.cso");
+	m_particleMaterial = game->m_contentManager.GetParticleMaterial("snowflake");
+
+	//bd;
+	
 	//m_dirLights[0] = { {1,0,0,1},{.1f,0,0,1},{0,1,1} };
 	//m_dirLights[1] = { { 0,1,0,1 },{ .1f,0,0,1 },{ 1,1,0 } };
 	//m_dirLights[2] = { { 0,0,1,1 },{ .1f,0,0,1 },{ 1,0,1 } };
@@ -79,7 +94,7 @@ void RenderingSystem::Collapse() {
 }
 
 //Draws all the stuff
-void RenderingSystem::Update(Game * game, float dt) {
+void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 	Collapse();
 	m_camera.Update();
 
@@ -171,25 +186,30 @@ void RenderingSystem::Update(Game * game, float dt) {
 		instanceBuffer->Release();
 	}
 
-	vector<ParticleInput> particles = game->m_particleSystem.GetParticles();
+	vector<Particle> & particles = game->m_particleSystem.GetParticles();
 
 	if (particles.size() > 0) {
 
-		m_particleVS->SetShader();
-		m_particleGS->SetShader();
-		m_particleGS->SetMatrix4x4("view", m_camera.GetView());
-		m_particleGS->SetMatrix4x4("projection", m_camera.GetProjection());
-		m_particleGS->SetData("cameraPos", &m_camera.GetPosition(), sizeof(XMFLOAT3));
-		m_particlePS->SetShader();
+		m_particleMaterial.vertexShader->SetShader();
+		m_particleMaterial.vertexShader->SetFloat("currentTime", totalTime);
+		m_particleMaterial.geometryShader->SetShader();
+		m_particleMaterial.geometryShader->SetMatrix4x4("view", m_camera.GetView());
+		m_particleMaterial.geometryShader->SetMatrix4x4("projection", m_camera.GetProjection());
+		m_particleMaterial.geometryShader->SetData("cameraPos", &m_camera.GetPosition(), sizeof(XMFLOAT3));
+		m_particleMaterial.pixelShader->SetShader();
+		m_particleMaterial.pixelShader->SetShaderResourceView("pTexture", m_particleMaterial.textureView);
+		m_particleMaterial.pixelShader->SetSamplerState("pSampler", m_particleMaterial.samplerState);
 
-		m_particleGS->CopyAllBufferData();
+		m_particleMaterial.vertexShader->CopyAllBufferData();
+		m_particleMaterial.geometryShader->CopyAllBufferData();
+		m_particleMaterial.pixelShader->CopyAllBufferData();
 
 		m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_POINTLIST);
 
 		//create buffer for world matrices
 		D3D11_BUFFER_DESC partDesc = {};
 		partDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		partDesc.ByteWidth = sizeof(ParticleInput) * particles.size();
+		partDesc.ByteWidth = sizeof(Particle) * particles.size();
 		partDesc.CPUAccessFlags = 0;
 		partDesc.MiscFlags = 0;
 		partDesc.StructureByteStride = 0;
@@ -201,17 +221,21 @@ void RenderingSystem::Update(Game * game, float dt) {
 		ID3D11Buffer * particleBuffer;
 		m_device->CreateBuffer(&partDesc, &particleStructs, &particleBuffer);
 
-		UINT stride = sizeof(ParticleInput);
+		UINT stride = sizeof(Particle);
 		UINT offset = 0;
 
 		m_context->IASetVertexBuffers(0, 1, &particleBuffer, &stride, &offset);
+		m_context->OMSetBlendState(m_particleBlendState, 0, 0xffffffff);
 		//m_context->IASetIndexBuffer(NULL, DXGI_FORMAT_R32_UINT, 0);
+
+		//m_context->RSSetState()
 
 		m_context->Draw(particles.size(), 0);
 
 		particleBuffer->Release();
 
 		m_context->GSSetShader(NULL, 0, 0);
+		m_context->OMSetBlendState(NULL, 0, 0xffffffff);
 	}
 
 	// Present the back buffer to the user

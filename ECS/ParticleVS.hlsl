@@ -1,6 +1,8 @@
 struct VertexInput {
 	float3 position : POSITION;
+	float3 velocity : VELOCITY;
 	float size : SIZE;
+	float birthTime : TIME;
 };
 
 struct VertexToGeometry {
@@ -8,10 +10,14 @@ struct VertexToGeometry {
 	float size : SIZE;
 };
 
+cbuffer externalData : register(b2) {
+	float currentTime;
+}
+
 VertexToGeometry main( VertexInput input )
 {
 	VertexToGeometry vtg;
-	vtg.position = float4(input.position, 1.0);
+	vtg.position = float4(input.position + (currentTime-input.birthTime)*input.velocity, 1.0);
 	vtg.size = input.size;
 
 	return vtg;

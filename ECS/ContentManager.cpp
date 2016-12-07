@@ -74,7 +74,8 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	FindFilesInFolderWSTR(L"assets/CubeMaps", cubemaps);
 	FindFilesInFolder(L"assets/Models", models);
 
-	CreateSamplers("sampler");
+	CreateSamplers("sampler", D3D11_TEXTURE_ADDRESS_WRAP);
+	CreateSamplers("borderSampler", D3D11_TEXTURE_ADDRESS_BORDER);
 
 	for (unsigned int i = 0; i < vshaderNames.size(); i++)
 	{
@@ -92,7 +93,7 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	{
 		CreateTexture(textures[i]);
 	}
-	for (int i = 0; i < cubemaps.size(); i++)
+	for (unsigned int i = 0; i < cubemaps.size(); i++)
 	{
 		CreateCubeMap(cubemaps[i]);
 	}
@@ -103,6 +104,7 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 
 	LoadMaterial("brickLightingNormalMap", "sampler", "vsLighting.cso", "psLighting.cso", "bricks.png", "bricksNM.png");
 	LoadMaterial("skyMap", "sampler", "SkyVS.cso", "SkyPS.cso", "Ni.dds", "null");
+	LoadParticleMaterial("snowflake", "borderSampler", "ParticleVS.cso", "BillboardGS.cso", "ParticlePS.cso", "snowflake.png");
 	//LoadMaterial("TestMaterial", "sampler", "VertexShader.cso", "PixelShader.cso", "soilrough.png");
 }
 
@@ -119,6 +121,18 @@ Material ContentManager::LoadMaterial(std::string name, std::string samplerName,
 	return mat;
 }
 
+ParticleMaterial ContentManager::LoadParticleMaterial(std::string name, std::string samplerName, std::string vs, std::string gs, std::string ps, std::string textureName) {
+	SimpleVertexShader* vshader = m_vshaders[vs];
+	SimpleGeometryShader * gShader = m_gshaders[gs];
+	SimplePixelShader* pshader = m_pshaders[ps];
+	ID3D11SamplerState*  sampler = m_samplers[samplerName];
+	ID3D11ShaderResourceView* texture = m_textures[textureName];
+
+	ParticleMaterial pMat = { vshader, gShader, pshader, texture, sampler };
+	m_particleMaterials[name] = pMat;
+	return pMat;
+}
+
 MeshStore ContentManager::GetMeshStore(std::string mesh)
 {
 	return m_meshStores[mesh];
@@ -127,6 +141,10 @@ MeshStore ContentManager::GetMeshStore(std::string mesh)
 Material ContentManager::GetMaterial(std::string name)
 {
 	return m_materials[name];
+}
+
+ParticleMaterial ContentManager::GetParticleMaterial(std::string name) {
+	return m_particleMaterials[name];
 }
 
 SimpleGeometryShader* ContentManager::GetGShader(std::string name) {
@@ -428,16 +446,16 @@ void ContentManager::CreateMeshStore(std::string objFile)
 	m_meshStores[objFile] = ms;
 }
 
-void ContentManager::CreateSamplers(std::string name)
+void ContentManager::CreateSamplers(std::string name, D3D11_TEXTURE_ADDRESS_MODE addressMode)
 {
 	ID3D11SamplerState*  sampler;
 
 	D3D11_SAMPLER_DESC samplerDes;
 	memset(&samplerDes, 0, sizeof(D3D11_SAMPLER_DESC));
 	//Address U, V, W
-	samplerDes.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDes.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDes.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDes.AddressU = addressMode;
+	samplerDes.AddressV = addressMode;
+	samplerDes.AddressW = addressMode;
 	//Filter
 	samplerDes.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;	//trilinear filtering
 															//MaxLOD

@@ -55,9 +55,9 @@ void Game::Update(float dt, float totalTime) {
 		Constructors::CreateTestObject2(this);
 	}
 	m_transformSystem.Update(this, dt);
-	m_particleSystem.Update(this, dt);
+	m_particleSystem.Update(this, dt, totalTime);
 	m_collisionSystem.Update(this, dt);
-	m_renderingSystem.Update(this, dt);
+	m_renderingSystem.Update(this, dt, totalTime);
 	//std::cout << std::to_string(m_removeQueue.size()) << std::endl;
 	//remove all entities queued for removal
 	for (unsigned int eId : m_removeQueue) {

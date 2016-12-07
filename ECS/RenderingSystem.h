@@ -21,7 +21,7 @@ struct RenderingComponentData{
 
 class RenderingSystem : public ISystem {
 public:
-	void Update(Game * game, float dt);
+	void Update(Game * game, float dt, float totalTime);
 	void Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView);
 	void Create(EntityId entityId, RenderingComponent * rc);
 	void Remove(EntityId enttyId);
@@ -40,7 +40,7 @@ private:
 	//DirectionalLight		m_dirLights[3];
 	Lights					m_lights;
 
-	SimpleVertexShader*		m_particleVS;
-	SimpleGeometryShader*	m_particleGS;
-	SimplePixelShader*		m_particlePS;
+	ParticleMaterial		m_particleMaterial;
+	ID3D11BlendState *		m_particleBlendState;
+	D3D11_BLEND_DESC		bd;
 };

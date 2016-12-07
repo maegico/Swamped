@@ -11,6 +11,14 @@ struct Material {
 	ID3D11SamplerState * samplerState;
 };
 
+struct ParticleMaterial {
+	SimpleVertexShader * vertexShader;
+	SimpleGeometryShader * geometryShader;
+	SimplePixelShader * pixelShader;
+	ID3D11ShaderResourceView * textureView;
+	ID3D11SamplerState * samplerState;
+};
+
 struct Mesh {
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;

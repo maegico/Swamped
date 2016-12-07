@@ -13,16 +13,17 @@ class ParticleSystem {
 public:
 	ParticleSystem();
 	~ParticleSystem();
-	void Update(Game * g, float dt);
+	void Update(Game * g, float dt, float totalTime);
 	size_t GetParticleCount();
-	vector<ParticleInput> GetParticles();
+	vector<Particle> & GetParticles();
 private:
 	void Collapse();
 	void QueueRemove(unsigned int index);
 	unsigned int m_collapsedCount;
 	vector<bool> m_activeParticles;
 	FreeVector<Particle> m_particles;
-	vector<CollapsedNonComponent<Particle>> m_collapsedParticles;
+	vector<unsigned int> m_collapsedHandles;
+	vector<Particle> m_collapsedParticles;
 	ClearVector<unsigned int> m_removalQueue;
 	MaxMin m_bounds;
 };

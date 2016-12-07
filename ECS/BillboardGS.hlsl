@@ -12,6 +12,7 @@ struct GSInput {
 struct GSOutput
 {
 	float4 position : SV_POSITION;
+	float2 uv : TEXCOORD;
 	//float3 center : POSITION;
 	//float size : SIZE;
 };
@@ -46,6 +47,12 @@ void main(
 	v[2] = float4(gin[0].position - halfWidth*right - halfHeight*up, 1.0f);
 	v[3] = float4(gin[0].position - halfWidth*right + halfHeight*up, 1.0f);
 
+	float2 uv[4];
+	uv[0] = float2(0, 1);
+	uv[1] = float2(0, 0);
+	uv[2] = float2(1, 1);
+	uv[3] = float2(1, 0);
+
 	//
 	// Transform quad vertices to world space and output 
 	// them as a triangle strip.
@@ -57,6 +64,7 @@ void main(
 	for (int i = 0; i < 4; ++i)
 	{
 		gout.position = mul(v[i], mul(view, projection));
+		gout.uv = uv[i];
 
 		output.Append(gout);
 	}
