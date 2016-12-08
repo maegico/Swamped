@@ -499,7 +499,7 @@ void ContentManager::CreateTexture(std::wstring textureName)
 
 void ContentManager::CreateCubeMap(std::wstring cubeName)
 {
-	std::wstring debugPath = L"Assets/CubeMaps/";
+	std::wstring debugPath = L"assets/CubeMaps/";
 	debugPath += cubeName;
 
 	ID3D11ShaderResourceView* cubemap;
