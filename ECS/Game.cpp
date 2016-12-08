@@ -48,7 +48,7 @@ Game::~Game() {
 
 //Advances the game in time
 void Game::Update(float dt, float totalTime) {
-	unsigned int newComponents = 100;
+	unsigned int newComponents = 10000*dt;
 	for (unsigned int c = 0; c < newComponents; c++)
 	{
 		Constructors::CreateTestObject(this);
@@ -83,5 +83,5 @@ void Game::QueueRemoveEntity(EntityId entityId) {
 
 void Game::UpdateTitleBarForGame(std::string in) {
 	XMFLOAT3 cellCounts = m_collisionSystem.GetCellCounts();
-	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_transformSystem.GetCount()) + "  Particles: " + std::to_string(m_particleSystem.GetParticleCount()) + " Cell Counts: " + std::to_string(cellCounts.x) +", "+std::to_string(cellCounts.y)+", "+std::to_string(cellCounts.z)).c_str());
+	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_transformSystem.GetCount()) + "  Particles: " + std::to_string(m_particleSystem.GetParticleCount()) + " Cell Divisions: " + std::to_string(static_cast<int>(cellCounts.x))).c_str());
 }
