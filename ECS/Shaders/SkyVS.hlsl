@@ -1,6 +1,6 @@
 
 // Constant Buffer for external (C++) data
-cbuffer externalData : register(b0)
+cbuffer externalData : register(b3)
 {
 	matrix view;
 	matrix projection;

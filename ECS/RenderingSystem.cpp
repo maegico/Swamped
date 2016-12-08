@@ -25,6 +25,7 @@ void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device
 	m_context = context;
 	m_backBufferRTV = renderTargetView;
 	m_depthStencilView = depthStencilView;
+
 	DirectionalLight dirLight1 = { XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f),
 		XMFLOAT3(1.0f, -1.0f, 0.0f) };
 
@@ -45,12 +46,22 @@ void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device
 		1 };
 
 	m_particleMaterial = game->m_contentManager.GetParticleMaterial("snowflake");
+	m_skyBox = { game->m_contentManager.GetSkyBoxMaterial("skyMap"), game->m_contentManager.GetMeshStore("cube.obj").m_m };
 
-	//bd;
-	
-	//m_dirLights[0] = { {1,0,0,1},{.1f,0,0,1},{0,1,1} };
-	//m_dirLights[1] = { { 0,1,0,1 },{ .1f,0,0,1 },{ 1,1,0 } };
-	//m_dirLights[2] = { { 0,0,1,1 },{ .1f,0,0,1 },{ 1,0,1 } };
+	// Create a rasterizer state so we can render backfaces
+	D3D11_RASTERIZER_DESC rsDesc = {};
+	rsDesc.FillMode = D3D11_FILL_SOLID;
+	rsDesc.CullMode = D3D11_CULL_FRONT;
+	rsDesc.DepthClipEnable = true;
+	device->CreateRasterizerState(&rsDesc, &m_skyBoxRasterizerState);
+
+	// Create a depth state so that we can accept pixels
+	// at a depth less than or EQUAL TO an existing depth
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+	dsDesc.DepthEnable = true;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // Make sure we can see the sky (at max depth)
+	device->CreateDepthStencilState(&dsDesc, &m_skyBoxDepthStencilState);
 }
 
 //Create a rendering component
@@ -188,6 +199,37 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 
 	vector<Particle> & particles = game->m_particleSystem.GetParticles();
 
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+
+	m_context->IASetVertexBuffers(0, 1, &m_skyBox.m_mesh.vertexBuffer, &stride, &offset);
+	m_context->IASetIndexBuffer(m_skyBox.m_mesh.indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	SimplePixelShader* skyPS = m_skyBox.m_material.pixelShader;
+	SimpleVertexShader* skyVS = m_skyBox.m_material.vertexShader;
+	ID3D11ShaderResourceView* skySRV = m_skyBox.m_material.textureView;
+
+	// Set up shaders
+	skyVS->SetMatrix4x4("view", m_camera.GetView());
+	skyVS->SetMatrix4x4("projection", m_camera.GetProjection());
+	skyVS->CopyAllBufferData();
+	skyVS->SetShader();
+
+	skyPS->SetShaderResourceView("Sky", skySRV);
+	skyPS->CopyAllBufferData();
+	skyPS->SetShader();
+
+	// Set the proper render states
+	m_context->RSSetState(m_skyBoxRasterizerState);
+	m_context->OMSetDepthStencilState(m_skyBoxDepthStencilState, 0);
+
+	// Actually draw
+	m_context->DrawIndexed(m_skyBox.m_mesh.indexCount, 0, 0);
+
+	// Reset the states!
+	m_context->RSSetState(0);
+	m_context->OMSetDepthStencilState(0, 0);
+
 	if (particles.size() > 0) {
 
 		m_particleMaterial.vertexShader->SetShader();
@@ -236,6 +278,7 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 
 		m_context->GSSetShader(NULL, 0, 0);
 		m_context->OMSetBlendState(NULL, 0, 0xffffffff);
+		m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
 	// Present the back buffer to the user

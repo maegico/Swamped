@@ -42,5 +42,9 @@ private:
 
 	ParticleMaterial		m_particleMaterial;
 	ID3D11BlendState *		m_particleBlendState;
+
+	SkyBoxComponent		m_skyBox;
+	ID3D11RasterizerState*	m_skyBoxRasterizerState;
+	ID3D11DepthStencilState* m_skyBoxDepthStencilState;
 	//D3D11_BLEND_DESC		bd;
 };

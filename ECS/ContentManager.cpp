@@ -103,7 +103,7 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	}
 
 	LoadMaterial("brickLightingNormalMap", "sampler", "vsLighting.cso", "psLighting.cso", "bricks.png", "bricksNM.png");
-	LoadMaterial("skyMap", "sampler", "SkyVS.cso", "SkyPS.cso", "Ni.dds", "null");
+	LoadSkyBoxMaterial("skyMap", "sampler", "SkyVS.cso", "SkyPS.cso", "Ni.dds");
 	LoadParticleMaterial("snowflake", "borderSampler", "ParticleVS.cso", "BillboardGS.cso", "ParticlePS.cso", "snowflake.png");
 	//LoadMaterial("TestMaterial", "sampler", "VertexShader.cso", "PixelShader.cso", "soilrough.png");
 }
@@ -133,6 +133,17 @@ ParticleMaterial ContentManager::LoadParticleMaterial(std::string name, std::str
 	return pMat;
 }
 
+SkyBoxMaterial ContentManager::LoadSkyBoxMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::string textureName) {
+	SimpleVertexShader* vshader = m_vshaders[vs];
+	SimplePixelShader* pshader = m_pshaders[ps];
+	ID3D11SamplerState*  sampler = m_samplers[samplerName];
+	ID3D11ShaderResourceView* texture = m_cubemaps[textureName];
+
+	SkyBoxMaterial sbMat = { vshader, pshader, texture, sampler };
+	m_skyBoxMaterials[name] = sbMat;
+	return sbMat;
+}
+
 MeshStore ContentManager::GetMeshStore(std::string mesh)
 {
 	return m_meshStores[mesh];
@@ -145,6 +156,10 @@ Material ContentManager::GetMaterial(std::string name)
 
 ParticleMaterial ContentManager::GetParticleMaterial(std::string name) {
 	return m_particleMaterials[name];
+}
+
+SkyBoxMaterial ContentManager::GetSkyBoxMaterial(std::string name) {
+	return m_skyBoxMaterials[name];
 }
 
 SimpleGeometryShader* ContentManager::GetGShader(std::string name) {
@@ -484,7 +499,7 @@ void ContentManager::CreateTexture(std::wstring textureName)
 
 void ContentManager::CreateCubeMap(std::wstring cubeName)
 {
-	std::wstring debugPath = L"assets/CubeMaps/";
+	std::wstring debugPath = L"Assets/CubeMaps/";
 	debugPath += cubeName;
 
 	ID3D11ShaderResourceView* cubemap;

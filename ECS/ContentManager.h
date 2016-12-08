@@ -29,9 +29,11 @@ public:
 
 	Material LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::string textureName, std::string normalMapName);
 	ParticleMaterial LoadParticleMaterial(std::string name, std::string samplerName, std::string vs, std::string gs, std::string ps, std::string textureName);
+	SkyBoxMaterial LoadSkyBoxMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::string textureName);
 	MeshStore GetMeshStore(std::string);
 	Material GetMaterial(std::string);
 	ParticleMaterial GetParticleMaterial(std::string);
+	SkyBoxMaterial GetSkyBoxMaterial(std::string);
 	SimpleGeometryShader* GetGShader(std::string);
 	SimpleVertexShader* GetVShader(std::string);
 	SimplePixelShader* GetPShader(std::string);
@@ -39,6 +41,7 @@ public:
 private:
 	std::unordered_map<std::string, Material>					m_materials;	//List of materials
 	std::unordered_map<std::string, ParticleMaterial>			m_particleMaterials; //list of particle materials
+	std::unordered_map<std::string, SkyBoxMaterial>				m_skyBoxMaterials;
 	std::unordered_map<std::string, MeshStore>					m_meshStores;		//List of meshes
 	std::unordered_map<std::string, ID3D11SamplerState*>		m_samplers;		//List of sampler states
 	std::unordered_map<std::string, ID3D11ShaderResourceView*>	m_textures;	//List of textures
