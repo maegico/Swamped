@@ -48,7 +48,7 @@ Game::~Game() {
 
 //Advances the game in time
 void Game::Update(float dt, float totalTime) {
-	unsigned int newComponents = 10000*dt;
+	unsigned int newComponents = 100*dt;
 	for (unsigned int c = 0; c < newComponents; c++)
 	{
 		Constructors::CreateTestObject(this);

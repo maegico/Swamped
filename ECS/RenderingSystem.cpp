@@ -17,8 +17,8 @@ void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device
 
 	HRESULT blendStateCreate = device->CreateBlendState(&bd, &m_particleBlendState);
 	
-	m_camera = Camera(XMFLOAT3(0, 50, -100));
-	m_camera.RotationDelta(.7, 0);
+	m_camera = Camera(XMFLOAT3(0, 5, -100));
+	m_camera.RotationDelta(0, 0);
 	m_camera.CreateProjectionMatrix(1920, 1080, 90);
 	m_swapChain = swapChain;
 	m_device = device;

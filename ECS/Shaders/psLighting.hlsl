@@ -42,6 +42,11 @@ cbuffer lights : register(b0)
 	Lights lights;
 };
 
+cbuffer fog : register(b1) {
+	float fogStart;
+	float fogEnd;
+};
+
 Texture2D Texture		: register(t0);
 Texture2D NormalMap		: register(t1);
 SamplerState Sampler	: register(s0);
@@ -63,7 +68,7 @@ struct VertexToPixel
 	float3 normal		: NORMAL;
 	float3 tangent		: TANGENT;		// XYZ tangent
 	float2 uv			: TEXCOORD;
-	float4 worldSpace   : TEXCOORD1;
+	float4 cameraSpace   : TEXCOORD1;
 };
 
 float4 calcDirLight(float3 normal, DirectionalLight dirLight)
@@ -164,11 +169,14 @@ float4 main(VertexToPixel input) : SV_TARGET
 	float4 fogColor = float4(0.5, 0.5, 0.5, 1.0); //grey
 
 												  //range-based
-	dist = length(input.worldSpace);
+	dist = length(input.cameraSpace);
 
 	//linear fog
-	fogFactor = (10 - dist) / (10 - 5);
-	fogFactor = clamp(fogFactor, 0.0, 1.0);
+	float minFogAngle = .4;
+	float4 up = float4(0.0, 1.0, 0.0, 0.0);
+	float angle = clamp(acos(dot(normalize(input.cameraSpace), up)), minFogAngle,0.5);
+	fogFactor = (30 - dist) / (30 - 10);
+	fogFactor = ((angle - minFogAngle) / (.5-minFogAngle)) * clamp(fogFactor, 0.0, 1.0);
 
 	return lerp(fogColor, finalLighting * surfaceColor, fogFactor);
 	//return sumOfDiffuse * surfaceColor;

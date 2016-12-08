@@ -19,6 +19,8 @@ struct VertexShaderInput
 struct VertexToPixel
 {
 	float4 position		: SV_POSITION;
+	float4 worldPos		: POSITION;
+	float4 cameraSpace	: TEXCOORD1;
 	float3 uvw			: TEXCOORD;
 };
 
@@ -42,6 +44,8 @@ VertexToPixel main(VertexShaderInput input)
 
 	// Ensure the vertex is at max depth
 	output.position.z = output.position.w;
+	output.worldPos = float4(input.position,1.0);
+	output.cameraSpace = mul(float4(input.position, 1.0f), view); //this is the only line changed in the math
 
 	// Use the raw vertex position as a direction
 	// in space
