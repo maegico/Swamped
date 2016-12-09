@@ -46,5 +46,18 @@ private:
 	SkyBoxComponent		m_skyBox;
 	ID3D11RasterizerState*	m_skyBoxRasterizerState;
 	ID3D11DepthStencilState* m_skyBoxDepthStencilState;
+
+	// Post process requirements
+	//initial render
+	ID3D11RenderTargetView* irRTV;		// Allows us to render to a texture
+	ID3D11ShaderResourceView* irSRV;	// Allows us to sample from the same texture
+
+										//bright pixels
+	ID3D11RenderTargetView* bpRTV;		// Allows us to render to a texture
+	ID3D11ShaderResourceView* bpSRV;	// Allows us to sample from the same texture
+
+										//blur
+	ID3D11RenderTargetView* blRTV;		// Allows us to render to a texture
+	ID3D11ShaderResourceView* blSRV;	// Allows us to sample from the same texture
 	//D3D11_BLEND_DESC		bd;
 };

@@ -103,6 +103,9 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	}
 
 	LoadMaterial("brickLightingNormalMap", "sampler", "vsLighting.cso", "psLighting.cso", "bricks.png", "bricksNM.png");
+	LoadMaterial("BrightPixels", "sampler", "vsPostProcessing.cso", "psBrightPixels.cso", "null", "null");
+	LoadMaterial("Blur", "sampler", "vsPostProcessing.cso", "psBlur.cso", "null", "null");
+	LoadMaterial("Bloom", "sampler", "vsPostProcessing.cso", "psBloom.cso", "null", "null");
 	LoadSkyBoxMaterial("skyMap", "sampler", "SkyVS.cso", "SkyPS.cso", "Ni.dds");
 	LoadParticleMaterial("snowflake", "borderSampler", "ParticleVS.cso", "BillboardGS.cso", "ParticlePS.cso", "snowflake.png");
 	//LoadMaterial("TestMaterial", "sampler", "VertexShader.cso", "PixelShader.cso", "soilrough.png");
@@ -113,7 +116,7 @@ Material ContentManager::LoadMaterial(std::string name, std::string samplerName,
 	SimpleVertexShader* vshader = m_vshaders[vs];
 	SimplePixelShader* pshader = m_pshaders[ps];
 	ID3D11SamplerState*  sampler = m_samplers[samplerName];
-	ID3D11ShaderResourceView* texture = m_textures[textureName];
+	ID3D11ShaderResourceView* texture = (textureName != "null") ? m_textures[textureName] : nullptr;
 	ID3D11ShaderResourceView * normalMap = (normalMapName != "null") ? m_textures[normalMapName] : nullptr;
 
 	Material mat = { vshader, pshader, texture, normalMap, sampler };//new Material(vshader, pshader, texture, sampler);

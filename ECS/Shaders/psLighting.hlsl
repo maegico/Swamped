@@ -101,7 +101,7 @@ float4 calcSpotLight(float4 worldPos, float3 normal, SpotLight spotLight)
 	float angleFromCenter = max( 0.0f, dot(spotLightDirectionToPixel, spotLight.Direction) );
 	//raise to a power for a nice "falloff"
 	//multiply diffuse and specular results by this
-	float spotAmount = pow(angleFromCenter, 0.0f);
+	float spotAmount = pow(angleFromCenter, 20.0f);
 
 	float4 scaledDiffuse = spotLight.DiffuseColor * lightAmount * spotAmount;
 
@@ -170,7 +170,8 @@ float4 main(VertexToPixel input) : SV_TARGET
 	fogFactor = (10 - dist) / (10 - 5);
 	fogFactor = clamp(fogFactor, 0.0, 1.0);
 
-	return lerp(fogColor, finalLighting * surfaceColor, fogFactor);
+	//return lerp(fogColor, finalLighting * surfaceColor, fogFactor);
+	return finalLighting * surfaceColor;
 	//return sumOfDiffuse * surfaceColor;
 	//return float4(input.normal, 1);
 	//return float4(1, 0, 0, 1);
