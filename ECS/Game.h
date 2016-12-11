@@ -2,12 +2,16 @@
 #include "CollisionSystem.h"
 #include "TransformSystem.h"
 #include "RenderingSystem.h"
+#include "ParticleSystem.h"
 #include "ContentManager.h"
 #include "DXCore.h"
 #include "EntityIdTypeDef.h"
+#include "Toggle.h"
 #include <vector>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 //The game instance. Not a singleton
 class Game : public DXCore {
@@ -16,6 +20,7 @@ public:
 	CollisionSystem m_collisionSystem;
 	TransformSystem m_transformSystem;
 	RenderingSystem m_renderingSystem;
+	ParticleSystem m_particleSystem;
 
 	ContentManager m_contentManager;
 
@@ -36,4 +41,11 @@ private:
 	FreeVector<vector<ISystem*>> m_entities;
 	ClearVector<EntityId> m_removeQueue;
 	void UpdateTitleBarForGame(std::string in);
+
+	vector<Toggle> m_toggles;
+
+	float m_accumulator = 0;
+	const float m_timeStep = 1.0 / 60;
+
+	//bool fxaaToggle = false;
 };

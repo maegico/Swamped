@@ -1,5 +1,6 @@
 
 #include <Windows.h>
+#include <time.h>
 #include "Game.h"
 
 // --------------------------------------------------------
@@ -17,6 +18,7 @@ int WINAPI WinMain(
 	//  - You may want to use something more advanced, like Visual Leak Detector
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+	srand(time(NULL));
 
 	// Create the Game object using
 	// the app handle we got from WinMain
@@ -40,4 +42,9 @@ int WINAPI WinMain(
 	// Begin the message and game loop, and then return
 	// whatever we get back once the game loop is over
 	return dxGame.Run();
+}
+
+static float fRand(float min, float max) {
+	float f = (float)rand() / RAND_MAX;
+	return min + f * (max - min);
 }

@@ -63,6 +63,7 @@ struct VertexToPixel
 	float3 normal		: NORMAL;
 	float3 tangent		: TANGENT;		// XYZ tangent
 	float2 uv			: TEXCOORD;
+	float4 worldSpace   : TEXCOORD1;
 };
 
 float4 calcDirLight(float3 normal, DirectionalLight dirLight)
@@ -100,7 +101,7 @@ float4 calcSpotLight(float4 worldPos, float3 normal, SpotLight spotLight)
 	float angleFromCenter = max( 0.0f, dot(spotLightDirectionToPixel, spotLight.Direction) );
 	//raise to a power for a nice "falloff"
 	//multiply diffuse and specular results by this
-	float spotAmount = pow(angleFromCenter, 0.0f);
+	float spotAmount = pow(angleFromCenter, 20.0f);
 
 	float4 scaledDiffuse = spotLight.DiffuseColor * lightAmount * spotAmount;
 
@@ -157,6 +158,19 @@ float4 main(VertexToPixel input) : SV_TARGET
 
 	float4 finalLighting = sumOfDiffuse + (lights.AmbientColor * 0.1f);
 
+	//fog-related stuff
+	float dist = 0;
+	float fogFactor = 0;
+	float4 fogColor = float4(0.5, 0.5, 0.5, 1.0); //grey
+
+												  //range-based
+	dist = length(input.worldSpace);
+
+	//linear fog
+	fogFactor = (10 - dist) / (10 - 5);
+	fogFactor = clamp(fogFactor, 0.0, 1.0);
+
+	//return lerp(fogColor, finalLighting * surfaceColor, fogFactor);
 	return finalLighting * surfaceColor;
 	//return sumOfDiffuse * surfaceColor;
 	//return float4(input.normal, 1);

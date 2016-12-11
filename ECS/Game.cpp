@@ -16,30 +16,12 @@ Game::Game(HINSTANCE hInstance)
 
 void Game::Init() {
 	m_contentManager.Init(m_device, m_context);
-	m_renderingSystem.Init(m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
+	m_renderingSystem.Init(this, m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 	Constructors::Init(this);
-	Constructors::CreateTestObject(this);
-	/*PhysicsComponent pc;
-	pc.m_velocity = XMFLOAT3(0, 0, 0);
-	pc.m_acceleration = XMFLOAT3(0, 0, 0);
-	XMStoreFloat4(&pc.m_rotationalVelocity, XMQuaternionRotationRollPitchYaw(1, 0, 0));
-	XMStoreFloat4(&pc.m_rotationalAcceleration, XMQuaternionRotationRollPitchYaw(0, 0, 0));
-	TransformComponent tc;
-	tc.m_position = XMFLOAT3((rand() % 50) - 25, (rand() % 50) - 25, (rand() % 50) - 25);
-	Constructors::CreateTransform(this, tc, pc, {
-		{
-			{ -1,-1,-1 },
-			{ -1,-1,1 },
-			{ -1,1,-1 },
-			{ -1,1,1 },
-			{ 1,-1,-1 },
-			{ 1,-1,1 },
-			{ 1,1,-1 },
-			{ 1,1,1 }
-		},
-		CollisionType::none
-	});*/
-	//Constructors::CreateTransform(this, {}, {}, {});
+	//Constructors::CreateTestObject(this);
+	Constructors::CreateGround(this);
+	m_toggles.push_back(Toggle('A', &m_renderingSystem.m_fxaaToggle));
+	m_toggles.push_back(Toggle('B', &m_renderingSystem.m_bloomToggle));
 }
 
 //delete system objects
@@ -48,16 +30,34 @@ Game::~Game() {
 
 //Advances the game in time
 void Game::Update(float dt, float totalTime) {
-	unsigned int newComponents = 100;
-	for (unsigned int c = 0; c < newComponents; c++)
-	{
-		Constructors::CreateTestObject(this);
-		Constructors::CreateTestObject2(this);
+	for (Toggle& t : m_toggles)
+		t.Check();
+
+	if (dt > m_timeStep * 4)
+		dt = m_timeStep;
+
+	m_accumulator += dt;
+
+	while (m_accumulator >= m_timeStep) {
+#ifdef _DEBUG
+		unsigned int newComponents = 100 * m_timeStep;
+#else
+		unsigned int newComponents = 10000 * m_timeStep;
+#endif
+		for (unsigned int c = 0; c < newComponents; c++)
+		{
+			Constructors::CreateTestObject(this);
+			Constructors::CreateTestObject2(this);
+		}
+
+		m_transformSystem.Update(this, m_timeStep);
+		m_collisionSystem.Update(this, m_timeStep);
+		m_accumulator -= m_timeStep;
 	}
-	m_transformSystem.Update(this, dt);
-	m_collisionSystem.Update(this, dt);
-	m_renderingSystem.Update(this, dt);
-	//std::cout << std::to_string(m_removeQueue.size()) << std::endl;
+
+	m_particleSystem.Update(this, dt, totalTime);
+	m_renderingSystem.Update(this, dt, totalTime);
+
 	//remove all entities queued for removal
 	for (unsigned int eId : m_removeQueue) {
 		//call remove on the entity ID for each system associated with the entity
@@ -81,5 +81,18 @@ void Game::QueueRemoveEntity(EntityId entityId) {
 }
 
 void Game::UpdateTitleBarForGame(std::string in) {
-	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_transformSystem.GetCount())).c_str());
+	double totalUpdateTime = m_collisionSystem.GetTotalTime() + m_particleSystem.GetTotalTime() + m_renderingSystem.GetTotalTime() + m_transformSystem.GetTotalTime();
+	XMFLOAT3 cellCounts = m_collisionSystem.GetCellCounts();
+	SetWindowText(hWnd, 
+		(in + 
+			" Objects: " + std::to_string(m_transformSystem.GetCount()) + 
+			" Particles: " + std::to_string(m_particleSystem.GetParticleCount()) + 
+			" Cell Divisions: " + std::to_string(static_cast<int>(cellCounts.x)) + 
+			" FXAA: "+std::to_string(m_renderingSystem.m_fxaaToggle) + 
+			" Bloom: "+std::to_string(m_renderingSystem.m_bloomToggle) + 
+			" Collisions: "+std::to_string((m_collisionSystem.GetTotalTime()/totalUpdateTime)) +
+			" Particles: " + std::to_string((m_particleSystem.GetTotalTime() / totalUpdateTime)) +
+			" Rendering: " + std::to_string((m_renderingSystem.GetTotalTime() / totalUpdateTime)) +
+			" Transforms: " + std::to_string((m_transformSystem.GetTotalTime() / totalUpdateTime))
+		).c_str());
 }

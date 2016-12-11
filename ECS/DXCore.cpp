@@ -352,6 +352,16 @@ void DXCore::OnResize()
 	m_context->RSSetViewports(1, &viewport);
 }
 
+unsigned int DXCore::GetWidth()
+{
+	return width;
+}
+
+unsigned int DXCore::GetHeight()
+{
+	return height;
+}
+
 
 // --------------------------------------------------------
 // This is the main game loop, handling the following:

@@ -11,6 +11,21 @@ struct Material {
 	ID3D11SamplerState * samplerState;
 };
 
+struct ParticleMaterial {
+	SimpleVertexShader * vertexShader;
+	SimpleGeometryShader * geometryShader;
+	SimplePixelShader * pixelShader;
+	ID3D11ShaderResourceView * textureView;
+	ID3D11SamplerState * samplerState;
+};
+
+struct SkyBoxMaterial {
+	SimpleVertexShader * vertexShader;
+	SimplePixelShader * pixelShader;
+	ID3D11ShaderResourceView * textureView;
+	ID3D11SamplerState * samplerState;
+};
+
 struct Mesh {
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
@@ -19,6 +34,11 @@ struct Mesh {
 
 struct RenderingComponent {
 	Material m_material;
+	Mesh m_mesh;
+};
+
+struct SkyBoxComponent {
+	SkyBoxMaterial m_material;
 	Mesh m_mesh;
 };
 

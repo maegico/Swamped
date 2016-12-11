@@ -1,7 +1,7 @@
 
 // External texture-related data
-TextureCube Sky			: register(t0);
-SamplerState Sampler	: register(s0);
+TextureCube Sky			: register(t4);
+SamplerState Sampler	: register(s3);
 
 // Defines the input to this pixel shader
 // - Should match the output of our corresponding vertex shader

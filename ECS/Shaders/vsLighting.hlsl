@@ -46,6 +46,7 @@ struct VertexToPixel
 	float3 normal		: NORMAL;
 	float3 tangent		: TANGENT;		// XYZ tangent
 	float2 uv			: TEXCOORD;
+	float4 cameraSpace	: TEXCOORD1;
 };
 
 // --------------------------------------------------------
@@ -80,7 +81,7 @@ VertexToPixel main(VertexShaderInput input)
 	output.tangent = mul(input.tangent, (float3x3)input.world);
 
 	output.uv = input.uv;
-
+	output.cameraSpace = mul(float4(input.position, 1.0f), mul(input.world, view)); //this is the only line changed in the math
 	// Whatever we return will make its way through the pipeline to the
 	// next programmable stage we're using (the pixel shader for now)
 	return output;

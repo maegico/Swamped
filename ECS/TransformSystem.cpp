@@ -1,6 +1,7 @@
 #include "TransformSystem.h"
 #include "Constructors.h"
 void TransformSystem::Update(Game * game, float dt) {
+	StartTimer();
 	/*for (unsigned int c = 0; c < m_components1.size(); c++) {
 		if (m_componentData[c].m_active && rand() % 50 < 1)
 			g->QueueRemoveEntity(m_componentData[c].GetEntityId());
@@ -22,7 +23,9 @@ void TransformSystem::Update(Game * game, float dt) {
 		position = XMLoadFloat3(&m_collapsedComponents1[c].m_component.m_position);
 		rotation = XMLoadFloat4(&m_collapsedComponents1[c].m_component.m_rotation);
 		velocity = XMLoadFloat3(&m_collapsedComponents2[c].m_component.m_velocity);
-		acceleration = XMVectorAdd(XMLoadFloat3(&m_collapsedComponents2[c].m_component.m_acceleration), XMLoadFloat3(&XMFLOAT3(0, m_gravity, 0)));
+		acceleration = XMLoadFloat3(&m_collapsedComponents2[c].m_component.m_acceleration);
+		if(m_collapsedComponents2[c].m_component.m_gravity)
+			acceleration = XMVectorAdd(acceleration, XMLoadFloat3(&XMFLOAT3(0, m_gravity, 0)));
 		rotationalVelocity = XMLoadFloat3(&m_collapsedComponents2[c].m_component.m_rotationalVelocity);
 		if (XMVectorGetX(XMVector3Length(rotationalVelocity)) != 0)
 		{
@@ -49,6 +52,7 @@ void TransformSystem::Update(Game * game, float dt) {
 		//m_components2[c].m_rotationalVelocity = rotationalVelocity;
 		XMStoreFloat4(&m_components1[m_collapsedComponents1[c].m_handle].m_rotation, rotation);
 	});
+	StopTimer();
 }
 
 //Returns a matrix generated from the given component's properties

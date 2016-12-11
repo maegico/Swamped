@@ -4,6 +4,7 @@
 #include "CollisionFunctions.h"
 
 #define CELL_DIVISIONS 9
+#define DESIRED_OBJECT_DENSITY 1500
 
 using namespace DirectX;
 
@@ -19,14 +20,21 @@ using namespace DirectX;
 
 CollisionSystem::CollisionSystem() {
 	m_collisionFunctions.push_back(std::make_tuple(CollisionType::none, CollisionType::player, &CollisionFunctions::NoOpCollision));
+	m_collisionFunctions.push_back(std::make_tuple(CollisionType::none, CollisionType::none, &CollisionFunctions::NoOpCollision));
+	m_collisionFunctions.push_back(std::make_tuple(CollisionType::player, CollisionType::player, &CollisionFunctions::NoOpCollision));
 }
 
 CollisionSystem::~CollisionSystem() {
 
 }
 
+XMFLOAT3 CollisionSystem::GetCellCounts() {
+	return m_cellCounts;
+}
+
 //Generates AABBs then checks them for collisions
 void CollisionSystem::Update(Game * game, float dt) {
+	StartTimer();
 	Collapse();
 	if (m_collapsedCount == 0)
 		return;
@@ -63,10 +71,10 @@ void CollisionSystem::Update(Game * game, float dt) {
 		entityId = m_collapsedComponents[c].m_entityId; //get entityID
 
 		//search for the index of this component's corresponding transform
-		ts->SearchForEntityId(transformIndex, entityId);
+		//ts->SearchForEntityId(transformIndex, entityId);
 
 		//save the transform and its quat
-		tc = &tcs[transformIndex];
+		tc = &ts->GetComponent1(entityId);//&tcs[transformIndex];
 		//rotation = XMLoadFloat4(&tc->m_rotation);
 		modelToWorld = TransformSystem::GetMatrix(*tc);
 
@@ -110,13 +118,17 @@ void CollisionSystem::Update(Game * game, float dt) {
 	//prep spatial hash grid
 	//XMStoreFloat3(&m_mapMin, globalMin);
 	XMVECTOR dimensions = XMVectorSubtract(globalMax, globalMin);
-	dimensions = XMVectorScale(dimensions, 1.0f/CELL_DIVISIONS);
+	//XMVECTOR cellCounts = XMVectorScale(m_collapsedCount, 1.0f / DESIRED_OBJECT_DENSITY);
+	//cellCounts = XMVectorCeiling(cellCounts);
+	float cellDivisions = ceilf(static_cast<float>(m_collapsedCount) / DESIRED_OBJECT_DENSITY);
+	dimensions = XMVectorScale(dimensions, 1.0f/cellDivisions);
 	//XMStoreFloat3(&m_cellDimensions, dimensions);
-	m_cellCounts = XMFLOAT3(CELL_DIVISIONS, CELL_DIVISIONS, CELL_DIVISIONS);
+	m_cellCounts = XMFLOAT3(cellDivisions, cellDivisions, cellDivisions);
+	//XMStoreFloat3(&m_cellCounts, cellCounts);
 	for (unsigned int c = 0; c < m_spatialHashGrid.size(); c++)
 		for (unsigned int n = 0; n < CollisionType::NUMTYPES;n++)
 			m_spatialHashGrid[c][n].clear();
-	m_spatialHashGrid.resize(m_cellCounts.x * m_cellCounts.y * m_cellCounts.z, vector<ClearVector<CollapsedComponent<MaxMin>>>(CollisionType::NUMTYPES));
+	m_spatialHashGrid.resize(static_cast<size_t>(m_cellCounts.x * m_cellCounts.y * m_cellCounts.z), vector<ClearVector<CollapsedComponent<MaxMin>>>(CollisionType::NUMTYPES));
 	//m_cellCrossers.clear();
 
 	//populate spatial hash grid
@@ -142,7 +154,7 @@ void CollisionSystem::Update(Game * game, float dt) {
 		for (auto& point : bb) {
 			pointxm = XMLoadFloat3(&point);
 			XMStoreFloat3(&point, XMVectorFloor(XMVectorDivide(XMVectorSubtract(pointxm, globalMin), dimensions)));
-			gridIndices.push(point.z * m_cellCounts.x * m_cellCounts.y + point.y * m_cellCounts.x + point.x, true);
+			gridIndices.push(static_cast<unsigned int>(point.z * m_cellCounts.x * m_cellCounts.y + point.y * m_cellCounts.x + point.x), true);
 		}
 		for (unsigned int n = 0; n < gridIndices.size(); n++) {
 			//auto one = m_spatialHashGrid[gridIndices[n]];
@@ -226,4 +238,5 @@ void CollisionSystem::Update(Game * game, float dt) {
 			kv.first(game, collisions[c].first, collisions[c].second, dt);
 		}
 	}
+	StopTimer();
 }
