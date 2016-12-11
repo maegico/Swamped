@@ -74,8 +74,9 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	FindFilesInFolderWSTR(L"assets/CubeMaps", cubemaps);
 	FindFilesInFolder(L"assets/Models", models);
 
-	CreateSamplers("sampler", D3D11_TEXTURE_ADDRESS_WRAP);
-	CreateSamplers("borderSampler", D3D11_TEXTURE_ADDRESS_BORDER);
+	CreateSamplers("sampler", D3D11_TEXTURE_ADDRESS_WRAP, D3D11_DEFAULT_MAX_ANISOTROPY);
+	CreateSamplers("borderSampler", D3D11_TEXTURE_ADDRESS_BORDER,D3D11_DEFAULT_MAX_ANISOTROPY);
+	CreateSamplers("fxaaSampler", D3D11_TEXTURE_ADDRESS_BORDER, 4);
 
 	for (unsigned int i = 0; i < vshaderNames.size(); i++)
 	{
@@ -175,6 +176,10 @@ SimpleVertexShader* ContentManager::GetVShader(std::string name) {
 
 SimplePixelShader* ContentManager::GetPShader(std::string name) {
 	return m_pshaders[name];
+}
+
+ID3D11SamplerState* ContentManager::GetSampler(std::string name) {
+	return m_samplers[name];
 }
 
 //took from Chris Cascioli's code
@@ -464,7 +469,7 @@ void ContentManager::CreateMeshStore(std::string objFile)
 	m_meshStores[objFile] = ms;
 }
 
-void ContentManager::CreateSamplers(std::string name, D3D11_TEXTURE_ADDRESS_MODE addressMode)
+void ContentManager::CreateSamplers(std::string name, D3D11_TEXTURE_ADDRESS_MODE addressMode, UINT maxAnisotropy)
 {
 	ID3D11SamplerState*  sampler;
 
@@ -475,9 +480,10 @@ void ContentManager::CreateSamplers(std::string name, D3D11_TEXTURE_ADDRESS_MODE
 	samplerDes.AddressV = addressMode;
 	samplerDes.AddressW = addressMode;
 	//Filter
-	samplerDes.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;	//trilinear filtering
+	samplerDes.Filter = D3D11_FILTER_ANISOTROPIC;	//trilinear filtering
 															//MaxLOD
 	samplerDes.MaxLOD = D3D11_FLOAT32_MAX;
+	samplerDes.MaxAnisotropy = maxAnisotropy;
 
 	HRESULT result = m_device->CreateSamplerState(&samplerDes, &sampler);
 	if (result != S_OK)

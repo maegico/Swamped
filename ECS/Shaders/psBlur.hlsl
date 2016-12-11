@@ -27,7 +27,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 			//figure out this pixel's uv
 			float2 uv = input.uv + float2(x * pixelWidth, y * pixelHeight);
 
-			totalColor += BrightPixels.Sample(Sampler, uv);
+			totalColor += (1-((x*x+y*y)/(blurAmount*blurAmount))) * BrightPixels.Sample(Sampler, uv);
 			//numSamples++;
 		}
 	}

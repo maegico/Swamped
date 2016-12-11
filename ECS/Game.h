@@ -6,6 +6,7 @@
 #include "ContentManager.h"
 #include "DXCore.h"
 #include "EntityIdTypeDef.h"
+#include "Toggle.h"
 #include <vector>
 
 using namespace std;
@@ -38,4 +39,8 @@ private:
 	FreeVector<vector<ISystem*>> m_entities;
 	ClearVector<EntityId> m_removeQueue;
 	void UpdateTitleBarForGame(std::string in);
+
+	vector<Toggle> m_toggles;
+
+	//bool fxaaToggle = false;
 };

@@ -176,6 +176,12 @@
     <ClInclude Include="ParticleInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Fxaa3_11.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Toggle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\PixelShader.hlsl">
@@ -215,6 +221,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\vsPostProcessing.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="FxaaVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="FxaaPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

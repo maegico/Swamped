@@ -19,27 +19,8 @@ void Game::Init() {
 	m_renderingSystem.Init(this, m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 	Constructors::Init(this);
 	Constructors::CreateTestObject(this);
-	/*PhysicsComponent pc;
-	pc.m_velocity = XMFLOAT3(0, 0, 0);
-	pc.m_acceleration = XMFLOAT3(0, 0, 0);
-	XMStoreFloat4(&pc.m_rotationalVelocity, XMQuaternionRotationRollPitchYaw(1, 0, 0));
-	XMStoreFloat4(&pc.m_rotationalAcceleration, XMQuaternionRotationRollPitchYaw(0, 0, 0));
-	TransformComponent tc;
-	tc.m_position = XMFLOAT3((rand() % 50) - 25, (rand() % 50) - 25, (rand() % 50) - 25);
-	Constructors::CreateTransform(this, tc, pc, {
-		{
-			{ -1,-1,-1 },
-			{ -1,-1,1 },
-			{ -1,1,-1 },
-			{ -1,1,1 },
-			{ 1,-1,-1 },
-			{ 1,-1,1 },
-			{ 1,1,-1 },
-			{ 1,1,1 }
-		},
-		CollisionType::none
-	});*/
-	//Constructors::CreateTransform(this, {}, {}, {});
+	m_toggles.push_back(Toggle('A', &m_renderingSystem.m_fxaaToggle));
+	m_toggles.push_back(Toggle('B', &m_renderingSystem.m_bloomToggle));
 }
 
 //delete system objects
@@ -54,6 +35,10 @@ void Game::Update(float dt, float totalTime) {
 		Constructors::CreateTestObject(this);
 		Constructors::CreateTestObject2(this);
 	}
+
+	for (Toggle& t : m_toggles)
+		t.Check();
+
 	m_transformSystem.Update(this, dt);
 	m_particleSystem.Update(this, dt, totalTime);
 	m_collisionSystem.Update(this, dt);
@@ -83,5 +68,5 @@ void Game::QueueRemoveEntity(EntityId entityId) {
 
 void Game::UpdateTitleBarForGame(std::string in) {
 	XMFLOAT3 cellCounts = m_collisionSystem.GetCellCounts();
-	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_transformSystem.GetCount()) + "  Particles: " + std::to_string(m_particleSystem.GetParticleCount()) + " Cell Divisions: " + std::to_string(static_cast<int>(cellCounts.x))).c_str());
+	SetWindowText(hWnd, (in + "  Objects: " + std::to_string(m_transformSystem.GetCount()) + "  Particles: " + std::to_string(m_particleSystem.GetParticleCount()) + " Cell Divisions: " + std::to_string(static_cast<int>(cellCounts.x)) + " FXAA: "+std::to_string(m_renderingSystem.m_fxaaToggle) + " Bloom: "+std::to_string(m_renderingSystem.m_bloomToggle)).c_str());
 }

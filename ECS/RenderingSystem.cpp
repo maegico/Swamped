@@ -1,6 +1,26 @@
 #include "RenderingSystem.h"
 #include "Game.h"
 
+RenderingSystem::~RenderingSystem() {
+	m_particleBlendState->Release();
+	m_skyBoxRasterizerState->Release();
+	m_skyBoxDepthStencilState->Release();
+
+	m_initialRenderRTV->Release();
+	m_initialRenderSRV->Release();
+
+	m_brightPixelsRTV->Release();
+	m_brightPixelsSRV->Release();
+
+	m_blurRTV->Release(); 
+	m_blurSRV->Release();	
+
+	m_fxaaRTV->Release();
+	m_fxaaSRV->Release();
+
+	m_particleDepthStencilState->Release();
+}
+
 //Initializes the rendering system
 void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView) {
 	D3D11_BLEND_DESC bd = {};
@@ -92,21 +112,39 @@ void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device
 	ID3D11Texture2D* initialRender;
 	ID3D11Texture2D* brightPixels;
 	ID3D11Texture2D* blur;
+	ID3D11Texture2D* fxaa;
 	device->CreateTexture2D(&textureDesc, 0, &initialRender);
 	device->CreateTexture2D(&textureDesc, 0, &brightPixels);
 	device->CreateTexture2D(&textureDesc, 0, &blur);
+	device->CreateTexture2D(&textureDesc, 0, &fxaa);
 
-	device->CreateRenderTargetView(initialRender, &rtvDesc, &irRTV);
-	device->CreateRenderTargetView(brightPixels, &rtvDesc, &bpRTV);
-	device->CreateRenderTargetView(blur, &rtvDesc, &blRTV);
+	device->CreateRenderTargetView(initialRender, &rtvDesc, &m_initialRenderRTV);
+	device->CreateRenderTargetView(brightPixels, &rtvDesc, &m_brightPixelsRTV);
+	device->CreateRenderTargetView(blur, &rtvDesc, &m_blurRTV);
+	device->CreateRenderTargetView(fxaa, &rtvDesc, &m_fxaaRTV);
 
-	device->CreateShaderResourceView(initialRender, &srvDesc, &irSRV);
-	device->CreateShaderResourceView(brightPixels, &srvDesc, &bpSRV);
-	device->CreateShaderResourceView(blur, &srvDesc, &blSRV);
+	device->CreateShaderResourceView(initialRender, &srvDesc, &m_initialRenderSRV);
+	device->CreateShaderResourceView(brightPixels, &srvDesc, &m_brightPixelsSRV);
+	device->CreateShaderResourceView(blur, &srvDesc, &m_blurSRV);
+	device->CreateShaderResourceView(fxaa, &srvDesc, &m_fxaaSRV);
 
 	initialRender->Release();
 	brightPixels->Release();
 	blur->Release();
+	fxaa->Release();
+
+	m_fxaaVS = game->m_contentManager.GetVShader("FxaaVS.cso");
+	m_fxaaPS = game->m_contentManager.GetPShader("FxaaPS.cso");
+	game->m_contentManager.GetSampler("fxaaSampler");
+
+	D3D11_DEPTH_STENCIL_DESC pdsDesc = {};
+
+	//Depth test parameters
+	pdsDesc.DepthEnable = true;
+	pdsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	pdsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+
+	m_device->CreateDepthStencilState(&pdsDesc, &m_particleDepthStencilState);
 }
 
 //Create a rendering component
@@ -158,16 +196,23 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 	const float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };
 
 	// Clear the render target and depth buffer (erases what's on the screen)
-	m_context->ClearRenderTargetView(irRTV, color);
-	m_context->ClearRenderTargetView(bpRTV, color);
-	m_context->ClearRenderTargetView(blRTV, color);
+	m_context->ClearRenderTargetView(m_initialRenderRTV, color);
+	m_context->ClearRenderTargetView(m_brightPixelsRTV, color);
+	m_context->ClearRenderTargetView(m_blurRTV, color);
 	m_context->ClearRenderTargetView(m_backBufferRTV, color);
 	m_context->ClearDepthStencilView(
 		m_depthStencilView,
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0f,
 		0);
-	m_context->OMSetRenderTargets(1, &irRTV, m_depthStencilView);
+
+	if(m_bloomToggle)
+		m_context->OMSetRenderTargets(1, &m_initialRenderRTV, m_depthStencilView);
+	else if(m_fxaaToggle)
+		m_context->OMSetRenderTargets(1, &m_fxaaRTV, m_depthStencilView);
+	else
+		m_context->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
+
 	m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	//for each mesh/material combination
@@ -264,6 +309,7 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 	skyVS->SetShader();
 
 	skyPS->SetShaderResourceView("Sky", skySRV);
+	skyPS->SetSamplerState("Sampler", m_skyBox.m_material.samplerState);
 	skyPS->CopyAllBufferData();
 	skyPS->SetShader();
 
@@ -316,6 +362,7 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 
 		m_context->IASetVertexBuffers(0, 1, &particleBuffer, &stride, &offset);
 		m_context->OMSetBlendState(m_particleBlendState, 0, 0xffffffff);
+		m_context->OMSetDepthStencilState(m_particleDepthStencilState, 0);
 		//m_context->IASetIndexBuffer(NULL, DXGI_FORMAT_R32_UINT, 0);
 
 		//m_context->RSSetState()
@@ -326,83 +373,114 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 
 		m_context->GSSetShader(NULL, 0, 0);
 		m_context->OMSetBlendState(NULL, 0, 0xffffffff);
+		m_context->OMSetDepthStencilState(NULL, 0);
 		m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 
-	//Post Processing
-	m_context->OMSetRenderTargets(1, &bpRTV, 0);
+	ID3D11ShaderResourceView* initialReset = { NULL };
 
-	//Set the Shaders
-	//Send data to the Shaders
-	//copy all the buffer data
+	if (m_bloomToggle) {
+		//Post Processing
+		m_context->OMSetRenderTargets(1, &m_brightPixelsRTV, 0);
 
-	Material brightPixels = game->m_contentManager.GetMaterial("BrightPixels");
-	SimplePixelShader* brightPixelsPS = brightPixels.pixelShader;
+		//Set the Shaders
+		//Send data to the Shaders
+		//copy all the buffer data
 
-	brightPixels.vertexShader->SetShader();
-	brightPixelsPS->SetShader();
-	brightPixelsPS->SetShaderResourceView("InitialRender", irSRV);
-	brightPixelsPS->SetSamplerState("Sampler", brightPixels.samplerState);
-	brightPixelsPS->SetFloat("brightnessLvl", 0.5);
-	brightPixelsPS->CopyAllBufferData();
+		Material brightPixels = game->m_contentManager.GetMaterial("BrightPixels");
+		SimplePixelShader* brightPixelsPS = brightPixels.pixelShader;
 
-	//then draw
-	//ID3D11Buffer* nothing1 = 0;
-	ID3D11Buffer* nothing = 0;
-	m_context->IASetVertexBuffers(0, 1, &nothing, &stride, &offset);
-	m_context->IASetIndexBuffer(0, DXGI_FORMAT_R32_UINT, 0);
+		brightPixels.vertexShader->SetShader();
+		brightPixelsPS->SetShader();
+		brightPixelsPS->SetShaderResourceView("InitialRender", m_initialRenderSRV);
+		brightPixelsPS->SetSamplerState("Sampler", brightPixels.samplerState);
+		brightPixelsPS->SetFloat("brightnessMin", .2);
+		brightPixelsPS->SetFloat("brightnessMax", .5);
+		brightPixelsPS->SetFloat("exponent", 1.5);
+		brightPixelsPS->CopyAllBufferData();
 
-	////draw the triangle that encompasses the whole screen
-	m_context->Draw(3, 0);
+		//then draw
+		//ID3D11Buffer* nothing1 = 0;
+		ID3D11Buffer* nothing = 0;
+		m_context->IASetVertexBuffers(0, 1, &nothing, &stride, &offset);
+		m_context->IASetIndexBuffer(0, DXGI_FORMAT_R32_UINT, 0);
 
-	m_context->OMSetRenderTargets(1, &blRTV, 0);
+		////draw the triangle that encompasses the whole screen
+		m_context->Draw(3, 0);
 
-	Material blurMat = game->m_contentManager.GetMaterial("Blur");
-	SimplePixelShader* blurPS = blurMat.pixelShader;
+		//unbind initialRender from brightPixelPS so we can write to it next frame
+		m_context->PSSetShaderResources(0, 1, &initialReset);
 
-	blurMat.vertexShader->SetShader();
+		m_context->OMSetRenderTargets(1, &m_blurRTV, 0);
 
-	blurPS->SetShader();
+		Material blurMat = game->m_contentManager.GetMaterial("Blur");
+		SimplePixelShader* blurPS = blurMat.pixelShader;
 
-	blurPS->SetShaderResourceView("BrightPixels", bpSRV);
-	blurPS->SetSamplerState("Sampler", blurMat.samplerState);
-	blurPS->SetInt("blurAmount", 5);
-	blurPS->SetFloat("pixelWidth", 1.0f / game->GetWidth());
-	blurPS->SetFloat("pixelHeight", 1.0f / game->GetHeight());
-	blurPS->CopyAllBufferData();
+		blurMat.vertexShader->SetShader();
 
-	//then draw
-	//ID3D11Buffer* nothing2 = 0;
-	m_context->IASetVertexBuffers(0, 1, &nothing, &stride, &offset);
-	m_context->IASetIndexBuffer(0, DXGI_FORMAT_R32_UINT, 0);
+		blurPS->SetShader();
 
-	//draw the triangle that encompasses the whole screen
-	m_context->Draw(3, 0);
+		blurPS->SetShaderResourceView("BrightPixels", m_brightPixelsSRV);
+		blurPS->SetSamplerState("Sampler", blurMat.samplerState);
+		blurPS->SetInt("blurAmount", 5);
+		blurPS->SetFloat("pixelWidth", 1.0f / game->GetWidth());
+		blurPS->SetFloat("pixelHeight", 1.0f / game->GetHeight());
+		blurPS->CopyAllBufferData();
 
-	//brightPixelsPS->SetShaderResourceView("InitialRender", 0);
-	//blurPS->SetShaderResourceView("Blur", 0);
+		//then draw
+		//ID3D11Buffer* nothing2 = 0;
+		m_context->IASetVertexBuffers(0, 1, &nothing, &stride, &offset);
+		m_context->IASetIndexBuffer(0, DXGI_FORMAT_R32_UINT, 0);
+
+		//draw the triangle that encompasses the whole screen
+		m_context->Draw(3, 0);
+
+		//brightPixelsPS->SetShaderResourceView("InitialRender", 0);
+		//blurPS->SetShaderResourceView("Blur", 0);
 
 
-	//the last pass
-	m_context->OMSetRenderTargets(1, &m_backBufferRTV, 0);
+		//the last pass
+		m_context->OMSetRenderTargets(1, (m_fxaaToggle) ? &m_fxaaRTV : &m_backBufferRTV, 0);
 
-	Material bloom = game->m_contentManager.GetMaterial("Bloom");
-	SimplePixelShader* bloomPS = bloom.pixelShader;
+		Material bloom = game->m_contentManager.GetMaterial("Bloom");
+		SimplePixelShader* bloomPS = bloom.pixelShader;
 
-	bloom.vertexShader->SetShader();
-	bloomPS->SetShader();
-	bloomPS->SetShaderResourceView("InitialRender", irSRV);
-	bloomPS->SetShaderResourceView("Blur", blSRV);
-	bloomPS->SetSamplerState("Sampler", bloom.samplerState);
-	bloomPS->CopyAllBufferData();
+		bloom.vertexShader->SetShader();
+		bloomPS->SetShader();
+		bloomPS->SetShaderResourceView("InitialRender", m_initialRenderSRV);
+		bloomPS->SetShaderResourceView("Blur", m_blurSRV);
+		bloomPS->SetSamplerState("Sampler", bloom.samplerState);
+		bloomPS->CopyAllBufferData();
 
-	//then draw
-	//ID3D11Buffer* nothing3 = 0;
-	m_context->IASetVertexBuffers(0, 1, &nothing, &stride, &offset);
-	m_context->IASetIndexBuffer(0, DXGI_FORMAT_R32_UINT, 0);
+		//then draw
+		//ID3D11Buffer* nothing3 = 0;
+		m_context->IASetVertexBuffers(0, 1, &nothing, &stride, &offset);
+		m_context->IASetIndexBuffer(0, DXGI_FORMAT_R32_UINT, 0);
 
-	////draw the triangle that encompasses the whole screen
-	m_context->Draw(3, 0);
+		////draw the triangle that encompasses the whole screen
+		m_context->Draw(3, 0);
+
+		//unbind initialRender from bloomPS so we can write to it next frame
+		m_context->PSSetShaderResources(0, 1, &initialReset);
+	}
+
+	if (m_fxaaToggle) {
+
+		m_context->OMSetRenderTargets(1, &m_backBufferRTV, 0);
+
+		//XMFLOAT4 rcpFrame = XMFLOAT4(1.0f / game->GetWidth(), 1.0f / game->GetHeight(), 0.0f, 0.0f);
+		m_fxaaVS->SetShader();
+		m_fxaaPS->SetShader();
+		m_fxaaPS->SetFloat4("rcpFrame", XMFLOAT4(1.0f / game->GetWidth(), 1.0f / game->GetHeight(), 0.0f, 0.0f));
+		m_fxaaPS->SetSamplerState("anisotropicSampler", m_fxaaSampler);
+		m_fxaaPS->SetShaderResourceView("inputTexture", m_fxaaSRV);
+		m_fxaaPS->CopyAllBufferData();
+
+		m_context->Draw(3, 0);
+
+		//unbind initialRender from bloomPS so we can write to it next frame
+		m_context->PSSetShaderResources(0, 1, &initialReset);
+	}
 
 	// Present the back buffer to the user
 	m_swapChain->Present(0, 0);

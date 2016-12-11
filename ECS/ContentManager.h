@@ -37,6 +37,7 @@ public:
 	SimpleGeometryShader* GetGShader(std::string);
 	SimpleVertexShader* GetVShader(std::string);
 	SimplePixelShader* GetPShader(std::string);
+	ID3D11SamplerState* GetSampler(std::string);
 
 private:
 	std::unordered_map<std::string, Material>					m_materials;	//List of materials
@@ -57,7 +58,7 @@ private:
 	//Creates a mesh of the passed in .obj file and save it into a std::map  
 	void CreateMeshStore(std::string objFile);
 	//Creates a sampler states and save it into a std::map using the passed in name
-	void CreateSamplers(std::string name, D3D11_TEXTURE_ADDRESS_MODE);
+	void CreateSamplers(std::string name, D3D11_TEXTURE_ADDRESS_MODE, UINT maxAnisotropy);
 	void CreateTexture(std::wstring textureName);
 	void CreateCubeMap(std::wstring cubeName);
 	//Creates a vertex shader of the passed in wide string .cso file and saves it into a std::map
