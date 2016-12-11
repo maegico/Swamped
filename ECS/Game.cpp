@@ -30,23 +30,32 @@ Game::~Game() {
 
 //Advances the game in time
 void Game::Update(float dt, float totalTime) {
-#ifdef _DEBUG
-	unsigned int newComponents = 1*dt;
-#else
-	unsigned int newComponents = 10000 * dt;
-#endif
-	for (unsigned int c = 0; c < newComponents; c++)
-	{
-		Constructors::CreateTestObject(this);
-		Constructors::CreateTestObject2(this);
-	}
-
 	for (Toggle& t : m_toggles)
 		t.Check();
 
-	m_transformSystem.Update(this, dt);
+	if (dt > m_timeStep * 4)
+		dt = m_timeStep;
+
+	m_accumulator += dt;
+
+	while (m_accumulator >= m_timeStep) {
+#ifdef _DEBUG
+		unsigned int newComponents = 100 * m_timeStep;
+#else
+		unsigned int newComponents = 10000 * m_timeStep;
+#endif
+		for (unsigned int c = 0; c < newComponents; c++)
+		{
+			Constructors::CreateTestObject(this);
+			Constructors::CreateTestObject2(this);
+		}
+
+		m_transformSystem.Update(this, m_timeStep);
+		m_collisionSystem.Update(this, m_timeStep);
+		m_accumulator -= m_timeStep;
+	}
+
 	m_particleSystem.Update(this, dt, totalTime);
-	m_collisionSystem.Update(this, dt);
 	m_renderingSystem.Update(this, dt, totalTime);
 
 	//remove all entities queued for removal

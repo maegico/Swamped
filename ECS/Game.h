@@ -44,7 +44,8 @@ private:
 
 	vector<Toggle> m_toggles;
 
-
+	float m_accumulator = 0;
+	const float m_timeStep = 1.0 / 60;
 
 	//bool fxaaToggle = false;
 };
