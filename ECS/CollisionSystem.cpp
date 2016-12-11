@@ -34,6 +34,7 @@ XMFLOAT3 CollisionSystem::GetCellCounts() {
 
 //Generates AABBs then checks them for collisions
 void CollisionSystem::Update(Game * game, float dt) {
+	StartTimer();
 	Collapse();
 	if (m_collapsedCount == 0)
 		return;
@@ -237,4 +238,5 @@ void CollisionSystem::Update(Game * game, float dt) {
 			kv.first(game, collisions[c].first, collisions[c].second, dt);
 		}
 	}
+	StopTimer();
 }

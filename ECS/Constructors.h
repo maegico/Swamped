@@ -19,6 +19,10 @@ public:
 			g->m_contentManager.GetMaterial("brickLightingNormalMap"),
 			g->m_contentManager.GetMeshStore("cube.obj").m_m
 		};
+		m_renderingComponents["groundPlane"] = {
+			g->m_contentManager.GetMaterial("Ground"),
+			g->m_contentManager.GetMeshStore("Quad.obj").m_m
+		};
 	}
 	static void CreateTestObject(Game * game) {
 		//get entityID and add system list to game
@@ -80,5 +84,18 @@ public:
 		game->m_transformSystem.Create(eid, tc, pc);
 		game->m_collisionSystem.Create(eid, ms.m_bb);
 		game->m_renderingSystem.Create(eid, &m_renderingComponents["testObj2"]);
+	}
+
+	static void CreateGround(Game * game) {
+		EntityId eid = game->m_entities.add({
+			&game->m_transformSystem,
+			&game->m_renderingSystem
+		});
+
+		//MeshStore ms = game->m_contentManager.GetMeshStore("Quad.obj");
+		PhysicsComponent pc = {};
+		pc.m_gravity = false;
+		game->m_transformSystem.Create(eid, {}, pc);
+		game->m_renderingSystem.Create(eid, &m_renderingComponents["groundPlane"]);
 	}
 };

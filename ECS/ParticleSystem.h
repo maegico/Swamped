@@ -8,8 +8,9 @@
 #include "ParticleInput.h"
 #include "CollapsedComponent.h"
 #include "CollisionComponent.h"
+#include "Timeable.h"
 
-class ParticleSystem {
+class ParticleSystem : public Timeable{
 public:
 	ParticleSystem();
 	~ParticleSystem();

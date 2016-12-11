@@ -37,23 +37,23 @@ void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device
 
 	HRESULT blendStateCreate = device->CreateBlendState(&bd, &m_particleBlendState);
 	
-	m_camera = Camera(XMFLOAT3(0, 50, -100));
-	m_camera.RotationDelta(.7, 0);
-	m_camera.CreateProjectionMatrix(1920, 1080, 90);
+	m_camera = Camera(XMFLOAT3(0, 100, 0));
+	m_camera.RotationDelta(1, 2);
+	m_camera.CreateProjectionMatrix(1920, 1080, 103);
 	m_swapChain = swapChain;
 	m_device = device;
 	m_context = context;
 	m_backBufferRTV = renderTargetView;
 	m_depthStencilView = depthStencilView;
 
-	DirectionalLight dirLight1 = { XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f),
+	DirectionalLight dirLight1 = { XMFLOAT4(1.0f, 0.8f, 0.8f, 1.0f),
 		XMFLOAT3(1.0f, -1.0f, 0.0f) };
 
-	PointLight pointLight = { XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),
+	PointLight pointLight = { XMFLOAT4(0.4f, 0.6f, 0.4f, 1.0f),
 		XMFLOAT3(1.0f, -1.0f, 0.0f),
 		2.0f };
 
-	SpotLight spotLight = { XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
+	SpotLight spotLight = { XMFLOAT4(0.4f, 0.6f, 0.8f, 1.0f),
 		XMFLOAT3(1.0f, 0.0f, 0.0f),
 		2.0f,
 		XMFLOAT3(-1.0f, 0.0f, 0.0f) };
@@ -61,7 +61,7 @@ void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device
 	m_lights = { { spotLight },
 	{ pointLight },
 		dirLight1,
-		XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),
+		XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f),
 		1,
 		1 };
 
@@ -189,6 +189,7 @@ void RenderingSystem::Collapse() {
 
 //Draws all the stuff
 void RenderingSystem::Update(Game * game, float dt, float totalTime) {
+	StartTimer();
 	Collapse();
 	m_camera.Update();
 
@@ -484,4 +485,6 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 
 	// Present the back buffer to the user
 	m_swapChain->Present(0, 0);
+
+	StopTimer();
 }

@@ -6,6 +6,7 @@
 #include "ClearVector.h"
 #include "ClearArray.h"
 #include "EntityIdTypeDef.h"
+#include "Timeable.h"
 #include <DirectXMath.h>
 #include <mutex>
 #include <ppl.h>
@@ -15,7 +16,7 @@
 using namespace DirectX;
 using namespace Concurrency;
 //A System implementation
-class CollisionSystem : public System<BoundingBox> {
+class CollisionSystem : public System<BoundingBox>, public Timeable {
 public:
 	//Generates AABBs and checks collision
 	void Update(Game * game, float dT);

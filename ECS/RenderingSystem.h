@@ -10,6 +10,7 @@
 #include "CollapsedComponent.h"
 #include "Particle.h"
 #include "ParticleInput.h"
+#include "Timeable.h"
 #include <d3d11.h>
 #include <unordered_map>
 #include <map>
@@ -19,7 +20,7 @@ struct RenderingComponentData{
 	unsigned int m_instanceHandle;
 };
 
-class RenderingSystem : public ISystem {
+class RenderingSystem : public ISystem , public Timeable{
 public:
 	void Update(Game * game, float dt, float totalTime);
 	void Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device * device, ID3D11DeviceContext * context, ID3D11RenderTargetView * renderTargetView, ID3D11DepthStencilView * depthStencilView);
@@ -31,13 +32,14 @@ public:
 
 	bool m_fxaaToggle = true;
 	bool m_bloomToggle = true;
+
+	Camera						m_camera;
 private:
 	IDXGISwapChain*				m_swapChain;
 	ID3D11Device*				m_device;
 	ID3D11DeviceContext*		m_context;
 	ID3D11RenderTargetView*		m_backBufferRTV;
 	ID3D11DepthStencilView*		m_depthStencilView;
-	Camera						m_camera;
 	unordered_map<RenderingComponent*, FreeVector<ComponentData>>	m_instancedComponents;
 	unordered_map<RenderingComponent*, ClearVector<EntityId>> m_collapsedInstancedComponents;
 	unordered_map<EntityId, RenderingHandle> m_renderHandles;

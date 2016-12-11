@@ -42,8 +42,14 @@ void ParticleSystem::QueueRemove(unsigned int index) {
 }
 
 void ParticleSystem::Update(Game * g, float dt, float totalTime) {
+	StartTimer();
 	//generate new particles
-	for (unsigned int c = 0; c < 10000*dt; c++) {
+#ifdef _DEBUG
+	unsigned int newParticles = 100 * dt;
+#else
+	unsigned int newParticles = 10000 * dt;
+#endif
+	for (unsigned int c = 0; c < newParticles; c++) {
 		Particle p;
 		p.m_startPosition = XMFLOAT3(fRand(-100, 100), fRand(0, 100), fRand(-100, 100));
 		p.m_velocity = XMFLOAT3(fRand(-1, 1), fRand(-2, -1), fRand(-1, 1));
@@ -99,4 +105,6 @@ void ParticleSystem::Update(Game * g, float dt, float totalTime) {
 		m_particles.free(index);
 	}
 	m_removalQueue.clear();
+
+	StopTimer();
 }

@@ -8,8 +8,10 @@
 #include "EntityIdTypeDef.h"
 #include "Toggle.h"
 #include <vector>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
 
 //The game instance. Not a singleton
 class Game : public DXCore {
@@ -41,6 +43,8 @@ private:
 	void UpdateTitleBarForGame(std::string in);
 
 	vector<Toggle> m_toggles;
+
+
 
 	//bool fxaaToggle = false;
 };

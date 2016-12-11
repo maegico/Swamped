@@ -196,6 +196,7 @@ copy "$(ProjectDir)d3dcompiler_47.dll" "$(OutputPath)d3dcompiler_47.dll"</Comman
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="CollisionSystem.h" />
+    <ClInclude Include="Timeable.h" />
     <ClInclude Include="Toggle.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TransformSystem.h" />
