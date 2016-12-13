@@ -1,4 +1,3 @@
-
 #include <Windows.h>
 #include <time.h>
 #include "Game.h"

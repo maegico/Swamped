@@ -19,9 +19,11 @@ using namespace DirectX;
 //}
 
 CollisionSystem::CollisionSystem() {
-	m_collisionFunctions.push_back(std::make_tuple(CollisionType::none, CollisionType::player, &CollisionFunctions::NoOpCollision));
-	m_collisionFunctions.push_back(std::make_tuple(CollisionType::none, CollisionType::none, &CollisionFunctions::NoOpCollision));
-	m_collisionFunctions.push_back(std::make_tuple(CollisionType::player, CollisionType::player, &CollisionFunctions::NoOpCollision));
+#ifdef BENCHMARK
+	m_collisionFunctions.push_back(std::make_tuple(CollisionType::test1, CollisionType::test2, &CollisionFunctions::NoOpCollision));
+	m_collisionFunctions.push_back(std::make_tuple(CollisionType::test1, CollisionType::test1, &CollisionFunctions::NoOpCollision));
+	m_collisionFunctions.push_back(std::make_tuple(CollisionType::test2, CollisionType::test2, &CollisionFunctions::NoOpCollision));
+#endif
 }
 
 CollisionSystem::~CollisionSystem() {
@@ -182,7 +184,7 @@ void CollisionSystem::Update(Game * game, float dt) {
 #else
 	parallel_for(size_t(0), m_spatialHashGrid.size(), [&](unsigned int b) {
 #endif
-		auto bucketCv = m_spatialHashGrid[b];
+		auto& bucketCv = m_spatialHashGrid[b];
 		for (auto cfDef : m_collisionFunctions) {
 			CollisionType ct1 = std::get<0>(cfDef);
 			CollisionType ct2 = std::get<1>(cfDef);

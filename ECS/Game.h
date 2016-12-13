@@ -1,4 +1,7 @@
 #pragma once
+
+#undef BENCHMARK 0
+
 #include "CollisionSystem.h"
 #include "TransformSystem.h"
 #include "RenderingSystem.h"

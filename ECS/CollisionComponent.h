@@ -5,7 +5,7 @@
 #include <vector>
 using namespace std;
 typedef uint8_t CollisionMask;
-enum CollisionType { none, terrain, ghost, player, NUMTYPES };
+enum CollisionType { test1, test2, terrain, ghost, player, NUMTYPES };
 
 //CollisionMask MakeCollisionMask(vector<CollisionType> types);
 

@@ -18,7 +18,6 @@ void Game::Init() {
 	m_contentManager.Init(m_device, m_context);
 	m_renderingSystem.Init(this, m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 	Constructors::Init(this);
-	//Constructors::CreateTestObject(this);
 	Constructors::CreateGround(this);
 	m_toggles.push_back(Toggle('A', &m_renderingSystem.m_fxaaToggle));
 	m_toggles.push_back(Toggle('B', &m_renderingSystem.m_bloomToggle));
@@ -39,16 +38,18 @@ void Game::Update(float dt, float totalTime) {
 	m_accumulator += dt;
 
 	while (m_accumulator >= m_timeStep) {
+#ifdef BENCHMARK
 #ifdef _DEBUG
 		unsigned int newComponents = 100 * m_timeStep;
 #else
-		unsigned int newComponents = 10000 * m_timeStep;
+		unsigned int newComponents = BENCHMARK * 10000 * m_timeStep;
 #endif
 		for (unsigned int c = 0; c < newComponents; c++)
 		{
 			Constructors::CreateTestObject(this);
 			Constructors::CreateTestObject2(this);
 		}
+#endif
 
 		m_transformSystem.Update(this, m_timeStep);
 		m_collisionSystem.Update(this, m_timeStep);

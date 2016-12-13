@@ -11,6 +11,7 @@ class Constructors {
 	static unordered_map<std::string, RenderingComponent> m_renderingComponents;
 public:
 	static void Init(Game * g) {
+#ifdef BENCHMARK
 		m_renderingComponents["testObj"] = {
 			g->m_contentManager.GetMaterial("brickLightingNormalMap"),
 			g->m_contentManager.GetMeshStore("cone.obj").m_m
@@ -19,11 +20,13 @@ public:
 			g->m_contentManager.GetMaterial("brickLightingNormalMap"),
 			g->m_contentManager.GetMeshStore("cube.obj").m_m
 		};
+#endif
 		m_renderingComponents["groundPlane"] = {
 			g->m_contentManager.GetMaterial("Ground"),
 			g->m_contentManager.GetMeshStore("Quad.obj").m_m
 		};
 	}
+#ifdef BENCHMARK
 	static void CreateTestObject(Game * game) {
 		//get entityID and add system list to game
 		EntityId eid = game->m_entities.add(vector<ISystem*>{
@@ -47,7 +50,7 @@ public:
 		//tc.m_position = XMFLOAT3(0, 10, -45);
 		//vector<CollisionType> cTypes = { CollisionType::none };
 		//copy collision mask into bounding box
-		ms.m_bb.m_collisionType = CollisionType::none;
+		ms.m_bb.m_collisionType = CollisionType::test1;
 
 		//create components
 		game->m_transformSystem.Create(eid, tc, pc);
@@ -78,13 +81,14 @@ public:
 		//tc.m_position = XMFLOAT3(0, 10, -45);
 		//vector<CollisionType> cTypes = { CollisionType::none };
 		//copy collision mask into bounding box
-		ms.m_bb.m_collisionType = CollisionType::player;
+		ms.m_bb.m_collisionType = CollisionType::test2;
 
 		//create components
 		game->m_transformSystem.Create(eid, tc, pc);
 		game->m_collisionSystem.Create(eid, ms.m_bb);
 		game->m_renderingSystem.Create(eid, &m_renderingComponents["testObj2"]);
 	}
+#endif
 
 	static void CreateGround(Game * game) {
 		EntityId eid = game->m_entities.add({
