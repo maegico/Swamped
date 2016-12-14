@@ -80,25 +80,26 @@ float4 calcDirLight(float3 normal, DirectionalLight dirLight)
 
 float4 calcPointLight(float4 worldPos, float3 normal, PointLight pointLight)
 {
-	float3 pointLightDirection = normalize(pointLight.Position - worldPos);
+	float3 worldPosToPointLight = pointLight.Position - worldPos;
+	float3 pointLightDirection = normalize(worldPosToPointLight);
 	//N dot L
 	float lightAmount = saturate( dot(normal, pointLightDirection) );
 
 	float4 scaledDiffuse = pointLight.DiffuseColor * lightAmount;
 
-	return scaledDiffuse;
+	float distance = length(worldPosToPointLight);
+	return scaledDiffuse / (distance*distance);
 }
 
 float4 calcSpotLight(float4 worldPos, float3 normal, SpotLight spotLight)
 {
-	float3 spotLightDirectionToPixel = worldPos - spotLight.Position;
-	spotLightDirectionToPixel = -normalize(spotLightDirectionToPixel);
+	float3 spotLightDirectionToPixel = spotLight.Position - worldPos;
+	float3 normalizedDirection = normalize(spotLightDirectionToPixel);
 
 	//N dot L
-	float lightAmount = saturate( dot(normal, spotLightDirectionToPixel) );
+	float lightAmount = saturate( dot(normal, normalizedDirection) );
 
-	//why 
-	float angleFromCenter = max( 0.0f, dot(spotLightDirectionToPixel, spotLight.Direction) );
+	float angleFromCenter = saturate(dot(normalizedDirection, -spotLight.Direction));
 	//raise to a power for a nice "falloff"
 	//multiply diffuse and specular results by this
 	float spotAmount = pow(angleFromCenter, 20.0f);
@@ -106,8 +107,8 @@ float4 calcSpotLight(float4 worldPos, float3 normal, SpotLight spotLight)
 	float4 scaledDiffuse = spotLight.DiffuseColor * lightAmount * spotAmount;
 
 	
-	//return float4(spotAmount, 0, 0, 0);
-	return scaledDiffuse;
+	float distance = length(spotLightDirectionToPixel);
+	return scaledDiffuse / (distance*distance);
 }
 
 // --------------------------------------------------------
@@ -154,8 +155,6 @@ float4 main(VertexToPixel input) : SV_TARGET
 		sumOfDiffuse += calcSpotLight(input.worldPos, input.normal, lights.spotLights[i2]);
 	}
 
-	//float4 skyColor = Sky.Sample(Sampler, reflect(-toCamera, input.normal));
-
 	float4 finalLighting = sumOfDiffuse + (lights.AmbientColor * 0.1f);
 
 	//fog-related stuff
@@ -167,8 +166,4 @@ float4 main(VertexToPixel input) : SV_TARGET
 	fogFactor = clamp(fogFactor, 0.0, 1.0);
 
 	return lerp(fogColor, finalLighting * surfaceColor, fogFactor);
-	//return finalLighting * surfaceColor;
-	//return sumOfDiffuse * surfaceColor;
-	//return float4(input.normal, 1);
-	//return float4(1, 0, 0, 1);
 }

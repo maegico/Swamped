@@ -1,6 +1,6 @@
 #pragma once
 
-#define BENCHMARK 1
+#define BENCHMARK 0
 
 #include "CollisionSystem.h"
 #include "TransformSystem.h"
@@ -49,6 +49,8 @@ private:
 
 	float m_accumulator = 0;
 	const float m_timeStep = 1.0 / 60;
+
+	void OnResize();
 
 	//bool fxaaToggle = false;
 };

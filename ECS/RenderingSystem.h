@@ -27,6 +27,7 @@ public:
 	void Create(EntityId entityId, RenderingComponent * rc);
 	void Remove(EntityId enttyId);
 	void Collapse();
+	void OnResize(Game * game);
 	RenderingSystem() {};
 	~RenderingSystem();
 

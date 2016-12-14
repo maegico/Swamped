@@ -97,3 +97,8 @@ void Game::UpdateTitleBarForGame(std::string in) {
 			" Transforms: " + std::to_string((m_transformSystem.GetTotalTime() / totalUpdateTime))
 		).c_str());
 }
+
+void Game::OnResize() {
+	DXCore::OnResize();
+	m_renderingSystem.OnResize(this);
+}

@@ -296,60 +296,7 @@ HRESULT DXCore::InitDirectX()
 // --------------------------------------------------------
 void DXCore::OnResize()
 {
-	// Release existing DirectX views and buffers
-	if (m_depthStencilView) { m_depthStencilView->Release(); }
-	if (m_backBufferRTV) { m_backBufferRTV->Release(); }
-
-	// Resize the underlying swap chain buffers
-	m_swapChain->ResizeBuffers(
-		1,
-		width,
-		height,
-		DXGI_FORMAT_R8G8B8A8_UNORM,
-		0);
-
-	// Recreate the render target view for the back buffer
-	// texture, then release our local texture reference
-	ID3D11Texture2D* backBufferTexture;
-	m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBufferTexture));
-	m_device->CreateRenderTargetView(backBufferTexture, 0, &m_backBufferRTV);
-	backBufferTexture->Release();
-
-	// Set up the description of the texture to use for the depth buffer
-	D3D11_TEXTURE2D_DESC depthStencilDesc;
-	depthStencilDesc.Width				= width;
-	depthStencilDesc.Height				= height;
-	depthStencilDesc.MipLevels			= 1;
-	depthStencilDesc.ArraySize			= 1;
-	depthStencilDesc.Format				= DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilDesc.Usage				= D3D11_USAGE_DEFAULT;
-	depthStencilDesc.BindFlags			= D3D11_BIND_DEPTH_STENCIL;
-	depthStencilDesc.CPUAccessFlags		= 0;
-	depthStencilDesc.MiscFlags			= 0;
-	depthStencilDesc.SampleDesc.Count	= 1;
-	depthStencilDesc.SampleDesc.Quality = 0;
-
-	// Create the depth buffer and its view, then 
-	// release our reference to the texture
-	ID3D11Texture2D* depthBufferTexture;
-	m_device->CreateTexture2D(&depthStencilDesc, 0, &depthBufferTexture);
-	m_device->CreateDepthStencilView(depthBufferTexture, 0, &m_depthStencilView);
-	depthBufferTexture->Release();
-
-	// Bind the views to the pipeline, so rendering properly 
-	// uses their underlying textures
-	m_context->OMSetRenderTargets(1, &m_backBufferRTV, m_depthStencilView);
-
-	// Lastly, set up a viewport so we render into
-	// to correct portion of the window
-	D3D11_VIEWPORT viewport = {};
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.Width = (float)width;
-	viewport.Height = (float)height;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	m_context->RSSetViewports(1, &viewport);
+	
 }
 
 unsigned int DXCore::GetWidth()
