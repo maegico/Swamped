@@ -37,8 +37,8 @@ void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device
 
 	HRESULT blendStateCreate = device->CreateBlendState(&bd, &m_particleBlendState);
 	
-	m_camera = Camera(XMFLOAT3(0, 100, 0));
-	m_camera.RotationDelta(1, 2);
+	m_camera = Camera(XMFLOAT3(0, 20, 0));
+	m_camera.RotationDelta(-.5, 0);
 	m_camera.CreateProjectionMatrix(1920, 1080, 103);
 	m_swapChain = swapChain;
 	m_device = device;
@@ -251,6 +251,8 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 		//set and copy data
 		vertexShader->SetMatrix4x4("view", m_camera.GetView());
 		vertexShader->SetMatrix4x4("projection", m_camera.GetProjection());
+		vertexShader->SetFloat3("cameraPos", m_camera.GetPosition());
+		vertexShader->SetFloat("fogHeight", 20);
 
 		vertexShader->CopyAllBufferData();
 

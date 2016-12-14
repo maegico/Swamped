@@ -9,7 +9,7 @@ ParticleSystem::ParticleSystem(unsigned int maxParticles, float particleLifeTime
 	m_particles.resize(maxParticles);
 }
 
-ParticleSystem::ParticleSystem() : ParticleSystem(2000000, 20) {
+ParticleSystem::ParticleSystem() : ParticleSystem(200000, 20) {
 
 }
 

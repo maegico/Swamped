@@ -8,6 +8,8 @@ cbuffer externalData : register(b0)
 {
 	matrix view;
 	matrix projection;
+	float3 cameraPos;
+	float fogHeight;
 };
 
 // Struct representing a single vertex worth of data
@@ -46,7 +48,7 @@ struct VertexToPixel
 	float3 normal		: NORMAL;
 	float3 tangent		: TANGENT;		// XYZ tangent
 	float2 uv			: TEXCOORD;
-	float4 cameraSpace	: TEXCOORD1;
+	float fogDistance	: DISTANCE;
 };
 
 // --------------------------------------------------------
@@ -81,7 +83,16 @@ VertexToPixel main(VertexShaderInput input)
 	output.tangent = mul(input.tangent, (float3x3)input.world);
 
 	output.uv = input.uv;
-	output.cameraSpace = mul(float4(input.position, 1.0f), mul(input.world, view)); //this is the only line changed in the math
+
+	float3 worldPos = output.worldPos.xyz;
+	float3 cameraToVert = worldPos - cameraPos;
+	float totalY = abs(cameraPos.y - worldPos.y);
+	float cameraToFogY = saturate((fogHeight - cameraPos.y) / totalY);
+	float vertToFogY = saturate((fogHeight - worldPos.y) / totalY);
+	float lengthPercent = saturate(cameraToFogY + vertToFogY);
+	output.fogDistance = lengthPercent * length(cameraToVert);
+
+	//output.cameraSpace = mul(float4(input.position, 1.0f), mul(input.world, view)); //this is the only line changed in the math
 	// Whatever we return will make its way through the pipeline to the
 	// next programmable stage we're using (the pixel shader for now)
 	return output;
