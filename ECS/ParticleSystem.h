@@ -12,19 +12,16 @@
 
 class ParticleSystem : public Timeable{
 public:
+	ParticleSystem(unsigned int maxParticles, float particleLifetime);
 	ParticleSystem();
 	~ParticleSystem();
 	void Update(Game * g, float dt, float totalTime);
 	size_t GetParticleCount();
 	vector<Particle> & GetParticles();
 private:
-	void Collapse();
-	void QueueRemove(unsigned int index);
-	unsigned int m_collapsedCount;
-	vector<bool> m_activeParticles;
-	FreeVector<Particle> m_particles;
-	vector<unsigned int> m_collapsedHandles;
-	vector<Particle> m_collapsedParticles;
-	ClearVector<unsigned int> m_removalQueue;
+	vector<Particle> m_particles;
 	MaxMin m_bounds;
+	float m_particlesPerSecond;
+	unsigned int m_particleIndex;
+	unsigned int m_particleCount;
 };

@@ -291,8 +291,6 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 		instanceBuffer->Release();
 	}
 
-	vector<Particle> & particles = game->m_particleSystem.GetParticles();
-
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 
@@ -325,7 +323,10 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 	m_context->RSSetState(0);
 	m_context->OMSetDepthStencilState(0, 0);
 
-	if (particles.size() > 0) {
+	vector<Particle> & particles = game->m_particleSystem.GetParticles();
+	unsigned int particleCount = game->m_particleSystem.GetParticleCount();
+
+	if (particleCount > 0) {
 
 		m_particleMaterial.vertexShader->SetShader();
 		m_particleMaterial.vertexShader->SetFloat("currentTime", totalTime);
@@ -346,7 +347,7 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 		//create buffer for world matrices
 		D3D11_BUFFER_DESC partDesc = {};
 		partDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		partDesc.ByteWidth = sizeof(Particle) * particles.size();
+		partDesc.ByteWidth = sizeof(Particle) * particleCount;
 		partDesc.CPUAccessFlags = 0;
 		partDesc.MiscFlags = 0;
 		partDesc.StructureByteStride = 0;
@@ -368,7 +369,7 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 
 		//m_context->RSSetState()
 
-		m_context->Draw(particles.size(), 0);
+		m_context->Draw(particleCount, 0);
 
 		particleBuffer->Release();
 

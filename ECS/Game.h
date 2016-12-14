@@ -1,6 +1,6 @@
 #pragma once
 
-#undef BENCHMARK 0
+#define BENCHMARK -1
 
 #include "CollisionSystem.h"
 #include "TransformSystem.h"

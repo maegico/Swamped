@@ -11,7 +11,7 @@ class Constructors {
 	static unordered_map<std::string, RenderingComponent> m_renderingComponents;
 public:
 	static void Init(Game * g) {
-#ifdef BENCHMARK
+#if BENCHMARK >= 0
 		m_renderingComponents["testObj"] = {
 			g->m_contentManager.GetMaterial("brickLightingNormalMap"),
 			g->m_contentManager.GetMeshStore("cone.obj").m_m
@@ -26,7 +26,7 @@ public:
 			g->m_contentManager.GetMeshStore("Quad.obj").m_m
 		};
 	}
-#ifdef BENCHMARK
+#if BENCHMARK >= 0
 	static void CreateTestObject(Game * game) {
 		//get entityID and add system list to game
 		EntityId eid = game->m_entities.add(vector<ISystem*>{

@@ -18,7 +18,7 @@ SamplerState Sampler	: register(s0);
 float4 main(VertexToPixel input) : SV_TARGET
 {
 	float4 totalColor = float4(0,0,0,0);
-	uint numSamples = blurAmount * blurAmount * 4;	//taking this out of the for loop
+	uint numSamples = 4*(blurAmount*blurAmount + blurAmount)+2;	//taking this out of the for loop
 
 	for (int y = -blurAmount; y < blurAmount; y++)
 	{

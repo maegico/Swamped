@@ -38,11 +38,11 @@ void Game::Update(float dt, float totalTime) {
 	m_accumulator += dt;
 
 	while (m_accumulator >= m_timeStep) {
-#ifdef BENCHMARK
+#if BENCHMARK >= 0
 #ifdef _DEBUG
 		unsigned int newComponents = 100 * m_timeStep;
 #else
-		unsigned int newComponents = BENCHMARK * 10000 * m_timeStep;
+		unsigned int newComponents = BENCHMARK * 1000 * m_timeStep;
 #endif
 		for (unsigned int c = 0; c < newComponents; c++)
 		{
