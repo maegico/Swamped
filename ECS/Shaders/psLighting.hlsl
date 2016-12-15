@@ -178,7 +178,7 @@ float4 main(VertexToPixel input) : SV_TARGET
 	finalLighting = finalLighting * surfaceColor;
 	float edgeShading = 1.0f - saturate(dot(input.normal, (input.camPosition - input.worldPos)));
 
-	float4 edgeShade = lerp(fogColor,lerp(finalLighting, float4(0.2f, 0.2f, 0.0f, 1.0f), edgeShading),fogFactor);
+	float4 edgeShade = lerp(fogColor,lerp(finalLighting, float4(0.15f, 0.2f, 0.05f, 1.0f), edgeShading),fogFactor);
 
 	return edgeShade;
 }

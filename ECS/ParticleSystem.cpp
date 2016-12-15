@@ -7,6 +7,7 @@ ParticleSystem::ParticleSystem(unsigned int maxParticles, float particleLifeTime
 	m_bounds.m_min = XMFLOAT3(-100, 0, -100);
 	m_particlesPerSecond = maxParticles / particleLifeTime;
 	m_particles.resize(maxParticles);
+	m_lifeTime = particleLifeTime;
 }
 
 ParticleSystem::ParticleSystem() : ParticleSystem(200000, 20) {
@@ -29,6 +30,11 @@ vector<Particle> & ParticleSystem::GetParticles() {
 	}*/
 	//return m_collapsedParticles;
 	return m_particles;
+}
+
+float ParticleSystem::GetLifeTime()
+{
+	return m_lifeTime;
 }
 
 //void ParticleSystem::Collapse() {

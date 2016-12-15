@@ -27,7 +27,7 @@ void Game::Init() {
 	Constructors::CreateGround(this, DirectX::XMFLOAT3(0.0f, 0.0f, -53.05f), 10.0f);
 	Constructors::CreateGround(this, DirectX::XMFLOAT3(53.05f, 0.0f, -53.05f), 10.0f);
 	Constructors::CreateGround(this, DirectX::XMFLOAT3(-53.05f, 0.0f, -53.05f), 10.0f);
-	//m_toggles.push_back(Toggle('A', &m_renderingSystem.m_fxaaToggle));
+	m_toggles.push_back(Toggle('L', &m_renderingSystem.m_fxaaToggle));
 	m_toggles.push_back(Toggle('B', &m_renderingSystem.m_bloomToggle));
 	//border trees
 	for (int i = 0; i < 22; i++)

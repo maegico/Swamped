@@ -18,9 +18,11 @@ public:
 	void Update(Game * g, float dt, float totalTime);
 	size_t GetParticleCount();
 	vector<Particle> & GetParticles();
+	float GetLifeTime();
 private:
 	vector<Particle> m_particles;
 	MaxMin m_bounds;
+	float m_lifeTime;
 	float m_particlesPerSecond;
 	unsigned int m_particleIndex;
 	unsigned int m_particleCount;

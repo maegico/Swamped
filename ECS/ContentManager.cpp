@@ -109,7 +109,7 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	LoadMaterial("Bloom", "sampler", "vsPostProcessing.cso", "psBloom.cso", "null", "null");
 	LoadMaterial("Ground", "sampler", "vsLighting.cso", "psLighting.cso", "hi res dirt.png", "hi res dirt NM.png");
 	LoadSkyBoxMaterial("skyMap", "sampler", "SkyVS.cso", "SkyPS.cso", "Ni.dds");
-	LoadParticleMaterial("snowflake", "borderSampler", "ParticleVS.cso", "BillboardGS.cso", "ParticlePS.cso", "snowflake.png");
+	LoadParticleMaterial("snowflake", "borderSampler", "ParticleVS.cso", "BillboardGS.cso", "ParticlePS.cso", "brightSpot.png");
 	//LoadMaterial("TestMaterial", "sampler", "VertexShader.cso", "PixelShader.cso", "soilrough.png");
 	LoadMaterial("TestMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "swampRocks.png", "swampRocksNormals.png");
 	LoadMaterial("TreeMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "bark.png", "barkNormals.png");

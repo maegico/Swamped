@@ -448,6 +448,8 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 
 		m_particleMaterial.vertexShader->SetShader();
 		m_particleMaterial.vertexShader->SetFloat("currentTime", totalTime);
+		m_particleMaterial.vertexShader->SetFloat("pulses", 10);
+		m_particleMaterial.vertexShader->SetFloat("lifeTime", game->m_particleSystem.GetLifeTime());
 		m_particleMaterial.geometryShader->SetShader();
 		m_particleMaterial.geometryShader->SetMatrix4x4("view", m_camera.GetView());
 		m_particleMaterial.geometryShader->SetMatrix4x4("projection", m_camera.GetProjection());
