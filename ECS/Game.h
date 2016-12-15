@@ -27,6 +27,7 @@ public:
 	ParticleSystem m_particleSystem;
 
 	Ghost m_ghost;
+	Ghost m_ghost2;
 
 	ContentManager m_contentManager;
 

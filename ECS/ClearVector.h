@@ -32,8 +32,8 @@ public:
 		return m_data.begin() + m_count;
 	}
 	bool contains(T item) {
-		for (auto& member : m_data)
-			if (member == item)
+		for (unsigned int c = 0; c < m_count;c++)
+			if (m_data[c] == item)
 				return true;
 		return false;
 	}

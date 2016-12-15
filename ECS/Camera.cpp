@@ -1,5 +1,7 @@
 #include "Camera.h"
 
+#define SPEED 15.0f
+
 Camera::Camera(XMFLOAT3 pos) {
 	rotationX = 0;
 	rotationY = 0;
@@ -12,7 +14,7 @@ Camera::Camera(XMFLOAT3 pos) {
 
 	//cameraId = Constructors::CreatePlayer()
 	//direction = XMFLOAT3(0, 0, 1);
-	Update();
+	//Update();
 }
 
 Camera::Camera() {
@@ -61,7 +63,7 @@ void Camera::RotationDelta(float x, float y) {
 	rotationY += y;
 }
 
-void Camera::Update() {
+void Camera::Update(float dt) {
 
 	//forward and back
 	if (GetAsyncKeyState('W') & 0x8000)
@@ -70,13 +72,13 @@ void Camera::Update() {
 		DirectX::XMVector3Normalize(move);
 		DirectX::XMStoreFloat3(&movement, move);
 
-		position.x += (0.1f * movement.x);
-		position.z += (0.1f * movement.z);
+		position.x += (SPEED *dt* movement.x);
+		position.z += (SPEED *dt* movement.z);
 	}
 	if (GetAsyncKeyState('S') & 0x8000)
 	{
-		position.x -= 0.1f * m_forward.x;
-		position.z -= 0.1f * m_forward.z;
+		position.x -= SPEED *dt* m_forward.x;
+		position.z -= SPEED *dt* m_forward.z;
 	}
 
 	//left and right
@@ -87,8 +89,8 @@ void Camera::Update() {
 		r = DirectX::XMVector3Transform(r, turnBy);
 		r = DirectX::XMVector3Normalize(r);
 
-		position.x -= 0.1f * DirectX::XMVectorGetX(r);
-		position.z -= 0.1f * DirectX::XMVectorGetZ(r);
+		position.x -= SPEED *dt* DirectX::XMVectorGetX(r);
+		position.z -= SPEED *dt* DirectX::XMVectorGetZ(r);
 
 	}
 	if (GetAsyncKeyState('D') & 0x8000)
@@ -98,8 +100,8 @@ void Camera::Update() {
 		r = DirectX::XMVector3Transform(r, turnBy);
 		r = DirectX::XMVector3Normalize(r);
 
-		position.x += 0.1f * DirectX::XMVectorGetX(r);
-		position.z += 0.1f * DirectX::XMVectorGetZ(r);
+		position.x += SPEED *dt* DirectX::XMVectorGetX(r);
+		position.z += SPEED *dt* DirectX::XMVectorGetZ(r);
 	}
 
 
@@ -132,4 +134,9 @@ void Camera::MouseInput(float x, float y)
 	if (rotationX < -89) rotationX = -89;
 	if (rotationY > 89) rotationY = 89;
 	if (rotationY < -89) rotationY = -89;
+}
+
+void Camera::SetPosition(XMFLOAT3 newPosition)
+{
+	position = newPosition;
 }

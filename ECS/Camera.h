@@ -6,7 +6,7 @@
 using namespace DirectX;
 class Camera {
 public:
-	void Update();
+	void Update(float dt);
 	Camera(XMFLOAT3 pos);
 	Camera();
 	~Camera();
@@ -17,6 +17,7 @@ public:
 	void RotationDelta(float x, float y);
 	void CreateProjectionMatrix(float width, float height, float fov);
 	void MouseInput(float x, float y);
+	void SetPosition(XMFLOAT3);
 	//XMFLOAT3 GetPosition(); 
 private:
 	XMFLOAT4X4 view;

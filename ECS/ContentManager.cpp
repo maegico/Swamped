@@ -111,10 +111,10 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	LoadSkyBoxMaterial("skyMap", "sampler", "SkyVS.cso", "SkyPS.cso", "Ni.dds");
 	LoadParticleMaterial("snowflake", "borderSampler", "ParticleVS.cso", "BillboardGS.cso", "ParticlePS.cso", "snowflake.png");
 	//LoadMaterial("TestMaterial", "sampler", "VertexShader.cso", "PixelShader.cso", "soilrough.png");
-	LoadMaterial("TestMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "soilrough.png", "null");
-	LoadMaterial("TreeMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "bark.png", "null");
-	LoadMaterial("GroundMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "swampground.png", "null");
-	LoadMaterial("GhostMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "lava.png", "null");
+	LoadMaterial("TestMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "swampRocks.png", "swampRocksNormals.png");
+	LoadMaterial("TreeMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "bark.png", "barkNormals.png");
+	LoadMaterial("GroundMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "swampground.png", "swampgroundNormals.png");
+	LoadMaterial("GhostMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "lava.png", "lavaNormals.png");
 }
 
 Material ContentManager::LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::string textureName, std::string normalMapName)

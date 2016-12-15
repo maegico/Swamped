@@ -37,7 +37,7 @@ void RenderingSystem::Init(Game * game, IDXGISwapChain * swapChain, ID3D11Device
 
 	HRESULT blendStateCreate = device->CreateBlendState(&bd, &m_particleBlendState);
 	
-	m_camera = Camera(XMFLOAT3(0, 3, 0));
+	m_camera = Camera(XMFLOAT3(0, 8, 0));
 	m_camera.RotationDelta(-.5, 0);
 	m_camera.CreateProjectionMatrix(1920, 1080, 103);
 	m_swapChain = swapChain;
@@ -303,7 +303,7 @@ void RenderingSystem::OnResize(Game * game)
 void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 	StartTimer();
 	Collapse();
-	m_camera.Update();
+	m_camera.Update(dt);
 
 	// Background color (Cornflower Blue in this case) for clearing
 	const float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };

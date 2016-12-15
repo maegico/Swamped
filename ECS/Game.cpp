@@ -27,25 +27,47 @@ void Game::Init() {
 	Constructors::CreateGround(this, DirectX::XMFLOAT3(0.0f, 0.0f, -53.05f), 10.0f);
 	Constructors::CreateGround(this, DirectX::XMFLOAT3(53.05f, 0.0f, -53.05f), 10.0f);
 	Constructors::CreateGround(this, DirectX::XMFLOAT3(-53.05f, 0.0f, -53.05f), 10.0f);
-	m_toggles.push_back(Toggle('A', &m_renderingSystem.m_fxaaToggle));
+	//m_toggles.push_back(Toggle('A', &m_renderingSystem.m_fxaaToggle));
 	m_toggles.push_back(Toggle('B', &m_renderingSystem.m_bloomToggle));
+	//border trees
 	for (int i = 0; i < 22; i++)
 	{
-		Constructors::CreateTree(this, DirectX::XMFLOAT3(-75.0f, 200.0f, -75.0f + (7.0f * i)), 3.0f);
-		//Constructors::CreateTestObject(this);
+		Constructors::CreateTree(this, DirectX::XMFLOAT3(-75.0f + fRand(-2, 3), 0.0f, -75.0f + (7.0f * i) + fRand(-2, 2)), fRand(1, 3));
 	}
 	for (int i = 0; i < 22; i++)
 	{
-		Constructors::CreateTree(this, DirectX::XMFLOAT3(-75.0f + (7.0f * i), 20.0f, -75.0f), 1.0f);
+		Constructors::CreateTree(this, DirectX::XMFLOAT3(-75.0f + (7.0f * i) + fRand(-2, 2), 0.0f, -75.0f + fRand(-2, 2)), fRand(1, 3));
 	}
 	for (int i = 0; i < 22; i++)
 	{
-		Constructors::CreateTree(this, DirectX::XMFLOAT3(-75.0f + (7.0f * i), 20.0f, 75.0f), 1.0f);
+		Constructors::CreateTree(this, DirectX::XMFLOAT3(-75.0f + (7.0f * i) + fRand(-2, 2), 0.0f, 75.0f + fRand(-2, 2)), fRand(1, 3));
 	}
 	for (int i = 0; i < 22; i++)
 	{
-		Constructors::CreateTree(this, DirectX::XMFLOAT3(75.0f, 20.0f, -75.0f + (7.0f * i)), 1.0f);
+		Constructors::CreateTree(this, DirectX::XMFLOAT3(75.0f + fRand(-2, 2), 0.0f, -75.0f + (7.0f * i) + fRand(-2, 2)), fRand(1, 3));
 	}
+	//distance trees
+	for (int i = 0; i < 7; i++)
+	{
+		Constructors::CreateTree2(this, DirectX::XMFLOAT3(75.0f + fRand(20, 65), 0.0f, fRand(-75.0f, 75.0f)), fRand(4, 7));
+	}
+	for (int i = 0; i < 7; i++)
+	{
+		Constructors::CreateTree2(this, DirectX::XMFLOAT3(-75.0f - fRand(20, 65), 0.0f, fRand(-75.0f, 75.0f)), fRand(4, 7));
+	}
+	for (int i = 0; i < 7; i++)
+	{
+		Constructors::CreateTree2(this, DirectX::XMFLOAT3(fRand(-75.0f, 75.0f), 0.0f, -75.0f - fRand(20, 65)), fRand(4, 7));
+	}
+	/*for (int i = 0; i < 7; i++)
+	{
+	Constructors::CreateTree(this, DirectX::XMFLOAT3(fRand(-75.0f, 75.0f), 0.0f, 75.0f + fRand(20, 65)), fRand(4, 7));
+	}*/
+	for (int i = 0; i < 20; i++)
+	{
+		Constructors::CreateTree2(this, DirectX::XMFLOAT3(15.0f * i + fRand(-3.0f, 3.0f), 0.0f, 75.0f + fRand(20, 65)), fRand(4, 7));
+	}
+
 	//rocks
 	Constructors::CreateRock(this, DirectX::XMFLOAT3(-5.0f, 0.0f, -1.0f), 4.0f);
 	Constructors::CreateRock(this, DirectX::XMFLOAT3(-5.0f, 0.0f, 0.0f), 4.0f);
@@ -56,11 +78,13 @@ void Game::Init() {
 
 	for (int i = 0; i < 15; i++)
 	{
-		Constructors::CreateTree2(this, DirectX::XMFLOAT3(fRand(-70, 70), 0.0f, fRand(-70, 70)), fRand(0.5, 4));
+		Constructors::CreateTree2(this, DirectX::XMFLOAT3(fRand(-75, 75), 0.0f, fRand(-75, 75)), fRand(0.5, 4));
 	}
 
-	EntityId ghostId = Constructors::CreateGhost(this, 1.0f);
-	m_ghost = Ghost(this, ghostId, DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)); 
+	EntityId ghostId = Constructors::CreateGhost(this, DirectX::XMFLOAT3(0.0f, 0.0f, 70.0f), 1.0f);
+	m_ghost = Ghost(this, ghostId, m_renderingSystem.m_camera.GetPosition());
+	EntityId ghostId2 = Constructors::CreateGhost(this, DirectX::XMFLOAT3(70.0f, 0.0f, 0.0f), 1.0f);
+	m_ghost2 = Ghost(this, ghostId2, m_renderingSystem.m_camera.GetPosition());
 
 	EntityId camId = Constructors::CreatePlayer(this);
 }
@@ -95,7 +119,8 @@ void Game::Update(float dt, float totalTime) {
 
 		m_transformSystem.Update(this, m_timeStep);
 		m_collisionSystem.Update(this, m_timeStep);
-		m_ghost.Update(m_renderingSystem.m_camera.GetPosition());
+		m_ghost.Update(m_renderingSystem.m_camera.GetPosition(),dt);
+		m_ghost2.Update(m_renderingSystem.m_camera.GetPosition(),dt);
 		m_accumulator -= m_timeStep;
 	}
 

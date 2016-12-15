@@ -26,7 +26,7 @@ public:
 
 	XMFLOAT3 m_force = XMFLOAT3(0,0,0);
 
-	void Update(DirectX::XMFLOAT3 playerPosition);
+	void Update(DirectX::XMFLOAT3 playerPosition, float dt);
 	void Seek(DirectX::XMFLOAT3 playerPosition);
 	void ObstacleAvoid();
 };

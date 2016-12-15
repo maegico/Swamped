@@ -43,7 +43,7 @@ int WINAPI WinMain(
 	return dxGame.Run();
 }
 
-static float fRand(float min, float max) {
+/*static float fRand(float min, float max) {
 	float f = (float)rand() / RAND_MAX;
 	return min + f * (max - min);
-}
+}*/

@@ -24,6 +24,7 @@ CollisionSystem::CollisionSystem() {
 	//m_collisionFunctions.push_back(std::make_tuple(CollisionType::test1, CollisionType::test1, &CollisionFunctions::NoOpCollision));
 	m_collisionFunctions.push_back(std::make_tuple(CollisionType::test2, CollisionType::test2, &CollisionFunctions::NoOpCollision));
 #endif
+	m_collisionFunctions.push_back(std::make_tuple(CollisionType::ghost, CollisionType::player, &CollisionFunctions::EndState));
 }
 
 CollisionSystem::~CollisionSystem() {
@@ -191,7 +192,7 @@ void CollisionSystem::Update(Game * game, float dt) {
 			if (bucketCv[ct1].size() == 0 || bucketCv[ct2].size() == 0)
 				continue;
 			bool selfCheck = ct1 == ct2;
-			unsigned int outerLength = (selfCheck) ? bucketCv[ct1].size() : bucketCv[ct1].size() - 1;
+			unsigned int outerLength = (!selfCheck) ? bucketCv[ct1].size() : bucketCv[ct1].size() - 1;
 			CollisionFunction cf = std::get<2>(cfDef);
 			for (unsigned int c = 0; c < outerLength; c++) {
 				CollapsedComponent<MaxMin> caabb1 = bucketCv[ct1][c];

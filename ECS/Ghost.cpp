@@ -56,7 +56,7 @@ This single method should be called during the game's update phase.
 It calls all other necessary methods and handles ghost movement.
 @param: Requires the player's current position to be passed
 */
-void Ghost::Update(DirectX::XMFLOAT3 playerPosition)
+void Ghost::Update(DirectX::XMFLOAT3 playerPosition, float dt)
 {
 	//PhysicsComponent & myPhysics = g->m_transformSystem.GetComponent2(m_entityId);
 	//TransformComponent & playerTransform = g->m_ts.GetComponent1(playerId);
@@ -64,9 +64,9 @@ void Ghost::Update(DirectX::XMFLOAT3 playerPosition)
 	Seek(playerPosition);
 	//ObstacleAvoid(); 
 
-	m_physics->m_velocity.x += m_physics->m_acceleration.x;
-	m_physics->m_velocity.y = 0.0f;
-	m_physics->m_velocity.z += m_physics->m_acceleration.z;
+	//m_physics->m_velocity.x += m_physics->m_acceleration.x;
+	//m_physics->m_velocity.y = 0.0f;
+	//m_physics->m_velocity.z += m_physics->m_acceleration.z;
 
 	DirectX::XMVECTOR steer = DirectX::XMLoadFloat3(&m_physics->m_velocity);
 

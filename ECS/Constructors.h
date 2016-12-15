@@ -124,7 +124,7 @@ public:
 	//	game->m_renderingSystem.Create(eid, &m_renderingComponents["groundPlane"]);
 	//}
 
-	static EntityId CreateGhost(Game * g, float size)
+	static EntityId CreateGhost(Game * g, DirectX::XMFLOAT3 position, float size)
 	{
 		EntityId eid = g->m_entities.add(vector<ISystem*>{
 			&g->m_transformSystem,
@@ -140,8 +140,10 @@ public:
 		pc.m_acceleration = XMFLOAT3(0, 0, 0);
 
 		TransformComponent tc;
-		tc.m_position = XMFLOAT3(-10.0f, 0.0f, -10.0f);
+		tc.m_position = position;
 		tc.m_scale = size;
+
+		ms.m_bb.m_collisionType = CollisionType::ghost;
 
 		//vector<CollisionType> cTypes = { CollisionType::none };
 		//copy collision mask into bounding box
@@ -172,6 +174,8 @@ public:
 		TransformComponent tc;
 		//tc.m_position = XMFLOAT3(fRand(-100, 100), fRand(0, 100), fRand(-100, 100));
 		tc.m_scale = 1.0f;
+
+		ms.m_bb.m_collisionType = CollisionType::player;
 
 		//vector<CollisionType> cTypes = { CollisionType::none };
 		//copy collision mask into bounding box

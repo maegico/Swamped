@@ -45,6 +45,7 @@ struct VertexToPixel
 	//  v    v                v
 	float4 position		: SV_POSITION;	// XYZW position (System Value Position)
 	float4 worldPos		: POSITION;
+	float3 camPosition : CAM_POSITION;
 	float3 normal		: NORMAL;
 	float3 tangent		: TANGENT;		// XYZ tangent
 	float2 uv			: TEXCOORD;
@@ -83,6 +84,7 @@ VertexToPixel main(VertexShaderInput input)
 	output.tangent = mul(input.tangent, (float3x3)input.world);
 
 	output.uv = input.uv;
+	output.camPosition = cameraPos;
 
 	float3 worldPos = output.worldPos.xyz;
 	float3 cameraToVert = worldPos - cameraPos;

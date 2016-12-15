@@ -60,6 +60,7 @@ struct VertexToPixel
 	//  v    v                v
 	float4 position		: SV_POSITION;
 	float4 worldPos		: POSITION;
+	float3 camPosition	: CAM_POSITION;
 	float3 normal		: NORMAL;
 	float3 tangent		: TANGENT;		// XYZ tangent
 	float2 uv			: TEXCOORD;
@@ -159,11 +160,16 @@ float4 main(VertexToPixel input) : SV_TARGET
 
 	//fog-related stuff
 	float fogFactor = 0;
-	float4 fogColor = float4(0.5, 0.5, 0.5, 1.0); //grey
+	float4 fogColor = float4(0.1, 0.3, 0, 1.0); //grey
 
 	//linear fog
 	fogFactor = (100 - input.fogDistance) / (100 - 20);
 	fogFactor = clamp(fogFactor, 0.0, 1.0);
 
-	return lerp(fogColor, finalLighting * surfaceColor, fogFactor);
+	finalLighting = lerp(fogColor, finalLighting * surfaceColor, fogFactor);
+	float edgeShading = 1.0f - saturate(dot(input.normal, (input.camPosition - input.worldPos)));
+
+	float4 edgeShade = lerp(finalLighting, float4(0.2f, 0.2f, 0.0f, 1.0f), edgeShading);
+
+	return edgeShade;
 }
