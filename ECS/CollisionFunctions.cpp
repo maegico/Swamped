@@ -21,10 +21,11 @@ void CollisionFunctions::NoOpCollision(Game * g, EntityId entityId1, EntityId en
 
 void CollisionFunctions::EndState(Game * g, EntityId entityId1, EntityId entityId2, float dt)
 {
-	XMFLOAT3 newPosition = XMFLOAT3(frand2(-100, 100), 8, frand2(-100, 100));
+	/*XMFLOAT3 newPosition = XMFLOAT3(frand2(-100, 100), 8, frand2(-100, 100));
 	TransformComponent& playerTransform = g->m_transformSystem.GetComponent1(entityId2);
 	playerTransform.m_position = XMFLOAT3(newPosition);
-	g->m_renderingSystem.m_camera.SetPosition(newPosition);
+	g->m_renderingSystem.m_camera.SetPosition(newPosition);*/
+	g->Quit();
 }
 
 float CollisionFunctions::frand2(float min, float max)
