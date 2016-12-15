@@ -57,5 +57,8 @@ void TransformSystem::Update(Game * game, float dt) {
 
 //Returns a matrix generated from the given component's properties
 XMMATRIX TransformSystem::GetMatrix(TransformComponent& tc) {
-	return XMMatrixMultiply(XMMatrixRotationQuaternion(XMLoadFloat4(&tc.m_rotation)), XMMatrixTranslationFromVector(XMLoadFloat3(&tc.m_position)));
+	if (tc.m_scale == 0.0f)
+		tc.m_scale = 1.0f;
+	XMMATRIX scale = XMMatrixScaling(tc.m_scale, tc.m_scale, tc.m_scale);
+	return XMMatrixMultiply(XMMatrixMultiply(scale,XMMatrixRotationQuaternion(XMLoadFloat4(&tc.m_rotation))), XMMatrixTranslationFromVector(XMLoadFloat3(&tc.m_position)));
 }

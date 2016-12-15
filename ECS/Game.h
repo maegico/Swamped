@@ -1,6 +1,6 @@
 #pragma once
 
-#define BENCHMARK 0
+#define BENCHMARK -1
 
 #include "CollisionSystem.h"
 #include "TransformSystem.h"
@@ -10,6 +10,7 @@
 #include "DXCore.h"
 #include "EntityIdTypeDef.h"
 #include "Toggle.h"
+#include "Ghost.h"
 #include <vector>
 #include <chrono>
 
@@ -25,6 +26,8 @@ public:
 	RenderingSystem m_renderingSystem;
 	ParticleSystem m_particleSystem;
 
+	Ghost m_ghost;
+
 	ContentManager m_contentManager;
 
 	Game(HINSTANCE hInstance);
@@ -37,6 +40,11 @@ public:
 
 	//Frees an entity's components, and frees its entry in m_entities
 	void QueueRemoveEntity(EntityId entityId);
+
+	POINT prevMousePos;
+	void OnMouseDown(WPARAM buttonState, int x, int y);
+	void OnMouseUp(WPARAM buttonState, int x, int y);
+	void OnMouseMove(WPARAM buttonState, int x, int y);
 
 	friend class Constructors;
 private:

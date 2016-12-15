@@ -20,8 +20,8 @@ using namespace DirectX;
 
 CollisionSystem::CollisionSystem() {
 #if BENCHMARK >=0
-	m_collisionFunctions.push_back(std::make_tuple(CollisionType::test1, CollisionType::test2, &CollisionFunctions::NoOpCollision));
-	m_collisionFunctions.push_back(std::make_tuple(CollisionType::test1, CollisionType::test1, &CollisionFunctions::NoOpCollision));
+	//m_collisionFunctions.push_back(std::make_tuple(CollisionType::test1, CollisionType::test2, &CollisionFunctions::NoOpCollision));
+	//m_collisionFunctions.push_back(std::make_tuple(CollisionType::test1, CollisionType::test1, &CollisionFunctions::NoOpCollision));
 	m_collisionFunctions.push_back(std::make_tuple(CollisionType::test2, CollisionType::test2, &CollisionFunctions::NoOpCollision));
 #endif
 }

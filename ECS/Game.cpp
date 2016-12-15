@@ -18,9 +18,51 @@ void Game::Init() {
 	m_contentManager.Init(m_device, m_context);
 	m_renderingSystem.Init(this, m_swapChain, m_device, m_context, m_backBufferRTV, m_depthStencilView);
 	Constructors::Init(this);
-	Constructors::CreateGround(this);
+	Constructors::CreateGround(this, DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f), 10.0f);
+	Constructors::CreateGround(this, DirectX::XMFLOAT3(53.05f, 0.0f, 0.0f), 10.0f);
+	Constructors::CreateGround(this, DirectX::XMFLOAT3(-53.05f, 0.0f, 0.0f), 10.0f);
+	Constructors::CreateGround(this, DirectX::XMFLOAT3(0.0f, 0.0f, 53.05f), 10.0f);
+	Constructors::CreateGround(this, DirectX::XMFLOAT3(53.05f, 0.0f, 53.05f), 10.0f);
+	Constructors::CreateGround(this, DirectX::XMFLOAT3(-53.05f, 0.0f, 53.05f), 10.0f);
+	Constructors::CreateGround(this, DirectX::XMFLOAT3(0.0f, 0.0f, -53.05f), 10.0f);
+	Constructors::CreateGround(this, DirectX::XMFLOAT3(53.05f, 0.0f, -53.05f), 10.0f);
+	Constructors::CreateGround(this, DirectX::XMFLOAT3(-53.05f, 0.0f, -53.05f), 10.0f);
 	m_toggles.push_back(Toggle('A', &m_renderingSystem.m_fxaaToggle));
 	m_toggles.push_back(Toggle('B', &m_renderingSystem.m_bloomToggle));
+	for (int i = 0; i < 22; i++)
+	{
+		Constructors::CreateTree(this, DirectX::XMFLOAT3(-75.0f, 200.0f, -75.0f + (7.0f * i)), 3.0f);
+		//Constructors::CreateTestObject(this);
+	}
+	for (int i = 0; i < 22; i++)
+	{
+		Constructors::CreateTree(this, DirectX::XMFLOAT3(-75.0f + (7.0f * i), 20.0f, -75.0f), 1.0f);
+	}
+	for (int i = 0; i < 22; i++)
+	{
+		Constructors::CreateTree(this, DirectX::XMFLOAT3(-75.0f + (7.0f * i), 20.0f, 75.0f), 1.0f);
+	}
+	for (int i = 0; i < 22; i++)
+	{
+		Constructors::CreateTree(this, DirectX::XMFLOAT3(75.0f, 20.0f, -75.0f + (7.0f * i)), 1.0f);
+	}
+	//rocks
+	Constructors::CreateRock(this, DirectX::XMFLOAT3(-5.0f, 0.0f, -1.0f), 4.0f);
+	Constructors::CreateRock(this, DirectX::XMFLOAT3(-5.0f, 0.0f, 0.0f), 4.0f);
+	for (int i = 0; i < 15; i++)
+	{
+		Constructors::CreateRock(this, DirectX::XMFLOAT3(fRand(-70, 70), 0.0f, fRand(-70, 70)), fRand(1, 5));
+	}
+
+	for (int i = 0; i < 15; i++)
+	{
+		Constructors::CreateTree2(this, DirectX::XMFLOAT3(fRand(-70, 70), 0.0f, fRand(-70, 70)), fRand(0.5, 4));
+	}
+
+	EntityId ghostId = Constructors::CreateGhost(this, 1.0f);
+	m_ghost = Ghost(this, ghostId, DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f)); 
+
+	EntityId camId = Constructors::CreatePlayer(this);
 }
 
 //delete system objects
@@ -42,17 +84,18 @@ void Game::Update(float dt, float totalTime) {
 #ifdef _DEBUG
 		unsigned int newComponents = 100 * m_timeStep;
 #else
-		unsigned int newComponents = BENCHMARK * 1000 * m_timeStep;
+		unsigned int newComponents = BENCHMARK * 100 * m_timeStep;
 #endif
 		for (unsigned int c = 0; c < newComponents; c++)
 		{
 			Constructors::CreateTestObject(this);
-			Constructors::CreateTestObject2(this);
+			//Constructors::CreateTestObject2(this);
 		}
 #endif
 
 		m_transformSystem.Update(this, m_timeStep);
 		m_collisionSystem.Update(this, m_timeStep);
+		m_ghost.Update(m_renderingSystem.m_camera.GetPosition());
 		m_accumulator -= m_timeStep;
 	}
 
@@ -101,4 +144,40 @@ void Game::UpdateTitleBarForGame(std::string in) {
 void Game::OnResize() {
 	DXCore::OnResize();
 	m_renderingSystem.OnResize(this);
+}
+
+void Game::OnMouseDown(WPARAM buttonState, int x, int y)
+{
+
+	prevMousePos.x = x;
+	prevMousePos.y = y;
+
+	SetCapture(hWnd);
+}
+
+// --------------------------------------------------------
+// Helper method for mouse release
+// --------------------------------------------------------
+void Game::OnMouseUp(WPARAM buttonState, int x, int y)
+{
+
+	ReleaseCapture();
+}
+
+// --------------------------------------------------------
+// Helper method for mouse movement.  We only get this message
+// if the mouse is currently over the window, or if we're 
+// currently capturing the mouse.
+// --------------------------------------------------------
+void Game::OnMouseMove(WPARAM buttonState, int x, int y)
+{
+	//static int lastPos[2] = { x,y };
+	if (buttonState & 0x0002)
+	{
+		m_renderingSystem.m_camera.MouseInput((x - prevMousePos.x), (y - prevMousePos.y));
+	}
+
+	// Save the previous mouse position, so we have it for the future
+	prevMousePos.x = x;
+	prevMousePos.y = y;
 }

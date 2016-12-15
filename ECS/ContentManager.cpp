@@ -111,6 +111,10 @@ void ContentManager::Init(ID3D11Device * device, ID3D11DeviceContext * context)
 	LoadSkyBoxMaterial("skyMap", "sampler", "SkyVS.cso", "SkyPS.cso", "Ni.dds");
 	LoadParticleMaterial("snowflake", "borderSampler", "ParticleVS.cso", "BillboardGS.cso", "ParticlePS.cso", "snowflake.png");
 	//LoadMaterial("TestMaterial", "sampler", "VertexShader.cso", "PixelShader.cso", "soilrough.png");
+	LoadMaterial("TestMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "soilrough.png", "null");
+	LoadMaterial("TreeMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "bark.png", "null");
+	LoadMaterial("GroundMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "swampground.png", "null");
+	LoadMaterial("GhostMaterial", "sampler", "vsLighting.cso", "psLighting.cso", "lava.png", "null");
 }
 
 Material ContentManager::LoadMaterial(std::string name, std::string samplerName, std::string vs, std::string ps, std::string textureName, std::string normalMapName)
@@ -278,9 +282,8 @@ void ContentManager::CreateMeshStore(std::string objFile)
 	std::vector<UINT> indices;           // Indices of these verts
 	unsigned int vertCounter = 0;        // Count of vertices/indices
 	char chars[100];                     // String for line reading
-	DirectX::XMVECTOR max = DirectX::XMVectorZero();
-	DirectX::XMVECTOR min = DirectX::XMVectorZero();
-	DirectX::XMVECTOR current;
+	
+	
 										 // Still good?
 	while (obj.good())
 	{
@@ -320,9 +323,7 @@ void ContentManager::CreateMeshStore(std::string objFile)
 				chars,
 				"v %f %f %f",
 				&pos.x, &pos.y, &pos.z);
-			current = DirectX::XMLoadFloat3(&pos);
-			max = DirectX::XMVectorMax(max, current);
-			min = DirectX::XMVectorMin(min, current);
+			
 			// Add to the positions
 			positions.push_back(pos);
 		}
@@ -405,6 +406,16 @@ void ContentManager::CreateMeshStore(std::string objFile)
 	//m_meshes[objFile] = new Mesh(&verts[0], &indices[0], verts.size(), indices.size(), m_device);
 	size_t vertCount = verts.size();
 	size_t indCount = indices.size();
+
+	DirectX::XMVECTOR current;
+	DirectX::XMVECTOR max = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(-FLT_MAX, -FLT_MAX, -FLT_MAX));
+	DirectX::XMVECTOR min = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(FLT_MAX, FLT_MAX, FLT_MAX));
+	for (unsigned int c = 0; c < vertCount; c++) {
+		current = DirectX::XMLoadFloat3(&verts[c].Position);
+		max = DirectX::XMVectorMax(max, DirectX::XMVectorScale(current,-1.0f));
+		min = DirectX::XMVectorMin(min, DirectX::XMVectorScale(current,-1.0f));		
+	}
+
 	ID3D11Buffer * vertexBuffer = 0;
 	ID3D11Buffer * indexBuffer = 0;
 	DirectX::XMFLOAT3 maxFloat;
@@ -413,13 +424,13 @@ void ContentManager::CreateMeshStore(std::string objFile)
 	DirectX::XMStoreFloat3(&minFloat, min);
 	DirectX::XMFLOAT3 bb[8] = {
 		{maxFloat.x,maxFloat.y,maxFloat.z},
-		{ maxFloat.x,maxFloat.y,-maxFloat.z },
-		{ maxFloat.x,-maxFloat.y,maxFloat.z },
-		{ maxFloat.x,-maxFloat.y,-maxFloat.z },
-		{ -maxFloat.x,maxFloat.y,maxFloat.z },
-		{ -maxFloat.x,maxFloat.y,-maxFloat.z },
-		{ -maxFloat.x,-maxFloat.y,maxFloat.z },
-		{ -maxFloat.x,-maxFloat.y,-maxFloat.z }
+		{ maxFloat.x,maxFloat.y,minFloat.z },
+		{ maxFloat.x,minFloat.y,maxFloat.z },
+		{ maxFloat.x,minFloat.y,minFloat.z },
+		{ minFloat.x,maxFloat.y,maxFloat.z },
+		{ minFloat.x,maxFloat.y,minFloat.z },
+		{ minFloat.x,minFloat.y,maxFloat.z },
+		{ minFloat.x,minFloat.y,minFloat.z }
 	};
 	
 	// Create the VERTEX BUFFER description
