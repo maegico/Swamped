@@ -13,6 +13,7 @@ struct GSOutput
 {
 	float4 position : SV_POSITION;
 	float2 uv : TEXCOORD;
+	float3 positionW : POSITION;
 	//float3 center : POSITION;
 	//float size : SIZE;
 };
@@ -64,6 +65,7 @@ void main(
 	for (int i = 0; i < 4; ++i)
 	{
 		gout.position = mul(v[i], mul(view, projection));
+		gout.positionW = v[i].xyz;
 		gout.uv = uv[i];
 
 		output.Append(gout);

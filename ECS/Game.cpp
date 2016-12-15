@@ -86,7 +86,7 @@ void Game::Init() {
 	EntityId ghostId2 = Constructors::CreateGhost(this, DirectX::XMFLOAT3(70.0f, 0.0f, 0.0f), 1.0f);
 	m_ghost2 = Ghost(this, ghostId2, m_renderingSystem.m_camera.GetPosition());
 
-	EntityId camId = Constructors::CreatePlayer(this);
+	m_playerId = Constructors::CreatePlayer(this);
 }
 
 //delete system objects
@@ -121,6 +121,38 @@ void Game::Update(float dt, float totalTime) {
 		m_collisionSystem.Update(this, m_timeStep);
 		m_ghost.Update(m_renderingSystem.m_camera.GetPosition(),dt);
 		m_ghost2.Update(m_renderingSystem.m_camera.GetPosition(),dt);
+
+		auto& playerTransform = m_transformSystem.GetComponent1(m_playerId);
+		auto& playerPhysics = m_transformSystem.GetComponent2(m_playerId);
+		const float PLAYER_SPEED = 20;
+		XMVECTOR direction = XMLoadFloat3(&XMFLOAT3(0, 0, 0));
+		//forward and back
+		if (GetAsyncKeyState('W') & 0x8000)
+		{
+			direction = XMVectorAdd(direction, XMLoadFloat3(&XMFLOAT3(0, 0, 1)));
+		}
+		if (GetAsyncKeyState('S') & 0x8000)
+		{
+			direction = XMVectorAdd(direction, XMLoadFloat3(&XMFLOAT3(0, 0, -1)));
+		}
+
+		//left and right
+		if (GetAsyncKeyState('A') & 0x8000)
+		{
+			direction = XMVectorAdd(direction, XMLoadFloat3(&XMFLOAT3(-1, 0, 0)));
+		}
+		if (GetAsyncKeyState('D') & 0x8000)
+		{
+			direction = XMVectorAdd(direction, XMLoadFloat3(&XMFLOAT3(1, 0, 0)));
+		}
+
+		direction = XMVector3Rotate(XMVector3Normalize(direction), XMQuaternionRotationRollPitchYaw(0,m_playerRotation.y,0));
+		XMStoreFloat3(&playerPhysics.m_velocity, XMVectorScale(direction, PLAYER_SPEED));
+
+		XMFLOAT3 cameraPos = XMFLOAT3(playerTransform.m_position.x, 8, playerTransform.m_position.z);
+		m_renderingSystem.m_camera.SetPosition(cameraPos);
+		m_renderingSystem.m_camera.rotationQuat = playerTransform.m_rotation;
+
 		m_accumulator -= m_timeStep;
 	}
 
@@ -196,10 +228,15 @@ void Game::OnMouseUp(WPARAM buttonState, int x, int y)
 // --------------------------------------------------------
 void Game::OnMouseMove(WPARAM buttonState, int x, int y)
 {
+	auto& playerTransform = m_transformSystem.GetComponent1(m_playerId);
 	//static int lastPos[2] = { x,y };
 	if (buttonState & 0x0002)
 	{
-		m_renderingSystem.m_camera.MouseInput((x - prevMousePos.x), (y - prevMousePos.y));
+		//XMStoreFloat4(&playerTransform.m_rotation, XMQuaternionMultiply(XMQuaternionMultiply(XMQuaternionRotationRollPitchYaw(0, XM_PI*( y - prevMousePos.y)/180, 0), XMLoadFloat4(&playerTransform.m_rotation)),XMQuaternionRotationRollPitchYaw(0,0, XM_PI*(x - prevMousePos.x) / 180)));
+		  //(x - prevMousePos.x), (y - prevMousePos.y);
+		m_playerRotation.x += .3*XM_PI*(y - prevMousePos.y) / 180;
+		m_playerRotation.y += .3*XM_PI*(x - prevMousePos.x) / 180;
+		XMStoreFloat4(&playerTransform.m_rotation, XMQuaternionRotationRollPitchYaw(m_playerRotation.x, m_playerRotation.y, 0));
 	}
 
 	// Save the previous mouse position, so we have it for the future

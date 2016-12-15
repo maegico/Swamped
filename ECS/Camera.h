@@ -18,6 +18,8 @@ public:
 	void CreateProjectionMatrix(float width, float height, float fov);
 	void MouseInput(float x, float y);
 	void SetPosition(XMFLOAT3);
+	XMFLOAT3 GetForward();
+	XMFLOAT4 rotationQuat;
 	//XMFLOAT3 GetPosition(); 
 private:
 	XMFLOAT4X4 view;
@@ -26,7 +28,6 @@ private:
 	//XMFLOAT3 direction;
 	float rotationX;
 	float rotationY;
-	XMFLOAT4 rotationQuat;
 	EntityId cameraId;
 
 	//for moving the camera

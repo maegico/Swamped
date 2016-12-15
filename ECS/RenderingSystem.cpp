@@ -364,7 +364,7 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 		vertexShader->SetMatrix4x4("view", m_camera.GetView());
 		vertexShader->SetMatrix4x4("projection", m_camera.GetProjection());
 		vertexShader->SetFloat3("cameraPos", m_camera.GetPosition());
-		vertexShader->SetFloat("fogHeight", 20);
+		//vertexShader->SetFloat("fogHeight", 20);
 
 		vertexShader->CopyAllBufferData();
 
@@ -375,6 +375,7 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 		pixelShader->SetShaderResourceView("Texture", rc.m_material.textureView);
 		pixelShader->SetShaderResourceView("NormalMap", rc.m_material.normalMap);
 		pixelShader->SetSamplerState("Sampler", rc.m_material.samplerState);
+		pixelShader->SetFloat("fogHeight", 20);
 
 		pixelShader->CopyAllBufferData();
 
@@ -423,6 +424,9 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 
 	skyPS->SetShaderResourceView("Sky", skySRV);
 	skyPS->SetSamplerState("Sampler", m_skyBox.m_material.samplerState);
+	//skyPS->SetFloat3("cameraLook", m_camera.GetForward());
+	skyPS->SetFloat("fogHeight", 20);
+	skyPS->SetFloat3("cameraPos", m_camera.GetPosition());
 	skyPS->CopyAllBufferData();
 	skyPS->SetShader();
 
@@ -451,6 +455,8 @@ void RenderingSystem::Update(Game * game, float dt, float totalTime) {
 		m_particleMaterial.pixelShader->SetShader();
 		m_particleMaterial.pixelShader->SetShaderResourceView("pTexture", m_particleMaterial.textureView);
 		m_particleMaterial.pixelShader->SetSamplerState("pSampler", m_particleMaterial.samplerState);
+		m_particleMaterial.pixelShader->SetFloat3("cameraPos", m_camera.GetPosition());
+		m_particleMaterial.pixelShader->SetFloat("fogHeight", 20);
 
 		m_particleMaterial.vertexShader->CopyAllBufferData();
 		m_particleMaterial.geometryShader->CopyAllBufferData();

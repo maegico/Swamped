@@ -32,6 +32,7 @@ VertexToPixel main(VertexShaderInput input)
 	VertexToPixel output;
 
 	// Copy the view matrix and remove translation
+	//float3 look = 
 	matrix viewNoMove = view;
 	viewNoMove._41 = 0;
 	viewNoMove._42 = 0;

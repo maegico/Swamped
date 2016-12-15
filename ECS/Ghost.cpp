@@ -7,7 +7,7 @@ Ghost::Ghost(Game * game, unsigned int entityId, DirectX::XMFLOAT3 playerStart)
 	playerPos = playerStart;
 	phasing = false;
 	PHASINGSPEED = 0.0002f;
-	NORMALSPEED = 1.0f;
+	NORMALSPEED = .5f;
 	maxSpeed = NORMALSPEED;
 	g = game;
 	//position = g->m_transformSystem.GetComponent1(entityId).m_position;

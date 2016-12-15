@@ -1,5 +1,6 @@
 #include "Camera.h"
 
+
 #define SPEED 15.0f
 
 Camera::Camera(XMFLOAT3 pos) {
@@ -65,57 +66,15 @@ void Camera::RotationDelta(float x, float y) {
 
 void Camera::Update(float dt) {
 
-	//forward and back
-	if (GetAsyncKeyState('W') & 0x8000)
-	{
-		XMVECTOR move = DirectX::XMLoadFloat3(&DirectX::XMFLOAT3(m_forward.x, 0.0f, m_forward.z));
-		DirectX::XMVector3Normalize(move);
-		DirectX::XMStoreFloat3(&movement, move);
-
-		position.x += (SPEED *dt* movement.x);
-		position.z += (SPEED *dt* movement.z);
-	}
-	if (GetAsyncKeyState('S') & 0x8000)
-	{
-		position.x -= SPEED *dt* m_forward.x;
-		position.z -= SPEED *dt* m_forward.z;
-	}
-
-	//left and right
-	if (GetAsyncKeyState('A') & 0x8000)
-	{
-		DirectX::XMMATRIX turnBy = DirectX::XMMatrixRotationRollPitchYaw(rotationX, rotationY, 0.0f);
-		DirectX::XMVECTOR r = DirectX::XMLoadFloat3(&m_right);
-		r = DirectX::XMVector3Transform(r, turnBy);
-		r = DirectX::XMVector3Normalize(r);
-
-		position.x -= SPEED *dt* DirectX::XMVectorGetX(r);
-		position.z -= SPEED *dt* DirectX::XMVectorGetZ(r);
-
-	}
-	if (GetAsyncKeyState('D') & 0x8000)
-	{
-		DirectX::XMMATRIX turnBy = DirectX::XMMatrixRotationRollPitchYaw(rotationX, rotationY, 0.0f);
-		DirectX::XMVECTOR r = DirectX::XMLoadFloat3(&m_right);
-		r = DirectX::XMVector3Transform(r, turnBy);
-		r = DirectX::XMVector3Normalize(r);
-
-		position.x += SPEED *dt* DirectX::XMVectorGetX(r);
-		position.z += SPEED *dt* DirectX::XMVectorGetZ(r);
-	}
-
-
-
-
 	XMFLOAT3 forward = XMFLOAT3(0, 0, 1);
 	XMFLOAT3 up = XMFLOAT3(0, 1, 0);
-	XMVECTOR rotationQuaternion = XMQuaternionRotationRollPitchYaw(rotationX, rotationY, 0);
-	XMStoreFloat4(&rotationQuat, rotationQuaternion);
+	//XMVECTOR rotationQuaternion = XMQuaternionRotationRollPitchYaw(rotationX, rotationY, 0);
+	XMVECTOR rotationQuaternion = XMLoadFloat4(&rotationQuat);
 	XMVECTOR newDirection = XMLoadFloat3(&forward);
 	newDirection = XMVector3Rotate(newDirection, rotationQuaternion);
 	XMMATRIX newView = XMMatrixLookToLH(XMLoadFloat3(&position), newDirection, XMLoadFloat3(&up));
 
-	DirectX::XMStoreFloat3(&forward, newDirection);
+	//DirectX::XMStoreFloat3(&forward, newDirection);
 	XMStoreFloat3(&m_forward, newDirection);
 	//XMStoreFloat3(&m_right)
 	XMStoreFloat4x4(&view, XMMatrixTranspose(newView));
@@ -139,4 +98,9 @@ void Camera::MouseInput(float x, float y)
 void Camera::SetPosition(XMFLOAT3 newPosition)
 {
 	position = newPosition;
+}
+
+XMFLOAT3 Camera::GetForward()
+{
+	return m_forward;
 }

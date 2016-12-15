@@ -13,6 +13,7 @@
 #include "Ghost.h"
 #include <vector>
 #include <chrono>
+#include <math.h>
 
 using namespace std;
 using namespace std::chrono;
@@ -28,6 +29,8 @@ public:
 
 	Ghost m_ghost;
 	Ghost m_ghost2;
+
+	EntityId m_playerId;
 
 	ContentManager m_contentManager;
 
@@ -60,6 +63,8 @@ private:
 	const float m_timeStep = 1.0 / 60;
 
 	void OnResize();
+
+	XMFLOAT2 m_playerRotation = XMFLOAT2(0, 0);
 
 	//bool fxaaToggle = false;
 };
